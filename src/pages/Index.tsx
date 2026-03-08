@@ -43,7 +43,7 @@ const Index = () => {
           transition={{ duration: 0.8 }}
         >
           <ScrollProgress />
-          <ParticleBackground />
+          <GenerativeArtBackground />
           
           <SpotlightGlow />
           <CommandPalette />
