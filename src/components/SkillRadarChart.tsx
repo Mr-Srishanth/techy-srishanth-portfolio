@@ -12,8 +12,7 @@ import { useLightMotion } from "@/hooks/use-mobile";
 const data = [
   { skill: "Python", level: 70 },
   { skill: "Data Structures", level: 55 },
-  { skill: "C Programming", level: 60 },
-  { skill: "React", level: 75 },
+  { skill: "C Programming", level: 100 },
   { skill: "ML Basics", level: 40 },
   { skill: "Git", level: 65 },
 ];
