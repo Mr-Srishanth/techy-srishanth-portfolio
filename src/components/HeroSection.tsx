@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import { motion, useMotionValue, useTransform, useScroll } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { toast } from "sonner";
 import profileImg from "@/assets/profile.jpg";
@@ -50,6 +50,12 @@ const HeroSection = () => {
 
   const offset = light ? 30 : 60;
 
+  const { scrollY } = useScroll();
+  const bgY1 = useTransform(scrollY, [0, 600], [0, -120]);
+  const bgY2 = useTransform(scrollY, [0, 600], [0, -80]);
+  const gridY = useTransform(scrollY, [0, 600], [0, -50]);
+  const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
+
   return (
     <section
       id="home"
@@ -57,9 +63,9 @@ const HeroSection = () => {
       onMouseMove={handleMouseMove}
       className="relative min-h-screen flex items-center pt-16 overflow-hidden"
     >
-      <div className="absolute inset-0 grid-bg animate-grid-move opacity-20 pointer-events-none" />
-      <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 -right-32 w-96 h-96 rounded-full bg-neon-purple/5 blur-[120px] pointer-events-none" />
+      <motion.div className="absolute inset-0 grid-bg animate-grid-move opacity-20 pointer-events-none" style={{ y: gridY }} />
+      <motion.div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-primary/5 blur-[120px] pointer-events-none" style={{ y: bgY1 }} />
+      <motion.div className="absolute bottom-1/4 -right-32 w-96 h-96 rounded-full bg-neon-purple/5 blur-[120px] pointer-events-none" style={{ y: bgY2 }} />
 
       <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center relative z-10">
         <motion.div
