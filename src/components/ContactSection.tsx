@@ -132,6 +132,15 @@ const ContactSection = () => {
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ delay: 0.4, duration: dur }}
           >
+            {/* Honeypot field - hidden from humans */}
+            <input
+              type="text"
+              name="website_url"
+              autoComplete="off"
+              tabIndex={-1}
+              aria-hidden="true"
+              style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, width: 0 }}
+            />
             {[
               { label: "Name", name: "from_name", type: "text" },
               { label: "Email", name: "from_email", type: "email" },
