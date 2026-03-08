@@ -1,5 +1,6 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
 
 const skills = [
   { name: "Python", level: 70, icon: "🐍" },
@@ -12,15 +13,18 @@ const skills = [
 
 const SkillsSection = () => {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
+  const light = useLightMotion();
+  const isMobile = useIsMobile();
+  const inView = useInView(ref, { once: true, margin: light ? "-50px" : "-100px" });
+  const yOff = light ? 20 : 40;
 
   return (
     <section id="skills" className="py-24 relative">
       <div className="container mx-auto px-4" ref={ref}>
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: yOff }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: light ? 0.5 : 0.8 }}
           className="text-center mb-16"
         >
           <p className="font-mono text-primary text-sm tracking-widest mb-2">{"// MY SKILLS"}</p>
@@ -34,20 +38,15 @@ const SkillsSection = () => {
             <motion.div
               key={skill.name}
               className="glass-card p-6 group"
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: light ? 15 : 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.1, duration: 0.5 }}
-              whileHover={{ scale: 1.02 }}
+              whileHover={isMobile ? undefined : { scale: 1.02 }}
+              whileTap={isMobile ? { scale: 0.98 } : undefined}
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <motion.span
-                    className="text-2xl"
-                    animate={inView ? { y: [0, -5, 0] } : {}}
-                    transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
-                  >
-                    {skill.icon}
-                  </motion.span>
+                  <span className="text-2xl">{skill.icon}</span>
                   <span className="font-display text-sm font-semibold tracking-wider text-foreground">
                     {skill.name}
                   </span>

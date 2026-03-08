@@ -17,3 +17,23 @@ export function useIsMobile() {
 
   return !!isMobile;
 }
+
+export function usePrefersReducedMotion() {
+  const [reduced, setReduced] = React.useState(false);
+
+  React.useEffect(() => {
+    const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mql.matches);
+    const onChange = () => setReduced(mql.matches);
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+
+  return reduced;
+}
+
+export function useLightMotion() {
+  const isMobile = useIsMobile();
+  const reduced = usePrefersReducedMotion();
+  return isMobile || reduced;
+}

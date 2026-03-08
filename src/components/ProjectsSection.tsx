@@ -1,6 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { ExternalLink, Github, Folder } from "lucide-react";
+import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
 
 const projects = [
   {
@@ -27,16 +28,19 @@ const projects = [
 
 const ProjectsSection = () => {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
+  const light = useLightMotion();
+  const isMobile = useIsMobile();
+  const inView = useInView(ref, { once: true, margin: light ? "-50px" : "-100px" });
+  const yOff = light ? 20 : 40;
 
   return (
     <section id="projects" className="py-24 relative">
       <div className="absolute inset-0 grid-bg opacity-10 pointer-events-none" />
       <div className="container mx-auto px-4 relative z-10" ref={ref}>
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: yOff }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: light ? 0.5 : 0.8 }}
           className="text-center mb-16"
         >
           <p className="font-mono text-primary text-sm tracking-widest mb-2">{"// PORTFOLIO"}</p>
@@ -50,16 +54,16 @@ const ProjectsSection = () => {
             <motion.div
               key={project.title}
               className="glass-card p-6 group cursor-default relative overflow-hidden"
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: yOff }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.15, duration: 0.6 }}
-              whileHover={{
+              whileHover={isMobile ? undefined : {
                 y: -5,
                 boxShadow: "0 0 30px hsl(200 100% 50% / 0.15)",
                 borderColor: "hsl(200 100% 50% / 0.4)",
               }}
+              whileTap={isMobile ? { scale: 0.98 } : undefined}
             >
-              {/* Glow effect on hover */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
               <div className="relative z-10">

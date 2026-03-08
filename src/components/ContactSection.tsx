@@ -3,15 +3,20 @@ import { useRef, useState } from "react";
 import { Mail, MapPin, Send, Github, Linkedin, Instagram, CheckCircle, X } from "lucide-react";
 import emailjs from "@emailjs/browser";
 import { toast } from "sonner";
+import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
 
 const ContactSection = () => {
   const ref = useRef(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
+  const light = useLightMotion();
+  const isMobile = useIsMobile();
+  const inView = useInView(ref, { once: true, margin: light ? "-50px" : "-100px" });
   const [sending, setSending] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const socialLinkTarget =
     typeof window !== "undefined" && window.top !== window.self ? "_top" : "_blank";
+  const dur = light ? 0.5 : 0.8;
+  const yOff = light ? 20 : 40;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,9 +44,9 @@ const ContactSection = () => {
       <div className="absolute inset-0 grid-bg opacity-10 pointer-events-none" />
       <div className="container mx-auto px-4 relative z-10" ref={ref}>
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: yOff }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: dur }}
           className="text-center mb-16"
         >
           <p className="font-mono text-primary text-sm tracking-widest mb-2">{"// CONTACT"}</p>
@@ -51,12 +56,11 @@ const ContactSection = () => {
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-          {/* Contact info */}
           <motion.div
             className="space-y-6"
-            initial={{ opacity: 0, x: -40 }}
+            initial={{ opacity: 0, x: light ? -20 : -40 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: 0.2, duration: 0.8 }}
+            transition={{ delay: 0.2, duration: dur }}
           >
             <p className="font-body text-lg text-muted-foreground leading-relaxed">
               I'm always open to discussing new projects, creative ideas, or opportunities to learn and grow.
@@ -66,13 +70,14 @@ const ContactSection = () => {
               <motion.div
                 key={item.label}
                 className="flex items-center gap-4 group cursor-default"
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: light ? 10 : 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.4 + i * 0.1 }}
               >
                 <motion.div
                   className="p-3 rounded-lg glass-card text-primary group-hover:neon-glow transition-all"
-                  whileHover={{ scale: 1.1 }}
+                  whileHover={isMobile ? undefined : { scale: 1.1 }}
+                  whileTap={isMobile ? { scale: 0.95 } : undefined}
                 >
                   <item.icon size={20} />
                 </motion.div>
@@ -96,7 +101,7 @@ const ContactSection = () => {
                   rel="noopener noreferrer"
                   aria-label={label}
                   className="p-3 rounded-lg glass-card text-muted-foreground hover:text-primary transition-colors cursor-pointer"
-                  whileHover={{ scale: 1.1, boxShadow: "0 0 20px hsl(var(--primary) / 0.3)" }}
+                  whileHover={isMobile ? undefined : { scale: 1.1, boxShadow: "0 0 20px hsl(var(--primary) / 0.3)" }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <Icon size={20} />
@@ -105,14 +110,13 @@ const ContactSection = () => {
             </div>
           </motion.div>
 
-          {/* Form */}
           <motion.form
             ref={formRef}
             onSubmit={handleSubmit}
             className="glass-card p-8 space-y-5"
-            initial={{ opacity: 0, x: 40 }}
+            initial={{ opacity: 0, x: light ? 20 : 40 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: 0.4, duration: 0.8 }}
+            transition={{ delay: 0.4, duration: dur }}
           >
             {[
               { label: "Name", name: "from_name", type: "text" },
@@ -147,7 +151,7 @@ const ContactSection = () => {
             <motion.button
               type="submit"
               className="w-full py-3 rounded-lg bg-primary text-primary-foreground font-display text-sm tracking-wider flex items-center justify-center gap-2 neon-glow"
-              whileHover={{ scale: 1.02, boxShadow: "0 0 30px hsl(200 100% 50% / 0.5)" }}
+              whileHover={isMobile ? undefined : { scale: 1.02, boxShadow: "0 0 30px hsl(200 100% 50% / 0.5)" }}
               whileTap={{ scale: 0.98 }}
               disabled={sending}
             >
@@ -167,7 +171,6 @@ const ContactSection = () => {
         </div>
       </div>
 
-      {/* Success Modal */}
       <AnimatePresence>
         {showSuccess && (
           <motion.div
@@ -227,7 +230,7 @@ const ContactSection = () => {
               <motion.button
                 className="px-8 py-3 rounded-lg bg-primary text-primary-foreground font-display text-sm tracking-wider neon-glow"
                 onClick={() => setShowSuccess(false)}
-                whileHover={{ scale: 1.05, boxShadow: "0 0 30px hsl(200 100% 50% / 0.5)" }}
+                whileHover={isMobile ? undefined : { scale: 1.05, boxShadow: "0 0 30px hsl(200 100% 50% / 0.5)" }}
                 whileTap={{ scale: 0.95 }}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}

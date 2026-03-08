@@ -117,6 +117,24 @@
   100% { background-position: 60px 60px; }
 }
 
+/* GPU hints for animated elements */
+.glass-card {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-pulse-glow,
+  .animate-grid-move {
+    animation: none !important;
+  }
+  .neon-glow {
+    box-shadow: 0 0 10px hsl(var(--neon-blue) / 0.2) !important;
+  }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
