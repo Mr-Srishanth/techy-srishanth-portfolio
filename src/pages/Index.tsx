@@ -11,7 +11,7 @@ import LearningJourneySection from "@/components/LearningJourneySection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import SkillRadarChart from "@/components/SkillRadarChart";
-import SkillSolarSystem from "@/components/SkillSolarSystem";
+
 import SkillCube from "@/components/SkillCube";
 
 import AchievementsSection from "@/components/AchievementsSection";
