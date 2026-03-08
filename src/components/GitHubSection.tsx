@@ -3,18 +3,26 @@ import { useRef, useEffect, useState } from "react";
 import { Terminal } from "lucide-react";
 
 const terminalLines = [
-  { text: "$ git status", delay: 0 },
-  { text: "On branch main", delay: 0.4, dim: true },
-  { text: "$ loading repositories...", delay: 0.8 },
-  { text: "✓ python-calculator", delay: 1.4, success: true },
-  { text: "✓ student-management-system", delay: 1.8, success: true },
-  { text: "✓ dsa-practice-tracker", delay: 2.2, success: true },
-  { text: "✓ portfolio-website", delay: 2.6, success: true },
-  { text: "$ initializing python projects...", delay: 3.2 },
-  { text: "✓ All systems operational", delay: 3.8, success: true },
-  { text: "$ connecting to GitHub...", delay: 4.2 },
-  { text: "✓ Connected as @arrabola-srishanth", delay: 4.8, success: true },
+  { text: "$ git status", delay: 0, type: "command" as const },
+  { text: "On branch main", delay: 0.4, type: "dim" as const },
+  { text: "$ loading repositories...", delay: 0.8, type: "command" as const },
+  { text: "✓ python-calculator", delay: 1.4, type: "success" as const },
+  { text: "✓ student-management-system", delay: 1.8, type: "success" as const },
+  { text: "✓ dsa-practice-tracker", delay: 2.2, type: "success" as const },
+  { text: "✓ portfolio-website", delay: 2.6, type: "success" as const },
+  { text: "$ initializing python projects...", delay: 3.2, type: "command" as const },
+  { text: "✓ All systems operational", delay: 3.8, type: "success" as const },
+  { text: "$ connecting to GitHub...", delay: 4.2, type: "command" as const },
+  { text: "✓ Connected as @arrabola-srishanth", delay: 4.8, type: "success" as const },
 ];
+
+const getLineColor = (type: string) => {
+  switch (type) {
+    case "success": return "text-emerald-400";
+    case "dim": return "text-muted-foreground";
+    default: return "text-primary";
+  }
+};
 
 const GitHubSection = () => {
   const ref = useRef(null);
@@ -50,17 +58,15 @@ const GitHubSection = () => {
           animate={inView ? { opacity: 1, scale: 1 } : {}}
           transition={{ delay: 0.3, duration: 0.6 }}
         >
-          {/* Terminal header */}
           <div className="flex items-center gap-2 px-4 py-3 border-b border-glass-border/30">
             <div className="w-3 h-3 rounded-full bg-destructive/70" />
-            <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
-            <div className="w-3 h-3 rounded-full bg-green-500/70" />
+            <div className="w-3 h-3 rounded-full bg-amber-500/70" />
+            <div className="w-3 h-3 rounded-full bg-emerald-500/70" />
             <span className="ml-3 font-mono text-xs text-muted-foreground flex items-center gap-2">
               <Terminal size={12} /> srishanth@portfolio:~
             </span>
           </div>
 
-          {/* Terminal body */}
           <div className="p-6 font-mono text-sm space-y-1 min-h-[280px]">
             {terminalLines.slice(0, visibleLines).map((line, i) => (
               <motion.div
@@ -68,13 +74,7 @@ const GitHubSection = () => {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3 }}
-                className={
-                  line.success
-                    ? "text-green-400"
-                    : line.dim
-                    ? "text-muted-foreground"
-                    : "text-primary"
-                }
+                className={getLineColor(line.type)}
               >
                 {line.text}
               </motion.div>
