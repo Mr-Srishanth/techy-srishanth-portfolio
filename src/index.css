@@ -142,10 +142,11 @@
   50% { opacity: 1; }
 }
 
-/* GPU hints for animated elements */
+/* GPU hints and smooth transitions for animated elements */
 .glass-card {
   transform: translateZ(0);
   will-change: transform;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 /* Reduced motion support */
