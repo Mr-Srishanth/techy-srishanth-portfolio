@@ -96,20 +96,19 @@ const HeroSection = () => {
           </p>
 
           <div className="flex gap-4">
-            <motion.a
-              href="mailto:a.srishanth1733@gmail.com"
+            <motion.button
               className="px-8 py-3 rounded-lg bg-primary text-primary-foreground font-body font-semibold tracking-wider neon-glow inline-block text-center"
               whileHover={{ scale: 1.05, boxShadow: "0 0 30px hsl(var(--primary) / 0.5)" }}
               whileTap={{ scale: 0.95 }}
               onClick={() => {
                 const el = document.getElementById("contact");
                 if (el) {
-                  setTimeout(() => el.scrollIntoView({ behavior: "smooth" }), 300);
+                  el.scrollIntoView({ behavior: "smooth" });
                 }
               }}
             >
               Hire Me
-            </motion.a>
+            </motion.button>
             <motion.button
               className="px-8 py-3 rounded-lg neon-border text-muted-foreground font-body font-semibold tracking-wider opacity-50 cursor-not-allowed"
               whileHover={{ scale: 1 }}
