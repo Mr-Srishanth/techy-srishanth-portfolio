@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 const themes = [
   "blue", "purple", "green", "red", "orange", "pink", "cyan",
-  "gold", "lime", "violet", "rose", "teal", "amber", "indigo", "rainbow",
+  "gold", "lime", "violet", "rose", "teal", "amber", "indigo", "rainbow", "light",
 ] as const;
 type Theme = (typeof themes)[number];
 
@@ -79,6 +79,7 @@ const ThemeToggle = () => {
     amber: "text-[hsl(38,100%,55%)]",
     indigo: "text-[hsl(240,80%,60%)]",
     rainbow: "",
+    light: "text-[hsl(40,100%,50%)]",
   };
 
   const isRainbow = theme === "rainbow";
