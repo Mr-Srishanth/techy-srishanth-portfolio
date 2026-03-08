@@ -50,7 +50,11 @@ const SkillsSection = () => {
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl">{skill.icon}</span>
+                  {skill.logo ? (
+                    <img src={skill.logo} alt={skill.name} className="w-7 h-7 object-contain" />
+                  ) : (
+                    <span className="text-2xl">{skill.icon}</span>
+                  )}
                   <span className="font-display text-sm font-semibold tracking-wider text-foreground">
                     {skill.name}
                   </span>
