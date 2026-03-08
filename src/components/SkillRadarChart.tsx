@@ -10,12 +10,12 @@ import {
 import { useLightMotion } from "@/hooks/use-mobile";
 
 const data = [
-  { skill: "React", level: 85 },
-  { skill: "TypeScript", level: 80 },
-  { skill: "Python", level: 75 },
-  { skill: "Node.js", level: 70 },
-  { skill: "CSS/Tailwind", level: 90 },
-  { skill: "Git", level: 78 },
+  { skill: "Python", level: 70 },
+  { skill: "Data Structures", level: 55 },
+  { skill: "C Programming", level: 60 },
+  { skill: "React", level: 75 },
+  { skill: "ML Basics", level: 40 },
+  { skill: "Git", level: 65 },
 ];
 
 const SkillRadarChart = () => {

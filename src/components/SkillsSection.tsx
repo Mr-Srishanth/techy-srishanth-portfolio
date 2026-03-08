@@ -1,14 +1,18 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
+import pythonLogo from "@/assets/logos/python.svg";
+import reactLogo from "@/assets/logos/react.svg";
+import gitLogo from "@/assets/logos/git.svg";
+import aimlLogo from "@/assets/logos/aiml.png";
 
 const skills = [
-  { name: "Python", level: 70, icon: "🐍" },
+  { name: "Python", level: 70, icon: "🐍", logo: pythonLogo },
   { name: "Data Structures", level: 55, icon: "🏗️" },
   { name: "C Programming", level: 60, icon: "⚙️" },
-  { name: "HTML & CSS", level: 75, icon: "🌐" },
-  { name: "Machine Learning (Basics)", level: 40, icon: "🤖" },
-  { name: "Problem Solving", level: 65, icon: "🧩" },
+  { name: "React", level: 75, icon: "⚛️", logo: reactLogo },
+  { name: "Machine Learning (Basics)", level: 40, icon: "🤖", logo: aimlLogo },
+  { name: "Git", level: 65, icon: "🧩", logo: gitLogo },
 ];
 
 const SkillsSection = () => {
@@ -46,7 +50,11 @@ const SkillsSection = () => {
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl">{skill.icon}</span>
+                  {skill.logo ? (
+                    <img src={skill.logo} alt={skill.name} className="w-7 h-7 object-contain" />
+                  ) : (
+                    <span className="text-2xl">{skill.icon}</span>
+                  )}
                   <span className="font-display text-sm font-semibold tracking-wider text-foreground">
                     {skill.name}
                   </span>
