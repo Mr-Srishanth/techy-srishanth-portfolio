@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { toast } from "sonner";
 import profileImg from "@/assets/profile.jpg";
 import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
-import { useTypingSound } from "@/hooks/use-typing-sound";
+
 
 const titles = ["AI & Software Developer", "Learning Python & DSA", "B.Tech CSE (AI & ML)"];
 
@@ -18,16 +18,13 @@ const HeroSection = () => {
   const imgY = useTransform(mouseY, [-300, 300], [10, -10]);
   const isMobile = useIsMobile();
   const light = useLightMotion();
-  const playClick = useTypingSound();
+  
 
   useEffect(() => {
     const target = titles[titleIdx];
     if (typing) {
       if (displayed.length < target.length) {
-        const t = setTimeout(() => {
-          setDisplayed(target.slice(0, displayed.length + 1));
-          playClick();
-        }, 60);
+        const t = setTimeout(() => setDisplayed(target.slice(0, displayed.length + 1)), 60);
         return () => clearTimeout(t);
       } else {
         const t = setTimeout(() => setTyping(false), 2000);
