@@ -1,7 +1,16 @@
 import { motion, useScroll, useTransform, useInView, useSpring } from "framer-motion";
 import { useRef } from "react";
-import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Rocket, GraduationCap, Code2, Brain, Trophy, Star, Shield, CheckCircle } from "lucide-react";
+import { headingReveal, textReveal, cardHover, DUR_REVEAL, EASE_REVEAL, STAGGER } from "@/lib/animations";
+
+interface Event {
+  year: string;
+  title: string;
+  desc: string;
+  icon: React.ComponentType<any>;
+  accent: string;
+}
 
 const events = [
   {
@@ -82,7 +91,6 @@ const accentText: Record<string, string> = {
 
 const TimeMachineTimeline = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const light = useLightMotion();
   const isMobile = useIsMobile();
   const inView = useInView(sectionRef, { once: true, margin: "-60px" });
 
@@ -93,14 +101,12 @@ const TimeMachineTimeline = () => {
 
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 80, damping: 30, restDelta: 0.001 });
 
-  // Parallax layers
   const bgY1 = useTransform(smoothProgress, [0, 1], [80, -80]);
   const bgY2 = useTransform(smoothProgress, [0, 1], [40, -120]);
   const lineHeight = useTransform(smoothProgress, [0.05, 0.85], ["0%", "100%"]);
 
   return (
     <section id="timeline" className="py-24 relative overflow-hidden" ref={sectionRef}>
-      {/* Parallax blurs */}
       <motion.div
         className="absolute top-0 -left-40 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[150px] pointer-events-none"
         style={{ y: bgY1 }}
@@ -111,24 +117,20 @@ const TimeMachineTimeline = () => {
       />
 
       <div className="container mx-auto px-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: light ? 0.5 : 0.8 }}
-          className="text-center mb-16"
-        >
+        <motion.div {...headingReveal(inView)} className="text-center mb-16">
           <p className="font-mono text-primary text-sm tracking-widest mb-2">{"// TIME MACHINE"}</p>
           <h2 className="font-display text-3xl md:text-4xl font-bold neon-text text-primary">
             My Journey Through Time
           </h2>
-          <p className="font-body text-muted-foreground mt-3 max-w-md mx-auto">
+          <motion.p
+            className="font-body text-muted-foreground mt-3 max-w-md mx-auto"
+            {...textReveal(inView)}
+          >
             Scroll to rewind through the milestones that shaped my path.
-          </p>
+          </motion.p>
         </motion.div>
 
-        {/* Timeline */}
         <div className="relative max-w-2xl mx-auto">
-          {/* Animated center line */}
           <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-[2px] bg-muted/20 md:-translate-x-px overflow-hidden">
             <motion.div
               className="w-full bg-gradient-to-b from-primary via-neon-cyan to-neon-purple origin-top"
@@ -152,24 +154,23 @@ const TimeMachineTimeline = () => {
                 }`}
                 initial={{ opacity: 0, x: isMobile ? -20 : isLeft ? 40 : -40 }}
                 animate={inView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.3 + i * 0.15 }}
+                transition={{ duration: DUR_REVEAL, delay: 0.2 + i * 0.12, ease: EASE_REVEAL }}
               >
-                {/* Timeline dot */}
                 <div
                   className={`absolute z-10 ${
                     isMobile ? "left-4" : "left-1/2"
                   } -translate-x-1/2`}
                 >
                   <motion.div
-                    className={`w-5 h-5 rounded-full border-[3px] border-background flex items-center justify-center`}
+                    className="w-5 h-5 rounded-full border-[3px] border-background flex items-center justify-center"
                     style={{ backgroundColor: accentMap[event.accent] }}
                     whileHover={{ scale: 1.4 }}
+                    transition={{ duration: 0.2 }}
                   >
                     <div className="w-1.5 h-1.5 rounded-full bg-background" />
                   </motion.div>
                 </div>
 
-                {/* Content card */}
                 <motion.div
                   className={`glass-card p-5 rounded-xl group cursor-default relative overflow-hidden ${
                     isMobile
@@ -182,12 +183,14 @@ const TimeMachineTimeline = () => {
                     isMobile
                       ? undefined
                       : {
-                          y: -4,
-                          boxShadow: `0 0 30px ${accentMap[event.accent]}33`,
+                          y: -6,
+                          scale: 1.02,
+                          boxShadow: `0 0 25px ${accentMap[event.accent]}33`,
+                          transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] },
                         }
                   }
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                   <div className="relative z-10">
                     <div className={`flex items-center gap-3 mb-2 ${isLeft && !isMobile ? "flex-row-reverse" : ""}`}>
@@ -198,7 +201,7 @@ const TimeMachineTimeline = () => {
                         {event.year}
                       </span>
                     </div>
-                    <h3 className="font-display text-sm md:text-base font-semibold text-foreground tracking-wider mb-1 group-hover:text-primary transition-colors">
+                    <h3 className="font-display text-sm md:text-base font-semibold text-foreground tracking-wider mb-1 group-hover:text-primary transition-colors duration-300">
                       {event.title}
                     </h3>
                     <p className="font-body text-muted-foreground text-sm leading-relaxed">

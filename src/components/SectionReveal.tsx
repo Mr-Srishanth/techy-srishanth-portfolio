@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { motion, useInView, useScroll, useTransform, useSpring } from "framer-motion";
+import { DUR_REVEAL, EASE_REVEAL, REVEAL_Y } from "@/lib/animations";
 
 interface SectionRevealProps {
   children: React.ReactNode;
@@ -20,13 +21,13 @@ const SectionReveal = ({ children, className = "", direction = "up", delay = 0, 
     offset: ["start end", "end start"],
   });
 
-  const rawY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+  const rawY = useTransform(scrollYProgress, [0, 1], [15, -15]);
   const bgY = useSpring(rawY, smooth);
 
   const offsets = {
-    up: { x: 0, y: 40 },
-    left: { x: -40, y: 0 },
-    right: { x: 40, y: 0 },
+    up: { x: 0, y: REVEAL_Y },
+    left: { x: -30, y: 0 },
+    right: { x: 30, y: 0 },
   };
 
   return (
@@ -34,7 +35,7 @@ const SectionReveal = ({ children, className = "", direction = "up", delay = 0, 
       ref={ref}
       initial={{ opacity: 0, ...offsets[direction] }}
       animate={inView ? { opacity: 1, x: 0, y: 0 } : undefined}
-      transition={{ duration: 0.7, delay, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
+      transition={{ duration: DUR_REVEAL, delay, ease: EASE_REVEAL }}
       className={`relative ${className}`}
       style={parallax ? { y: bgY } : undefined}
     >

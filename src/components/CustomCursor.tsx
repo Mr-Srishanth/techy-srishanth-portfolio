@@ -79,7 +79,7 @@ const CustomCursor = () => {
         });
       }
       // Spawn click ripple
-      ripples.current.push({ x: e.clientX, y: e.clientY, life: 30, maxLife: 30 });
+      ripples.current.push({ x: e.clientX, y: e.clientY, life: 18, maxLife: 18 });
     };
 
     const onUp = () => {
