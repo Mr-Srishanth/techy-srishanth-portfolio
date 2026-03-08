@@ -17,6 +17,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 import KonamiEasterEgg from "@/components/KonamiEasterEgg";
 import CustomCursor from "@/components/CustomCursor";
 import SectionReveal from "@/components/SectionReveal";
+import ParticleBackground from "@/components/ParticleBackground";
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
