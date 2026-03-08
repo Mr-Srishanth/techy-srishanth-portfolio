@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { useRef } from "react";
 import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
-import { Rocket, GraduationCap, Code2, Brain, Trophy, Star } from "lucide-react";
+import { Rocket, GraduationCap, Code2, Brain, Trophy, Star, Shield, CheckCircle } from "lucide-react";
 
 const events = [
   {
@@ -13,9 +13,23 @@ const events = [
   },
   {
     year: "2025",
+    title: "Started C Programming",
+    desc: "Began learning C language — pointers, memory management, and low-level programming fundamentals.",
+    icon: Shield,
+    accent: "neon-cyan",
+  },
+  {
+    year: "2025",
     title: "First Python Program",
     desc: "Wrote my first 'Hello World' and fell in love with coding.",
     icon: Code2,
+    accent: "primary",
+  },
+  {
+    year: "2025",
+    title: "Completed C Programming",
+    desc: "Mastered C fundamentals — arrays, structures, file handling, and dynamic memory allocation.",
+    icon: CheckCircle,
     accent: "neon-cyan",
   },
   {
