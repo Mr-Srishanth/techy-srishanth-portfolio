@@ -16,6 +16,7 @@ import CertificatesSection from "@/components/CertificatesSection";
 import ScrollToTop from "@/components/ScrollToTop";
 import KonamiEasterEgg from "@/components/KonamiEasterEgg";
 import CustomCursor from "@/components/CustomCursor";
+import SectionReveal from "@/components/SectionReveal";
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -35,18 +36,36 @@ const Index = () => {
         >
           <Navbar />
           <HeroSection />
-          <AboutSection />
-          <SkillsSection />
-          <SkillRadarChart />
-          <ProjectsSection />
-          <LearningJourneySection />
-          <AchievementsSection />
-          <CertificatesSection />
-          <GitHubSection />
+          <SectionReveal>
+            <AboutSection />
+          </SectionReveal>
+          <SectionReveal direction="left" delay={0.1}>
+            <SkillsSection />
+          </SectionReveal>
+          <SectionReveal delay={0.05}>
+            <SkillRadarChart />
+          </SectionReveal>
+          <SectionReveal direction="right" delay={0.1}>
+            <ProjectsSection />
+          </SectionReveal>
+          <SectionReveal>
+            <LearningJourneySection />
+          </SectionReveal>
+          <SectionReveal direction="left" delay={0.1}>
+            <AchievementsSection />
+          </SectionReveal>
+          <SectionReveal>
+            <CertificatesSection />
+          </SectionReveal>
+          <SectionReveal direction="right" delay={0.1}>
+            <GitHubSection />
+          </SectionReveal>
           <ScrollToTop />
           <KonamiEasterEgg />
           <CustomCursor />
-          <ContactSection />
+          <SectionReveal>
+            <ContactSection />
+          </SectionReveal>
           <Footer />
         </motion.div>
       )}
