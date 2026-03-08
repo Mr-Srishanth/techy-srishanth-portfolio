@@ -6,6 +6,7 @@ import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
 
 
 const titles = ["AI & Software Developer", "Learning Python & DSA", "B.Tech CSE (AI & ML)"];
+const CURRENT_FOCUS = "Data Structures & Algorithms";
 
 const HeroSection = () => {
   const [titleIdx, setTitleIdx] = useState(0);
