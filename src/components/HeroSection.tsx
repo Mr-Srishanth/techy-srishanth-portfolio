@@ -51,13 +51,13 @@ const HeroSection = () => {
       className="relative min-h-screen flex items-center pt-16 overflow-hidden"
     >
       {/* Background grid */}
-      <div className="absolute inset-0 grid-bg animate-grid-move opacity-20" />
+      <div className="absolute inset-0 grid-bg animate-grid-move opacity-20 pointer-events-none" />
 
       {/* Gradient orbs */}
-      <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-primary/5 blur-[120px]" />
-      <div className="absolute bottom-1/4 -right-32 w-96 h-96 rounded-full bg-neon-purple/5 blur-[120px]" />
+      <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 -right-32 w-96 h-96 rounded-full bg-neon-purple/5 blur-[120px] pointer-events-none" />
 
-      <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
+      <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center relative z-10">
         {/* Left */}
         <motion.div
           initial={{ opacity: 0, x: -60 }}
