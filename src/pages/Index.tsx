@@ -41,6 +41,7 @@ const Index = () => {
           <ProjectsSection />
           <LearningJourneySection />
           <AchievementsSection />
+          <CertificatesSection />
           <GitHubSection />
           <ScrollToTop />
           <KonamiEasterEgg />
