@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { motion, useScroll, useTransform, useInView, useSpring } from "framer-motion";
 import { useRef } from "react";
 import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
 import { Rocket, GraduationCap, Code2, Brain, Trophy, Star, Shield, CheckCircle } from "lucide-react";
