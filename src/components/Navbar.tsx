@@ -11,7 +11,8 @@ const Navbar = () => {
   const scrollTo = (id: string) => {
     setActive(id);
     setMobileOpen(false);
-    const el = document.getElementById(id.toLowerCase());
+    const sectionId = id === "My Journey" ? "journey" : id.toLowerCase();
+    const el = document.getElementById(sectionId);
     el?.scrollIntoView({ behavior: "smooth" });
   };
 
