@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { Palette } from "lucide-react";
 import { motion } from "framer-motion";
 
-const themes = ["blue", "purple", "green", "red", "orange", "pink", "cyan"] as const;
+const themes = [
+  "blue", "purple", "green", "red", "orange", "pink", "cyan",
+  "gold", "lime", "violet", "rose", "teal", "amber", "indigo", "rainbow",
+] as const;
 type Theme = (typeof themes)[number];
 
 const ThemeToggle = () => {
@@ -35,14 +38,29 @@ const ThemeToggle = () => {
     orange: "text-[hsl(30,100%,55%)]",
     pink: "text-[hsl(330,100%,60%)]",
     cyan: "text-[hsl(185,100%,50%)]",
+    gold: "text-[hsl(45,100%,50%)]",
+    lime: "text-[hsl(80,100%,45%)]",
+    violet: "text-[hsl(290,100%,60%)]",
+    rose: "text-[hsl(350,90%,55%)]",
+    teal: "text-[hsl(170,100%,40%)]",
+    amber: "text-[hsl(38,100%,55%)]",
+    indigo: "text-[hsl(240,80%,60%)]",
+    rainbow: "text-[hsl(300,100%,60%)]",
   };
+
+  const isRainbow = theme === "rainbow";
 
   return (
     <motion.button
       onClick={cycle}
       whileHover={{ scale: 1.1, rotate: 15 }}
       whileTap={{ scale: 0.9 }}
-      className={`p-2 rounded-lg hover:bg-secondary/60 transition-colors ${colorMap[theme]}`}
+      className={`p-2 rounded-lg hover:bg-secondary/60 transition-colors ${isRainbow ? "" : colorMap[theme]}`}
+      style={isRainbow ? {
+        background: "linear-gradient(135deg, hsl(0,100%,55%), hsl(45,100%,50%), hsl(120,100%,45%), hsl(200,100%,50%), hsl(270,100%,60%), hsl(330,100%,60%))",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+      } : undefined}
       aria-label={`Switch theme — current: ${theme}`}
       title={`Theme: ${theme}`}
     >
