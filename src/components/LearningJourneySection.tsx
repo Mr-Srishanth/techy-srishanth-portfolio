@@ -9,28 +9,24 @@ const updates = [
     title: "Learning Python & Data Structures",
     desc: "Currently improving programming fundamentals and problem-solving skills.",
     date: "Ongoing",
-    accent: "from-primary to-neon-cyan",
   },
   {
     icon: Brain,
     title: "Exploring Artificial Intelligence",
     desc: "Studying AI and Machine Learning concepts to build intelligent systems.",
     date: "In Progress",
-    accent: "from-neon-purple to-primary",
   },
   {
     icon: Rocket,
     title: "Building Python Mini Projects",
     desc: "Creating small applications to strengthen coding skills and apply theory.",
     date: "Active",
-    accent: "from-neon-cyan to-neon-purple",
   },
   {
     icon: BookOpen,
     title: "Mastering DSA Fundamentals",
     desc: "Working through arrays, linked lists, trees, and sorting algorithms.",
     date: "Ongoing",
-    accent: "from-primary to-neon-purple",
   },
 ];
 
@@ -104,7 +100,7 @@ const LearningJourneySection = () => {
 
                       <div className="relative z-10">
                         <div className="flex items-center justify-between mb-3">
-                          <div className={`p-2.5 rounded-lg bg-gradient-to-br ${item.accent} bg-opacity-10`}>
+                          <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20">
                             <item.icon size={20} className="text-primary" />
                           </div>
                           <span className="font-mono text-xs text-primary/70 tracking-wider">
