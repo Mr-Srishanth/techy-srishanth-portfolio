@@ -35,6 +35,7 @@ const Index = () => {
           <ProjectsSection />
           <LearningJourneySection />
           <GitHubSection />
+          <CTASection />
           <ContactSection />
           <Footer />
         </motion.div>
