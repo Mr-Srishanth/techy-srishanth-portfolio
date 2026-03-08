@@ -100,14 +100,20 @@ const HeroSection = () => {
               className="px-8 py-3 rounded-lg bg-primary text-primary-foreground font-body font-semibold tracking-wider neon-glow"
               whileHover={{ scale: 1.05, boxShadow: "0 0 30px hsl(200 100% 50% / 0.5)" }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+              onClick={() => {
+                const el = document.getElementById("contact");
+                if (el) {
+                  setTimeout(() => el.scrollIntoView({ behavior: "smooth" }), 100);
+                }
+              }}
             >
               Hire Me
             </motion.button>
             <motion.button
-              className="px-8 py-3 rounded-lg neon-border text-primary font-body font-semibold tracking-wider hover:bg-primary/10 transition-colors"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className="px-8 py-3 rounded-lg neon-border text-muted-foreground font-body font-semibold tracking-wider opacity-50 cursor-not-allowed"
+              whileHover={{ scale: 1 }}
+              whileTap={{ scale: 1 }}
+              onClick={() => toast("Resume coming soon!")}
             >
               Download CV
             </motion.button>
