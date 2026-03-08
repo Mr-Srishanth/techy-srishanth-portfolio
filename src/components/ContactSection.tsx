@@ -9,6 +9,7 @@ const ContactSection = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const [sending, setSending] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,7 +18,7 @@ const ContactSection = () => {
     emailjs
       .sendForm("service_mxd1a9e", "template_qpqqc1k", formRef.current, "JTN6BSs5DTYJqVJbL")
       .then(() => {
-        toast.success("Message sent successfully!");
+        setShowSuccess(true);
         formRef.current?.reset();
       })
       .catch(() => {
