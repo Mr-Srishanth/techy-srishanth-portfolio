@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
-const links = ["Home", "About", "Skills", "Projects", "Contact"];
+const links = ["Home", "About", "Skills", "Projects", "Journey", "Contact"];
 
 const Navbar = () => {
   const [active, setActive] = useState("Home");
