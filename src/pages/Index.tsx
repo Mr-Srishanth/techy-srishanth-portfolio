@@ -10,6 +10,9 @@ import GitHubSection from "@/components/GitHubSection";
 import LearningJourneySection from "@/components/LearningJourneySection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import SkillRadarChart from "@/components/SkillRadarChart";
+import AchievementsSection from "@/components/AchievementsSection";
+import ScrollToTop from "@/components/ScrollToTop";
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
