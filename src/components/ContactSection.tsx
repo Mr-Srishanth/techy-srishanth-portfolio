@@ -10,6 +10,8 @@ const ContactSection = () => {
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const [sending, setSending] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const socialLinkTarget =
+    typeof window !== "undefined" && window.top !== window.self ? "_top" : "_blank";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
