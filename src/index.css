@@ -349,15 +349,30 @@
   --primary-foreground: 220 20% 4%;
   --accent: 45 100% 55%;
   --accent-foreground: 220 20% 4%;
-  --neon-blue: 200 100% 50%;
-  --neon-cyan: 150 100% 45%;
-  --neon-purple: 300 100% 60%;
-  --border: 280 60% 30%;
+  --neon-blue: 200 100% 55%;
+  --neon-cyan: 150 100% 50%;
+  --neon-purple: 330 100% 60%;
+  --border: 280 50% 30%;
   --glass-border: 200 50% 30%;
   --ring: 280 100% 60%;
   --sidebar-primary: 280 100% 60%;
   --sidebar-border: 280 60% 30%;
   --sidebar-ring: 280 100% 60%;
+}
+
+.theme-rainbow {
+  animation: rainbow-shift 8s linear infinite;
+}
+
+@keyframes rainbow-shift {
+  0%   { --primary: 0 100% 55%;   --neon-blue: 0 100% 55%;   --ring: 0 100% 55%;   --border: 0 60% 28%;   --glass-border: 0 50% 28%; }
+  14%  { --primary: 30 100% 55%;  --neon-blue: 30 100% 55%;  --ring: 30 100% 55%;  --border: 30 60% 28%;  --glass-border: 30 50% 28%; }
+  28%  { --primary: 60 100% 50%;  --neon-blue: 60 100% 50%;  --ring: 60 100% 50%;  --border: 60 60% 28%;  --glass-border: 60 50% 28%; }
+  42%  { --primary: 150 100% 45%; --neon-blue: 150 100% 45%; --ring: 150 100% 45%; --border: 150 60% 25%; --glass-border: 150 50% 25%; }
+  57%  { --primary: 200 100% 50%; --neon-blue: 200 100% 50%; --ring: 200 100% 50%; --border: 200 60% 25%; --glass-border: 200 50% 25%; }
+  71%  { --primary: 270 100% 60%; --neon-blue: 270 100% 60%; --ring: 270 100% 60%; --border: 270 60% 28%; --glass-border: 270 50% 28%; }
+  85%  { --primary: 330 100% 55%; --neon-blue: 330 100% 55%; --ring: 330 100% 55%; --border: 330 60% 28%; --glass-border: 330 50% 28%; }
+  100% { --primary: 360 100% 55%; --neon-blue: 360 100% 55%; --ring: 360 100% 55%; --border: 360 60% 28%; --glass-border: 360 50% 28%; }
 }
 
 /* Custom scrollbar */
