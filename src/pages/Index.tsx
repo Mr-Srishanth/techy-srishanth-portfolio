@@ -34,9 +34,12 @@ const Index = () => {
           <HeroSection />
           <AboutSection />
           <SkillsSection />
+          <SkillRadarChart />
           <ProjectsSection />
           <LearningJourneySection />
+          <AchievementsSection />
           <GitHubSection />
+          <ScrollToTop />
           <ContactSection />
           <Footer />
         </motion.div>

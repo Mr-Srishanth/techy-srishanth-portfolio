@@ -60,10 +60,11 @@ const Navbar = () => {
             className="px-5 py-2 rounded-lg font-body text-sm tracking-wider neon-border text-primary hover:bg-primary/10 transition-colors"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => scrollTo("Contact")}
-        >
-          Let's Talk
-        </motion.button>
+            onClick={() => scrollTo("Contact")}
+          >
+            Let's Talk
+          </motion.button>
+        </div>
 
         {/* Mobile toggle */}
         <button className="md:hidden text-foreground" onClick={() => setMobileOpen(!mobileOpen)}>
