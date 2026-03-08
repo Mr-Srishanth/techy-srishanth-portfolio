@@ -33,7 +33,7 @@ const events = [
     accent: "neon-cyan",
   },
   {
-    year: "2025",
+    year: "27 Feb 2026",
     title: "Hackathon Debut — VHack",
     desc: "Participated in my first hackathon. Built a project under 24 hours.",
     icon: Trophy,
