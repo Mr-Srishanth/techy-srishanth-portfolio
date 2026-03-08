@@ -100,7 +100,7 @@ const LearningJourneySection = () => {
 
                       <div className="relative z-10">
                         <div className="flex items-center justify-between mb-3">
-                          <div className={`p-2.5 rounded-lg bg-gradient-to-br ${item.accent} bg-opacity-10`}>
+                          <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20">
                             <item.icon size={20} className="text-primary" />
                           </div>
                           <span className="font-mono text-xs text-primary/70 tracking-wider">
