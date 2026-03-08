@@ -1,6 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import { Terminal } from "lucide-react";
+import { useLightMotion } from "@/hooks/use-mobile";
 
 const terminalLines = [
   { text: "$ git clone https://github.com/Mr-Srishanth", delay: 0, type: "command" as const },
@@ -14,7 +15,6 @@ const terminalLines = [
   { text: "✓ feat: student-management-system — CRUD operations", delay: 3.2, type: "success" as const },
   { text: "✓ feat: dsa-practice-tracker — Algorithm solutions", delay: 3.6, type: "success" as const },
   { text: "✓ feat: ai-chatbot — Intelligent conversational assistant", delay: 4.0, type: "success" as const },
-
   { text: "$ echo $STATUS", delay: 4.6, type: "command" as const },
   { text: "✓ Open to collaborate — Let's build something great.", delay: 5.0, type: "success" as const },
 ];
@@ -29,7 +29,8 @@ const getLineColor = (type: string) => {
 
 const GitHubSection = () => {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
+  const light = useLightMotion();
+  const inView = useInView(ref, { once: true, margin: light ? "-50px" : "-100px" });
   const [visibleLines, setVisibleLines] = useState(0);
 
   useEffect(() => {
@@ -44,9 +45,9 @@ const GitHubSection = () => {
     <section className="py-24 relative">
       <div className="container mx-auto px-4" ref={ref}>
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: light ? 20 : 40 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: light ? 0.5 : 0.8 }}
           className="text-center mb-16"
         >
           <p className="font-mono text-primary text-sm tracking-widest mb-2">{"// GITHUB"}</p>

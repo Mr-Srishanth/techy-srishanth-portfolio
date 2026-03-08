@@ -1,6 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { BookOpen, Brain, Code2, Rocket } from "lucide-react";
+import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
 
 const updates = [
   {
@@ -35,7 +36,11 @@ const updates = [
 
 const LearningJourneySection = () => {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
+  const light = useLightMotion();
+  const isMobile = useIsMobile();
+  const inView = useInView(ref, { once: true, margin: light ? "-50px" : "-100px" });
+  const yOff = light ? 20 : 40;
+  const dur = light ? 0.5 : 0.8;
 
   return (
     <section id="journey" className="py-24 relative overflow-hidden">
@@ -45,9 +50,9 @@ const LearningJourneySection = () => {
 
       <div className="container mx-auto px-4 relative z-10" ref={ref}>
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: yOff }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: dur }}
           className="text-center mb-16"
         >
           <p className="font-mono text-primary text-sm tracking-widest mb-2">
@@ -61,7 +66,6 @@ const LearningJourneySection = () => {
           </p>
         </motion.div>
 
-        {/* Timeline line */}
         <div className="relative max-w-4xl mx-auto">
           <div className="absolute left-4 md:left-1/2 md:-translate-x-px top-0 bottom-0 w-[2px] bg-gradient-to-b from-primary/60 via-primary/20 to-transparent pointer-events-none" />
 
@@ -74,20 +78,14 @@ const LearningJourneySection = () => {
                   className={`relative flex items-start gap-6 md:gap-0 ${
                     isLeft ? "md:flex-row" : "md:flex-row-reverse"
                   }`}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: light ? 15 : 30 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: i * 0.15, duration: 0.6 }}
                 >
-                  {/* Dot on timeline */}
                   <div className="absolute left-4 md:left-1/2 -translate-x-1/2 top-6 z-20">
-                    <motion.div
-                      className="w-4 h-4 rounded-full bg-primary neon-glow border-2 border-background"
-                      animate={inView ? { scale: [1, 1.3, 1] } : {}}
-                      transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
-                    />
+                    <div className="w-4 h-4 rounded-full bg-primary neon-glow border-2 border-background" />
                   </div>
 
-                  {/* Card */}
                   <div
                     className={`ml-12 md:ml-0 md:w-[calc(50%-2rem)] ${
                       isLeft ? "md:pr-0 md:mr-auto md:pl-0" : "md:pl-0 md:ml-auto md:pr-0"
@@ -95,13 +93,13 @@ const LearningJourneySection = () => {
                   >
                     <motion.div
                       className="glass-card p-6 group cursor-default relative overflow-hidden"
-                      whileHover={{
+                      whileHover={isMobile ? undefined : {
                         y: -4,
                         boxShadow: "0 0 30px hsl(var(--primary) / 0.2)",
                         borderColor: "hsl(var(--primary) / 0.5)",
                       }}
+                      whileTap={isMobile ? { scale: 0.98 } : undefined}
                     >
-                      {/* Hover glow */}
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                       <div className="relative z-10">

@@ -1,15 +1,19 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useLightMotion } from "@/hooks/use-mobile";
 
 const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [phase, setPhase] = useState(0);
+  const light = useLightMotion();
+  const particleCount = light ? 6 : 20;
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase(1), 800);
-    const t2 = setTimeout(() => setPhase(2), 2000);
-    const t3 = setTimeout(() => onComplete(), 3000);
+    const fast = light;
+    const t1 = setTimeout(() => setPhase(1), fast ? 400 : 800);
+    const t2 = setTimeout(() => setPhase(2), fast ? 1200 : 2000);
+    const t3 = setTimeout(() => onComplete(), fast ? 1800 : 3000);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
-  }, [onComplete]);
+  }, [onComplete, light]);
 
   const name = "ARRABOLA SRISHANTH";
 
@@ -18,13 +22,11 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
       <motion.div
         className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background"
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.5 }}
       >
-        {/* Animated grid */}
         <div className="absolute inset-0 grid-bg animate-grid-move opacity-30" />
 
-        {/* Particles */}
-        {Array.from({ length: 20 }).map((_, i) => (
+        {!light && Array.from({ length: particleCount }).map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 rounded-full bg-primary"
@@ -38,7 +40,6 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
           />
         ))}
 
-        {/* Name reveal */}
         <motion.div className="relative z-10 flex flex-col items-center gap-6">
           {phase >= 0 && (
             <motion.div
@@ -52,16 +53,16 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
           {phase >= 1 && (
             <motion.h1
               className="font-display text-3xl md:text-5xl tracking-[0.3em] neon-text text-primary"
-              initial={{ opacity: 0, letterSpacing: "0.8em" }}
+              initial={{ opacity: 0, letterSpacing: light ? "0.3em" : "0.8em" }}
               animate={{ opacity: 1, letterSpacing: "0.3em" }}
-              transition={{ duration: 1.2, ease: "easeOut" }}
+              transition={{ duration: light ? 0.6 : 1.2, ease: "easeOut" }}
             >
               {name.split("").map((char, i) => (
                 <motion.span
                   key={i}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: light ? 5 : 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05, duration: 0.4 }}
+                  transition={{ delay: i * (light ? 0.02 : 0.05), duration: 0.4 }}
                 >
                   {char}
                 </motion.span>
@@ -79,13 +80,12 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
             </motion.p>
           )}
 
-          {/* Neon line */}
           {phase >= 1 && (
             <motion.div
               className="h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent"
               initial={{ width: 0 }}
-              animate={{ width: 300 }}
-              transition={{ duration: 1, ease: "easeOut" }}
+              animate={{ width: light ? 200 : 300 }}
+              transition={{ duration: light ? 0.5 : 1, ease: "easeOut" }}
             />
           )}
         </motion.div>

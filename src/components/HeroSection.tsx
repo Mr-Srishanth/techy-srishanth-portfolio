@@ -2,6 +2,7 @@ import { motion, useMotionValue, useTransform } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { toast } from "sonner";
 import profileImg from "@/assets/profile.jpg";
+import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
 
 const titles = ["AI & Software Developer", "Learning Python & DSA", "B.Tech CSE (AI & ML)"];
 
@@ -14,6 +15,8 @@ const HeroSection = () => {
   const mouseY = useMotionValue(0);
   const imgX = useTransform(mouseX, [-300, 300], [10, -10]);
   const imgY = useTransform(mouseY, [-300, 300], [10, -10]);
+  const isMobile = useIsMobile();
+  const light = useLightMotion();
 
   useEffect(() => {
     const target = titles[titleIdx];
@@ -37,11 +40,14 @@ const HeroSection = () => {
   }, [displayed, typing, titleIdx]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
+    if (isMobile) return;
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
     mouseX.set(e.clientX - rect.left - rect.width / 2);
     mouseY.set(e.clientY - rect.top - rect.height / 2);
   };
+
+  const offset = light ? 30 : 60;
 
   return (
     <section
@@ -50,19 +56,15 @@ const HeroSection = () => {
       onMouseMove={handleMouseMove}
       className="relative min-h-screen flex items-center pt-16 overflow-hidden"
     >
-      {/* Background grid */}
       <div className="absolute inset-0 grid-bg animate-grid-move opacity-20 pointer-events-none" />
-
-      {/* Gradient orbs */}
       <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 -right-32 w-96 h-96 rounded-full bg-neon-purple/5 blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center relative z-10">
-        {/* Left */}
         <motion.div
-          initial={{ opacity: 0, x: -60 }}
+          initial={{ opacity: 0, x: -offset }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
+          transition={{ duration: light ? 0.5 : 0.8, delay: 0.3 }}
         >
           <motion.p
             className="font-mono text-sm text-primary mb-4 tracking-widest"
@@ -99,21 +101,18 @@ const HeroSection = () => {
             <motion.button
               type="button"
               className="px-8 py-3 rounded-lg bg-primary text-primary-foreground font-body font-semibold tracking-wider neon-glow inline-block text-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-              whileHover={{ scale: 1.05, boxShadow: "0 0 30px hsl(var(--primary) / 0.5)" }}
+              whileHover={isMobile ? undefined : { scale: 1.05, boxShadow: "0 0 30px hsl(var(--primary) / 0.5)" }}
               whileTap={{ scale: 0.95 }}
               onClick={() => {
                 const el = document.getElementById("contact");
-                if (el) {
-                  el.scrollIntoView({ behavior: "smooth" });
-                }
+                if (el) el.scrollIntoView({ behavior: "smooth" });
               }}
             >
               Hire Me
             </motion.button>
             <motion.button
               className="px-8 py-3 rounded-lg neon-border text-muted-foreground font-body font-semibold tracking-wider opacity-50 cursor-not-allowed"
-              whileHover={{ scale: 1 }}
-              whileTap={{ scale: 1 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => toast("Resume coming soon!")}
             >
               Download CV
@@ -121,33 +120,34 @@ const HeroSection = () => {
           </div>
         </motion.div>
 
-        {/* Right - Profile */}
         <motion.div
           className="flex justify-center"
-          initial={{ opacity: 0, x: 60 }}
+          initial={{ opacity: 0, x: offset }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
+          transition={{ duration: light ? 0.5 : 0.8, delay: 0.5 }}
         >
           <div className="relative">
-            {/* Neon circle behind */}
+            {!light && (
+              <motion.div
+                className="absolute inset-0 rounded-full bg-primary/20 blur-[60px]"
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 4, repeat: Infinity }}
+              />
+            )}
             <motion.div
-              className="absolute inset-0 rounded-full bg-primary/20 blur-[60px]"
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 4, repeat: Infinity }}
-            />
-            <motion.div
-              className="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden neon-border animate-float"
-              style={{ x: imgX, y: imgY }}
+              className={`relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden neon-border ${light ? "" : "animate-float"}`}
+              style={isMobile ? undefined : { x: imgX, y: imgY }}
             >
               <img src={profileImg} alt="Arrabola Srishanth" className="w-full h-full object-cover" />
             </motion.div>
-            {/* Orbiting dot */}
-            <motion.div
-              className="absolute w-3 h-3 rounded-full bg-primary neon-glow"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              style={{ top: "50%", left: "50%", transformOrigin: "0 -160px" }}
-            />
+            {!light && (
+              <motion.div
+                className="absolute w-3 h-3 rounded-full bg-primary neon-glow"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                style={{ top: "50%", left: "50%", transformOrigin: "0 -160px" }}
+              />
+            )}
           </div>
         </motion.div>
       </div>
