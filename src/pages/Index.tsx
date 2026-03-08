@@ -11,6 +11,7 @@ import LearningJourneySection from "@/components/LearningJourneySection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import SkillRadarChart from "@/components/SkillRadarChart";
+import SkillConstellation from "@/components/SkillConstellation";
 
 import AchievementsSection from "@/components/AchievementsSection";
 import CertificatesSection from "@/components/CertificatesSection";
