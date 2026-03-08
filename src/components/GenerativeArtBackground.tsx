@@ -148,7 +148,7 @@ const GenerativeArtBackground = () => {
 
         // Draw flowing line
         const lifePct = p.life / p.maxLife;
-        const alpha = Math.sin(lifePct * Math.PI) * 0.4;
+        const alpha = Math.sin(lifePct * Math.PI) * 0.3;
         const hue = (baseHue + p.hueOffset + t * 10) % 360;
 
         ctx.beginPath();
