@@ -3,8 +3,8 @@ import { Palette } from "lucide-react";
 import { motion } from "framer-motion";
 
 const themes = [
-  "blue", "purple", "green", "red", "orange", "pink", "cyan",
-  "gold", "lime", "violet", "rose", "teal", "amber", "indigo", "rainbow", "light",
+  "blue", "purple", "green", "red", "orange", "pink",
+  "gold", "lime", "indigo", "rainbow", "light",
 ] as const;
 type Theme = (typeof themes)[number];
 
@@ -70,13 +70,8 @@ const ThemeToggle = () => {
     red: "text-[hsl(0,100%,55%)]",
     orange: "text-[hsl(30,100%,55%)]",
     pink: "text-[hsl(330,100%,60%)]",
-    cyan: "text-[hsl(185,100%,50%)]",
     gold: "text-[hsl(45,100%,50%)]",
     lime: "text-[hsl(80,100%,45%)]",
-    violet: "text-[hsl(290,100%,60%)]",
-    rose: "text-[hsl(350,90%,55%)]",
-    teal: "text-[hsl(170,100%,40%)]",
-    amber: "text-[hsl(38,100%,55%)]",
     indigo: "text-[hsl(240,80%,60%)]",
     rainbow: "",
     light: "text-[hsl(40,100%,50%)]",
