@@ -13,6 +13,7 @@ const ContactSection = () => {
   const inView = useInView(ref, { once: true, margin: light ? "-50px" : "-100px" });
   const [sending, setSending] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [lastSubmitTime, setLastSubmitTime] = useState(0);
   const socialLinkTarget =
     typeof window !== "undefined" && window.top !== window.self ? "_top" : "_blank";
   const dur = light ? 0.5 : 0.8;
@@ -21,7 +22,20 @@ const ContactSection = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formRef.current) return;
+
+    // Honeypot check
+    const honeypot = formRef.current.querySelector<HTMLInputElement>('[name="website_url"]');
+    if (honeypot && honeypot.value) return;
+
+    // Rate limit: 60s cooldown
+    const now = Date.now();
+    if (now - lastSubmitTime < 60000) {
+      toast.error("Please wait a moment before sending another message.");
+      return;
+    }
+
     setSending(true);
+    setLastSubmitTime(now);
     emailjs
       .sendForm("service_mxd1a9e", "template_qpqqc1k", formRef.current, "JTN6BSs5DTYJqVJbL")
       .then(() => {
@@ -118,6 +132,15 @@ const ContactSection = () => {
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ delay: 0.4, duration: dur }}
           >
+            {/* Honeypot field - hidden from humans */}
+            <input
+              type="text"
+              name="website_url"
+              autoComplete="off"
+              tabIndex={-1}
+              aria-hidden="true"
+              style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, width: 0 }}
+            />
             {[
               { label: "Name", name: "from_name", type: "text" },
               { label: "Email", name: "from_email", type: "email" },
