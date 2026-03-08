@@ -60,6 +60,9 @@ const Index = () => {
           <SectionReveal direction="left" delay={0.1}>
             <SkillSolarSystem />
           </SectionReveal>
+          <SectionReveal delay={0.1}>
+            <SkillCube />
+          </SectionReveal>
           <SectionReveal direction="right" delay={0.1}>
             <ProjectsSection />
           </SectionReveal>
