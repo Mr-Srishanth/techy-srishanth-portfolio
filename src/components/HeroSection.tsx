@@ -24,7 +24,10 @@ const HeroSection = () => {
     const target = titles[titleIdx];
     if (typing) {
       if (displayed.length < target.length) {
-        const t = setTimeout(() => setDisplayed(target.slice(0, displayed.length + 1)), 60);
+        const t = setTimeout(() => {
+          setDisplayed(target.slice(0, displayed.length + 1));
+          playClick();
+        }, 60);
         return () => clearTimeout(t);
       } else {
         const t = setTimeout(() => setTyping(false), 2000);
