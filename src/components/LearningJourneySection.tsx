@@ -1,6 +1,6 @@
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
-import { BookOpen, Brain, Code2, Rocket } from "lucide-react";
+import { useRef, useState } from "react";
+import { BookOpen, Brain, Code2, Rocket, GripHorizontal } from "lucide-react";
 import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
 
 const updates = [
@@ -9,34 +9,57 @@ const updates = [
     title: "Learning Python & Data Structures",
     desc: "Currently improving programming fundamentals and problem-solving skills.",
     date: "Ongoing",
+    color: "from-primary/20 to-primary/5",
   },
   {
     icon: Brain,
     title: "Exploring Artificial Intelligence",
     desc: "Studying AI and Machine Learning concepts to build intelligent systems.",
     date: "In Progress",
+    color: "from-neon-purple/20 to-neon-purple/5",
   },
   {
     icon: Rocket,
     title: "Building Python Mini Projects",
     desc: "Creating small applications to strengthen coding skills and apply theory.",
     date: "Active",
+    color: "from-neon-cyan/20 to-neon-cyan/5",
   },
   {
     icon: BookOpen,
     title: "Mastering DSA Fundamentals",
     desc: "Working through arrays, linked lists, trees, and sorting algorithms.",
     date: "Ongoing",
+    color: "from-primary/20 to-primary/5",
   },
 ];
 
 const LearningJourneySection = () => {
   const ref = useRef(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const light = useLightMotion();
   const isMobile = useIsMobile();
   const inView = useInView(ref, { once: true, margin: light ? "-50px" : "-100px" });
   const yOff = light ? 20 : 40;
   const dur = light ? 0.5 : 0.8;
+
+  // Drag state
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStart = useRef({ x: 0, scrollLeft: 0 });
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+    setIsDragging(true);
+    dragStart.current = { x: e.pageX, scrollLeft: scrollRef.current.scrollLeft };
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollRef.current) return;
+    const dx = e.pageX - dragStart.current.x;
+    scrollRef.current.scrollLeft = dragStart.current.scrollLeft - dx;
+  };
+
+  const handleMouseUp = () => setIsDragging(false);
 
   return (
     <section id="journey" className="py-24 relative overflow-hidden">
@@ -60,68 +83,87 @@ const LearningJourneySection = () => {
           <p className="font-body text-muted-foreground mt-4 max-w-lg mx-auto">
             Tracking my progress as I build skills and explore new technologies every day.
           </p>
+          <div className="flex items-center justify-center gap-2 mt-3 text-muted-foreground/50">
+            <GripHorizontal size={16} />
+            <span className="font-mono text-xs tracking-wider">Drag to explore</span>
+          </div>
         </motion.div>
 
-        <div className="relative max-w-4xl mx-auto">
-          <div className="absolute left-4 md:left-1/2 md:-translate-x-px top-0 bottom-0 w-[2px] bg-gradient-to-b from-primary/60 via-primary/20 to-transparent pointer-events-none" />
+        {/* Draggable horizontal timeline */}
+        <div className="relative">
+          {/* Horizontal line */}
+          <div className="absolute top-[60px] left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent pointer-events-none z-0" />
 
-          <div className="flex flex-col gap-10">
-            {updates.map((item, i) => {
-              const isLeft = i % 2 === 0;
-              return (
+          {/* Scroll container */}
+          <div
+            ref={scrollRef}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            className={`flex gap-6 overflow-x-auto pb-4 pt-2 scrollbar-hide ${isDragging ? "cursor-grabbing select-none" : "cursor-grab"}`}
+            style={{ scrollBehavior: isDragging ? "auto" : "smooth", scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {/* Spacer start */}
+            <div className="shrink-0 w-[calc(50vw-200px)] hidden md:block" />
+
+            {updates.map((item, i) => (
+              <motion.div
+                key={item.title}
+                className="shrink-0 w-[280px] sm:w-[320px] relative pt-[40px]"
+                initial={{ opacity: 0, y: light ? 15 : 30 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: i * 0.15, duration: 0.6 }}
+              >
+                {/* Timeline dot */}
+                <div className="absolute top-[52px] left-1/2 -translate-x-1/2 z-10">
+                  <div className="w-4 h-4 rounded-full bg-primary neon-glow border-2 border-background" />
+                </div>
+
+                {/* Connector line down */}
+                <div className="absolute top-[68px] left-1/2 -translate-x-px w-[2px] h-6 bg-gradient-to-b from-primary/60 to-transparent" />
+
+                {/* Card */}
                 <motion.div
-                  key={item.title}
-                  className={`relative flex items-start gap-6 md:gap-0 ${
-                    isLeft ? "md:flex-row" : "md:flex-row-reverse"
-                  }`}
-                  initial={{ opacity: 0, y: light ? 15 : 30 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ delay: i * 0.15, duration: 0.6 }}
+                  className="glass-card p-6 mt-10 group cursor-default relative overflow-hidden rounded-xl"
+                  whileHover={isMobile ? undefined : {
+                    y: -6,
+                    boxShadow: "0 0 40px hsl(var(--primary) / 0.25)",
+                    borderColor: "hsl(var(--primary) / 0.5)",
+                  }}
+                  whileTap={isMobile ? { scale: 0.98 } : undefined}
                 >
-                  <div className="absolute left-4 md:left-1/2 -translate-x-1/2 top-6 z-20">
-                    <div className="w-4 h-4 rounded-full bg-primary neon-glow border-2 border-background" />
-                  </div>
+                  {/* Gradient overlay */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
 
-                  <div
-                    className={`ml-12 md:ml-0 md:w-[calc(50%-2rem)] ${
-                      isLeft ? "md:pr-0 md:mr-auto md:pl-0" : "md:pl-0 md:ml-auto md:pr-0"
-                    }`}
-                  >
-                    <motion.div
-                      className="glass-card p-6 group cursor-default relative overflow-hidden"
-                      whileHover={isMobile ? undefined : {
-                        y: -4,
-                        boxShadow: "0 0 30px hsl(var(--primary) / 0.2)",
-                        borderColor: "hsl(var(--primary) / 0.5)",
-                      }}
-                      whileTap={isMobile ? { scale: 0.98 } : undefined}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                      <div className="relative z-10">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20">
-                            <item.icon size={20} className="text-primary" />
-                          </div>
-                          <span className="font-mono text-xs text-primary/70 tracking-wider">
-                            {item.date}
-                          </span>
-                        </div>
-                        <h3 className="font-display text-base font-semibold text-foreground mb-2 tracking-wider group-hover:text-primary transition-colors">
-                          {item.title}
-                        </h3>
-                        <p className="font-body text-muted-foreground text-sm leading-relaxed">
-                          {item.desc}
-                        </p>
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20">
+                        <item.icon size={20} className="text-primary" />
                       </div>
-                    </motion.div>
+                      <span className="font-mono text-xs text-primary/70 tracking-wider">
+                        {item.date}
+                      </span>
+                    </div>
+                    <h3 className="font-display text-base font-semibold text-foreground mb-2 tracking-wider group-hover:text-primary transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="font-body text-muted-foreground text-sm leading-relaxed">
+                      {item.desc}
+                    </p>
                   </div>
                 </motion.div>
-              );
-            })}
+              </motion.div>
+            ))}
+
+            {/* Spacer end */}
+            <div className="shrink-0 w-[calc(50vw-200px)] hidden md:block" />
           </div>
         </div>
       </div>
+
+      {/* Hide scrollbar */}
+      <style>{`.scrollbar-hide::-webkit-scrollbar { display: none; }`}</style>
     </section>
   );
 };
