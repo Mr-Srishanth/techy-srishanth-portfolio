@@ -14,7 +14,7 @@ import SkillRadarChart from "@/components/SkillRadarChart";
 import AchievementsSection from "@/components/AchievementsSection";
 import ScrollToTop from "@/components/ScrollToTop";
 import KonamiEasterEgg from "@/components/KonamiEasterEgg";
-import CursorTrail from "@/components/CursorTrail";
+import CustomCursor from "@/components/CustomCursor";
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -43,7 +43,7 @@ const Index = () => {
           <GitHubSection />
           <ScrollToTop />
           <KonamiEasterEgg />
-          <CursorTrail />
+          <CustomCursor />
           <ContactSection />
           <Footer />
         </motion.div>
