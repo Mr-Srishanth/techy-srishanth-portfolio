@@ -11,7 +11,7 @@ import LearningJourneySection from "@/components/LearningJourneySection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import SkillRadarChart from "@/components/SkillRadarChart";
-import SkillSolarSystem from "@/components/SkillSolarSystem";
+import SkillSlotMachine from "@/components/SkillSlotMachine";
 
 import AchievementsSection from "@/components/AchievementsSection";
 import CertificatesSection from "@/components/CertificatesSection";
@@ -57,7 +57,7 @@ const Index = () => {
             <SkillRadarChart />
           </SectionReveal>
           <SectionReveal delay={0.1}>
-            <SkillSolarSystem />
+            <SkillSlotMachine />
           </SectionReveal>
           <SectionReveal direction="right" delay={0.1}>
             <ProjectsSection />
