@@ -168,7 +168,71 @@
   --sidebar-ring: 150 100% 45%;
 }
 
-/* Custom scrollbar */
+.theme-red {
+  --primary: 0 100% 55%;
+  --primary-foreground: 220 20% 4%;
+  --accent: 0 100% 55%;
+  --accent-foreground: 220 20% 4%;
+  --neon-blue: 0 100% 55%;
+  --neon-cyan: 15 90% 50%;
+  --neon-purple: 345 100% 60%;
+  --border: 0 60% 25%;
+  --glass-border: 0 60% 25%;
+  --ring: 0 100% 55%;
+  --sidebar-primary: 0 100% 55%;
+  --sidebar-border: 0 60% 25%;
+  --sidebar-ring: 0 100% 55%;
+}
+
+.theme-orange {
+  --primary: 30 100% 55%;
+  --primary-foreground: 220 20% 4%;
+  --accent: 30 100% 55%;
+  --accent-foreground: 220 20% 4%;
+  --neon-blue: 30 100% 55%;
+  --neon-cyan: 45 100% 50%;
+  --neon-purple: 15 100% 55%;
+  --border: 30 60% 25%;
+  --glass-border: 30 60% 25%;
+  --ring: 30 100% 55%;
+  --sidebar-primary: 30 100% 55%;
+  --sidebar-border: 30 60% 25%;
+  --sidebar-ring: 30 100% 55%;
+}
+
+.theme-pink {
+  --primary: 330 100% 60%;
+  --primary-foreground: 220 20% 4%;
+  --accent: 330 100% 60%;
+  --accent-foreground: 220 20% 4%;
+  --neon-blue: 330 100% 60%;
+  --neon-cyan: 345 90% 55%;
+  --neon-purple: 310 100% 60%;
+  --border: 330 60% 25%;
+  --glass-border: 330 60% 25%;
+  --ring: 330 100% 60%;
+  --sidebar-primary: 330 100% 60%;
+  --sidebar-border: 330 60% 25%;
+  --sidebar-ring: 330 100% 60%;
+}
+
+.theme-cyan {
+  --primary: 185 100% 50%;
+  --primary-foreground: 220 20% 4%;
+  --accent: 185 100% 50%;
+  --accent-foreground: 220 20% 4%;
+  --neon-blue: 185 100% 50%;
+  --neon-cyan: 195 100% 50%;
+  --neon-purple: 170 90% 45%;
+  --border: 185 60% 22%;
+  --glass-border: 185 60% 25%;
+  --ring: 185 100% 50%;
+  --sidebar-primary: 185 100% 50%;
+  --sidebar-border: 185 60% 22%;
+  --sidebar-ring: 185 100% 50%;
+}
+
+
 ::-webkit-scrollbar {
   width: 6px;
 }
