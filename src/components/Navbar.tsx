@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 
-const links = ["Home", "About", "Skills", "Projects", "My Journey", "Contact"];
+const links = ["Home", "About", "Skills", "Projects", "My Journey", "Certificates", "Contact"];
 
 const Navbar = () => {
   const [active, setActive] = useState("Home");

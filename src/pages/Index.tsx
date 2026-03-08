@@ -12,6 +12,7 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import SkillRadarChart from "@/components/SkillRadarChart";
 import AchievementsSection from "@/components/AchievementsSection";
+import CertificatesSection from "@/components/CertificatesSection";
 import ScrollToTop from "@/components/ScrollToTop";
 import KonamiEasterEgg from "@/components/KonamiEasterEgg";
 import CustomCursor from "@/components/CustomCursor";
@@ -40,6 +41,7 @@ const Index = () => {
           <ProjectsSection />
           <LearningJourneySection />
           <AchievementsSection />
+          <CertificatesSection />
           <GitHubSection />
           <ScrollToTop />
           <KonamiEasterEgg />
