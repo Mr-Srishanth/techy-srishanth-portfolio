@@ -3,17 +3,19 @@ import { useRef, useEffect, useState } from "react";
 import { Terminal } from "lucide-react";
 
 const terminalLines = [
-  { text: "$ git status", delay: 0, type: "command" as const },
-  { text: "On branch main", delay: 0.4, type: "dim" as const },
-  { text: "$ loading repositories...", delay: 0.8, type: "command" as const },
-  { text: "✓ python-calculator", delay: 1.4, type: "success" as const },
-  { text: "✓ student-management-system", delay: 1.8, type: "success" as const },
-  { text: "✓ dsa-practice-tracker", delay: 2.2, type: "success" as const },
-  { text: "✓ portfolio-website", delay: 2.6, type: "success" as const },
-  { text: "$ initializing python projects...", delay: 3.2, type: "command" as const },
-  { text: "✓ All systems operational", delay: 3.8, type: "success" as const },
-  { text: "$ connecting to GitHub...", delay: 4.2, type: "command" as const },
-  { text: "✓ Connected as @arrabola-srishanth", delay: 4.8, type: "success" as const },
+  { text: "$ git clone https://github.com/Mr-Srishanth", delay: 0, type: "command" as const },
+  { text: "Cloning into 'portfolio'...", delay: 0.4, type: "dim" as const },
+  { text: "$ cat profile.yml", delay: 0.8, type: "command" as const },
+  { text: "name: Arrabola Srishanth", delay: 1.2, type: "dim" as const },
+  { text: "role: AI & Software Developer", delay: 1.5, type: "dim" as const },
+  { text: "stack: [Python, DSA, ML, C]", delay: 1.8, type: "dim" as const },
+  { text: "$ git log --oneline --graph", delay: 2.4, type: "command" as const },
+  { text: "✓ feat: python-calculator — CLI-based arithmetic tool", delay: 2.8, type: "success" as const },
+  { text: "✓ feat: student-management-system — CRUD operations", delay: 3.2, type: "success" as const },
+  { text: "✓ feat: dsa-practice-tracker — Algorithm solutions", delay: 3.6, type: "success" as const },
+  { text: "✓ feat: portfolio-website — React + Tailwind showcase", delay: 4.0, type: "success" as const },
+  { text: "$ echo $STATUS", delay: 4.6, type: "command" as const },
+  { text: "✓ Open to collaborate — Let's build something great.", delay: 5.0, type: "success" as const },
 ];
 
 const getLineColor = (type: string) => {
