@@ -26,7 +26,7 @@ const certificates = [
   {
     icon: Trophy,
     title: "Hackathon",
-    issuer: "VHack 2.0 — VITS",
+    issuer: "",
     image: vhackCert,
   },
 ];
