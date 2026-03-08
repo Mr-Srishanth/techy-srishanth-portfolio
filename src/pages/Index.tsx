@@ -12,6 +12,8 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import SkillRadarChart from "@/components/SkillRadarChart";
 import SkillSolarSystem from "@/components/SkillSolarSystem";
+import SkillCube from "@/components/SkillCube";
+import ScrollWave from "@/components/ScrollWave";
 import AchievementsSection from "@/components/AchievementsSection";
 import CertificatesSection from "@/components/CertificatesSection";
 import ScrollToTop from "@/components/ScrollToTop";
@@ -41,6 +43,7 @@ const Index = () => {
         >
           <ScrollProgress />
           <ParticleBackground />
+          <ScrollWave />
           <SpotlightGlow />
           <CommandPalette />
           <Navbar />
@@ -56,6 +59,9 @@ const Index = () => {
           </SectionReveal>
           <SectionReveal direction="left" delay={0.1}>
             <SkillSolarSystem />
+          </SectionReveal>
+          <SectionReveal delay={0.1}>
+            <SkillCube />
           </SectionReveal>
           <SectionReveal direction="right" delay={0.1}>
             <ProjectsSection />

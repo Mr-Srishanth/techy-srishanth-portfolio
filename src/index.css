@@ -127,6 +127,11 @@
   100% { transform: rotate(360deg); }
 }
 
+@keyframes cube-spin {
+  0% { transform: rotateX(-15deg) rotateY(0deg); }
+  100% { transform: rotateX(-15deg) rotateY(360deg); }
+}
+
 @keyframes breathe {
   0%, 100% { opacity: 0.3; transform: scale(1); }
   50% { opacity: 0.6; transform: scale(1.05); }
