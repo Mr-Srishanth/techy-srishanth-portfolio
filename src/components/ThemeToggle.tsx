@@ -3,8 +3,8 @@ import { Palette } from "lucide-react";
 import { motion } from "framer-motion";
 
 const themes = [
-  "blue", "purple", "green", "red", "orange", "pink", "cyan",
-  "gold", "lime", "violet", "rose", "teal", "amber", "indigo", "rainbow", "light",
+  "blue", "purple", "green", "red", "orange", "pink",
+  "gold", "lime", "indigo", "rainbow", "light",
 ] as const;
 type Theme = (typeof themes)[number];
 
