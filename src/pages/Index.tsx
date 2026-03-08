@@ -19,6 +19,8 @@ import CustomCursor from "@/components/CustomCursor";
 import SectionReveal from "@/components/SectionReveal";
 import ParticleBackground from "@/components/ParticleBackground";
 import ScrollProgress from "@/components/ScrollProgress";
+import CommandPalette from "@/components/CommandPalette";
+import SpotlightGlow from "@/components/SpotlightGlow";
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -38,6 +40,8 @@ const Index = () => {
         >
           <ScrollProgress />
           <ParticleBackground />
+          <SpotlightGlow />
+          <CommandPalette />
           <Navbar />
           <HeroSection />
           <SectionReveal>

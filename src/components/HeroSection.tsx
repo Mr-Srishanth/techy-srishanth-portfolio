@@ -73,14 +73,20 @@ const HeroSection = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: light ? 0.5 : 0.8, delay: 0.3 }}
         >
-          <motion.p
-            className="font-mono text-sm text-primary mb-4 tracking-widest"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-          >
-            {"< Hello World />"}
-          </motion.p>
+          {(() => {
+            const hour = new Date().getHours();
+            const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
+            return (
+              <motion.p
+                className="font-mono text-sm text-primary mb-4 tracking-widest"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                {`< ${greeting} />`}
+              </motion.p>
+            );
+          })()}
 
           <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-2">
             <span className="text-foreground">I'm </span>
