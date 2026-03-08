@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Palette } from "lucide-react";
 import { motion } from "framer-motion";
 
-const themes = ["blue", "purple", "green"] as const;
+const themes = ["blue", "purple", "green", "red", "orange", "pink", "cyan"] as const;
 type Theme = (typeof themes)[number];
 
 const ThemeToggle = () => {
@@ -15,7 +15,7 @@ const ThemeToggle = () => {
 
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.remove("theme-blue", "theme-purple", "theme-green");
+    themes.forEach((t) => root.classList.remove(`theme-${t}`));
     if (theme !== "blue") {
       root.classList.add(`theme-${theme}`);
     }
@@ -31,6 +31,10 @@ const ThemeToggle = () => {
     blue: "text-[hsl(200,100%,50%)]",
     purple: "text-[hsl(270,100%,60%)]",
     green: "text-[hsl(150,100%,45%)]",
+    red: "text-[hsl(0,100%,55%)]",
+    orange: "text-[hsl(30,100%,55%)]",
+    pink: "text-[hsl(330,100%,60%)]",
+    cyan: "text-[hsl(185,100%,50%)]",
   };
 
   return (
