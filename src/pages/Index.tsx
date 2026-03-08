@@ -43,7 +43,7 @@ const Index = () => {
         >
           <ScrollProgress />
           <ParticleBackground />
-          <ScrollWave />
+          
           <SpotlightGlow />
           <CommandPalette />
           <Navbar />
