@@ -1,25 +1,25 @@
-import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { GraduationCap, Code2, Brain } from "lucide-react";
 import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
+
+const ease = [0.25, 0.1, 0.25, 1];
 
 const AboutSection = () => {
   const ref = useRef(null);
   const light = useLightMotion();
   const isMobile = useIsMobile();
-  const inView = useInView(ref, { once: true, margin: light ? "-50px" : "-100px" });
-  const dur = light ? 0.5 : 0.8;
-  const yOff = light ? 20 : 40;
+  const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
     <section id="about" className="py-24 relative">
       <div className="absolute inset-0 grid-bg opacity-10 pointer-events-none" />
       <div className="container mx-auto px-4 relative z-10" ref={ref}>
+        {/* Heading */}
         <motion.div
-          initial={{ opacity: 0, y: yOff }}
+          initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: dur }}
+          transition={{ duration: 0.7, ease }}
           className="text-center mb-16"
         >
           <p className="font-mono text-primary text-sm tracking-widest mb-2">{"// ABOUT ME"}</p>
@@ -29,10 +29,11 @@ const AboutSection = () => {
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-12 items-center">
+          {/* Text block — staggered after heading */}
           <motion.div
-            initial={{ opacity: 0, x: light ? -20 : -40 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: dur, delay: 0.2 }}
+            initial={{ opacity: 0, y: 25 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.15, ease }}
           >
             <h3 className="font-display text-2xl font-bold mb-4 text-foreground">
               Aspiring AI & Software Developer
@@ -45,12 +46,8 @@ const AboutSection = () => {
             </p>
           </motion.div>
 
-          <motion.div
-            className="grid gap-4"
-            initial={{ opacity: 0, x: light ? 20 : 40 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: dur, delay: 0.4 }}
-          >
+          {/* Cards — staggered after text */}
+          <div className="grid gap-4">
             {[
               { icon: GraduationCap, title: "Education", desc: "B.Tech CSE (AI & ML) — VITS (2025–2029)" },
               { icon: Code2, title: "Focus Areas", desc: "Python, Data Structures & Algorithms" },
@@ -59,13 +56,18 @@ const AboutSection = () => {
               <motion.div
                 key={item.title}
                 className="glass-card p-6 flex gap-4 items-start group cursor-default"
-                whileHover={isMobile ? undefined : { scale: 1.02, borderColor: "hsl(200 100% 50% / 0.5)" }}
-                whileTap={isMobile ? { scale: 0.98 } : undefined}
-                initial={{ opacity: 0, y: light ? 10 : 20 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.5 + i * 0.15, duration: 0.5 }}
+                transition={{ delay: 0.3 + i * 0.12, duration: 0.6, ease }}
+                whileHover={isMobile ? undefined : {
+                  y: -6,
+                  boxShadow: "0 0 25px hsl(var(--primary) / 0.15)",
+                  borderColor: "hsl(200 100% 50% / 0.4)",
+                  transition: { duration: 0.25 },
+                }}
+                whileTap={isMobile ? { scale: 0.98 } : undefined}
               >
-                <div className="p-3 rounded-lg bg-primary/10 text-primary group-hover:neon-glow transition-all">
+                <div className="p-3 rounded-lg bg-primary/10 text-primary group-hover:neon-glow transition-all duration-250">
                   <item.icon size={24} />
                 </div>
                 <div>
@@ -74,7 +76,7 @@ const AboutSection = () => {
                 </div>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

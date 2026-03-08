@@ -15,20 +15,22 @@ const skills = [
   { name: "Git", level: 65, icon: "🧩", logo: gitLogo },
 ];
 
+const ease = [0.25, 0.1, 0.25, 1];
+
 const SkillsSection = () => {
   const ref = useRef(null);
   const light = useLightMotion();
   const isMobile = useIsMobile();
-  const inView = useInView(ref, { once: true, margin: light ? "-50px" : "-100px" });
-  const yOff = light ? 20 : 40;
+  const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
     <section id="skills" className="py-24 relative">
       <div className="container mx-auto px-4" ref={ref}>
+        {/* Heading */}
         <motion.div
-          initial={{ opacity: 0, y: yOff }}
+          initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: light ? 0.5 : 0.8 }}
+          transition={{ duration: 0.7, ease }}
           className="text-center mb-16"
         >
           <p className="font-mono text-primary text-sm tracking-widest mb-2">{"// MY SKILLS"}</p>
@@ -37,15 +39,21 @@ const SkillsSection = () => {
           </h2>
         </motion.div>
 
+        {/* Cards with stagger */}
         <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {skills.map((skill, i) => (
             <motion.div
               key={skill.name}
               className="glass-card p-6 group"
-              initial={{ opacity: 0, y: light ? 15 : 30 }}
+              initial={{ opacity: 0, y: 25 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              whileHover={isMobile ? undefined : { scale: 1.02 }}
+              transition={{ delay: 0.12 + i * 0.08, duration: 0.6, ease }}
+              whileHover={isMobile ? undefined : {
+                y: -6,
+                boxShadow: "0 0 25px hsl(var(--primary) / 0.15)",
+                borderColor: "hsl(200 100% 50% / 0.4)",
+                transition: { duration: 0.25 },
+              }}
               whileTap={isMobile ? { scale: 0.98 } : undefined}
             >
               <div className="flex items-center justify-between mb-3">
@@ -66,7 +74,7 @@ const SkillsSection = () => {
                   className="h-full rounded-full bg-gradient-to-r from-primary to-neon-cyan"
                   initial={{ width: 0 }}
                   animate={inView ? { width: `${skill.level}%` } : {}}
-                  transition={{ duration: 1.2, delay: 0.3 + i * 0.1, ease: "easeOut" }}
+                  transition={{ duration: 1, delay: 0.4 + i * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
                   style={{ boxShadow: "0 0 10px hsl(200 100% 50% / 0.5)" }}
                 />
               </div>
