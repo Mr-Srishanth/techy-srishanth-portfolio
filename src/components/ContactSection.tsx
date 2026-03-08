@@ -1,16 +1,29 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { Mail, Phone, MapPin, Send, Github, Linkedin } from "lucide-react";
+import emailjs from "@emailjs/browser";
+import { toast } from "sonner";
 
 const ContactSection = () => {
   const ref = useRef(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const [sending, setSending] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formRef.current) return;
     setSending(true);
-    setTimeout(() => setSending(false), 2000);
+    emailjs
+      .sendForm("service_mxd1a9e", "template_qpqqc1k", formRef.current, "JTN6BSs5DTYJqVJbL")
+      .then(() => {
+        toast.success("Message sent successfully!");
+        formRef.current?.reset();
+      })
+      .catch(() => {
+        toast.error("Failed to send message. Please try again.");
+      })
+      .finally(() => setSending(false));
   };
 
   const contactInfo = [
@@ -85,21 +98,28 @@ const ContactSection = () => {
 
           {/* Form */}
           <motion.form
+            ref={formRef}
             onSubmit={handleSubmit}
             className="glass-card p-8 space-y-5"
             initial={{ opacity: 0, x: 40 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ delay: 0.4, duration: 0.8 }}
           >
-            {["Name", "Email", "Subject"].map((field) => (
-              <div key={field}>
+            {[
+              { label: "Name", name: "from_name", type: "text" },
+              { label: "Email", name: "from_email", type: "email" },
+              { label: "Subject", name: "subject", type: "text" },
+            ].map((field) => (
+              <div key={field.name}>
                 <label className="font-mono text-xs text-muted-foreground tracking-wider block mb-2">
-                  {field}
+                  {field.label}
                 </label>
                 <input
-                  type={field === "Email" ? "email" : "text"}
+                  type={field.type}
+                  name={field.name}
+                  required
                   className="w-full bg-secondary/50 border border-glass-border/30 rounded-lg px-4 py-3 font-body text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
-                  placeholder={`Your ${field.toLowerCase()}`}
+                  placeholder={`Your ${field.label.toLowerCase()}`}
                 />
               </div>
             ))}
@@ -108,6 +128,8 @@ const ContactSection = () => {
                 Message
               </label>
               <textarea
+                name="message"
+                required
                 rows={4}
                 className="w-full bg-secondary/50 border border-glass-border/30 rounded-lg px-4 py-3 font-body text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all resize-none"
                 placeholder="Your message"
