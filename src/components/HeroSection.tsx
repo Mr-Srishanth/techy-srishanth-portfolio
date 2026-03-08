@@ -5,23 +5,12 @@ import profileImg from "@/assets/profile.jpg";
 import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
 
 
-const terminalLines = [
-  { type: "command" as const, text: "whoami" },
-  { type: "output" as const, text: "Arrabola Srishanth" },
-  { type: "command" as const, text: "cat role.txt" },
-  { type: "output" as const, text: "AI & Software Developer" },
-  { type: "command" as const, text: "cat education.txt" },
-  { type: "output" as const, text: "B.Tech CSE (AI & ML) — VITS 2025-2029" },
-  { type: "command" as const, text: "cat skills.txt" },
-  { type: "output" as const, text: "Python • React • DSA • Machine Learning" },
-];
+const titles = ["AI & Software Developer", "Learning Python & DSA", "B.Tech CSE (AI & ML)"];
 
 const HeroSection = () => {
-  const [visibleLines, setVisibleLines] = useState<typeof terminalLines>([]);
-  const [currentChar, setCurrentChar] = useState("");
-  const [lineIndex, setLineIndex] = useState(0);
-  const [charIndex, setCharIndex] = useState(0);
-  const [phase, setPhase] = useState<"typing" | "done">("typing");
+  const [titleIdx, setTitleIdx] = useState(0);
+  const [displayed, setDisplayed] = useState("");
+  const [typing, setTyping] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -30,32 +19,26 @@ const HeroSection = () => {
   const isMobile = useIsMobile();
   const light = useLightMotion();
 
-  // Terminal typing effect
   useEffect(() => {
-    if (lineIndex >= terminalLines.length) {
-      setPhase("done");
-      return;
-    }
-    const line = terminalLines[lineIndex];
-    const speed = line.type === "command" ? 45 : 20;
-
-    if (charIndex < line.text.length) {
-      const t = setTimeout(() => {
-        setCurrentChar(line.text.slice(0, charIndex + 1));
-        setCharIndex(charIndex + 1);
-      }, speed);
-      return () => clearTimeout(t);
+    const target = titles[titleIdx];
+    if (typing) {
+      if (displayed.length < target.length) {
+        const t = setTimeout(() => setDisplayed(target.slice(0, displayed.length + 1)), 60);
+        return () => clearTimeout(t);
+      } else {
+        const t = setTimeout(() => setTyping(false), 2000);
+        return () => clearTimeout(t);
+      }
     } else {
-      const delay = line.type === "command" ? 300 : 600;
-      const t = setTimeout(() => {
-        setVisibleLines((prev) => [...prev, line]);
-        setCurrentChar("");
-        setCharIndex(0);
-        setLineIndex(lineIndex + 1);
-      }, delay);
-      return () => clearTimeout(t);
+      if (displayed.length > 0) {
+        const t = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 30);
+        return () => clearTimeout(t);
+      } else {
+        setTitleIdx((i) => (i + 1) % titles.length);
+        setTyping(true);
+      }
     }
-  }, [lineIndex, charIndex]);
+  }, [displayed, typing, titleIdx]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (isMobile) return;
@@ -84,66 +67,14 @@ const HeroSection = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: light ? 0.5 : 0.8, delay: 0.3 }}
         >
-          {/* Terminal window */}
-          <div className="glass-card rounded-xl border border-border overflow-hidden mb-6">
-            {/* Title bar */}
-            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-muted/30">
-              <div className="w-3 h-3 rounded-full bg-destructive/70" />
-              <div className="w-3 h-3 rounded-full bg-[hsl(45,100%,50%)]/70" />
-              <div className="w-3 h-3 rounded-full bg-[hsl(150,100%,45%)]/70" />
-              <span className="ml-2 font-mono text-xs text-muted-foreground">srishanth@portfolio:~</span>
-            </div>
-            {/* Terminal body */}
-            <div className="p-4 font-mono text-sm leading-relaxed min-h-[200px] max-h-[280px] overflow-y-auto">
-              {visibleLines.map((line, i) => (
-                <div key={i} className="mb-1">
-                  {line.type === "command" ? (
-                    <span>
-                      <span className="text-primary">❯</span>{" "}
-                      <span className="text-foreground">{line.text}</span>
-                    </span>
-                  ) : (
-                    <motion.span
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="text-muted-foreground pl-4 block"
-                    >
-                      {line.text}
-                    </motion.span>
-                  )}
-                </div>
-              ))}
-              {/* Currently typing line */}
-              {lineIndex < terminalLines.length && (
-                <div className="mb-1">
-                  {terminalLines[lineIndex].type === "command" ? (
-                    <span>
-                      <span className="text-primary">❯</span>{" "}
-                      <span className="text-foreground">{currentChar}</span>
-                    </span>
-                  ) : (
-                    <span className="text-muted-foreground pl-4">{currentChar}</span>
-                  )}
-                  <motion.span
-                    className="inline-block w-[2px] h-4 bg-primary ml-0.5 align-middle"
-                    animate={{ opacity: [1, 0] }}
-                    transition={{ duration: 0.5, repeat: Infinity }}
-                  />
-                </div>
-              )}
-              {/* Blinking cursor after done */}
-              {phase === "done" && (
-                <div>
-                  <span className="text-primary">❯</span>{" "}
-                  <motion.span
-                    className="inline-block w-[2px] h-4 bg-primary align-middle"
-                    animate={{ opacity: [1, 0] }}
-                    transition={{ duration: 0.5, repeat: Infinity }}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
+          <motion.p
+            className="font-mono text-sm text-primary mb-4 tracking-widest"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            {"< Hello World />"}
+          </motion.p>
 
           <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-2">
             <span className="text-foreground">I'm </span>
@@ -151,6 +82,17 @@ const HeroSection = () => {
             <br />
             <span className="text-foreground">Srishanth</span>
           </h1>
+
+          <div className="h-12 mt-4 mb-6">
+            <span className="font-mono text-lg md:text-xl text-muted-foreground">
+              {displayed}
+              <motion.span
+                className="inline-block w-[2px] h-5 bg-primary ml-1 align-middle"
+                animate={{ opacity: [1, 0] }}
+                transition={{ duration: 0.5, repeat: Infinity }}
+              />
+            </span>
+          </div>
 
           <p className="font-body text-muted-foreground text-lg mb-8 max-w-md leading-relaxed">
             A passionate student pursuing B.Tech in CSE (AI & ML) at Vignan Institute of Technology and Science (2025–2029), building the future with code.
