@@ -13,6 +13,7 @@ import Footer from "@/components/Footer";
 import SkillRadarChart from "@/components/SkillRadarChart";
 import AchievementsSection from "@/components/AchievementsSection";
 import ScrollToTop from "@/components/ScrollToTop";
+import KonamiEasterEgg from "@/components/KonamiEasterEgg";
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -40,6 +41,7 @@ const Index = () => {
           <AchievementsSection />
           <GitHubSection />
           <ScrollToTop />
+          <KonamiEasterEgg />
           <ContactSection />
           <Footer />
         </motion.div>
