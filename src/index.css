@@ -360,7 +360,8 @@
   --sidebar-ring: 280 100% 60%;
 }
 
-
+/* Custom scrollbar */
+::-webkit-scrollbar {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
