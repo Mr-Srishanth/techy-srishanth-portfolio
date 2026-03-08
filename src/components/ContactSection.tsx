@@ -10,6 +10,8 @@ const ContactSection = () => {
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const [sending, setSending] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const socialLinkTarget =
+    typeof window !== "undefined" && window.top !== window.self ? "_top" : "_blank";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,7 +92,7 @@ const ContactSection = () => {
                 <motion.a
                   key={href}
                   href={href}
-                  target="_blank"
+                  target={socialLinkTarget}
                   rel="noopener noreferrer"
                   aria-label={label}
                   className="p-3 rounded-lg glass-card text-muted-foreground hover:text-primary transition-colors cursor-pointer"
