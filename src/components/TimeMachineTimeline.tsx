@@ -88,13 +88,13 @@ const TimeMachineTimeline = () => {
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start end", "end start"],
+    offset: ["start 0.85", "end 0.3"],
   });
 
   // Parallax layers
   const bgY1 = useTransform(scrollYProgress, [0, 1], [80, -80]);
   const bgY2 = useTransform(scrollYProgress, [0, 1], [40, -120]);
-  const lineHeight = useTransform(scrollYProgress, [0, 0.8], ["0%", "100%"]);
+  const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
     <section id="timeline" className="py-24 relative overflow-hidden" ref={sectionRef}>
