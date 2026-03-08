@@ -13,7 +13,7 @@ const terminalLines = [
   { text: "✓ feat: python-calculator — CLI-based arithmetic tool", delay: 2.8, type: "success" as const },
   { text: "✓ feat: student-management-system — CRUD operations", delay: 3.2, type: "success" as const },
   { text: "✓ feat: dsa-practice-tracker — Algorithm solutions", delay: 3.6, type: "success" as const },
-  { text: "✓ feat: portfolio-website — React + Tailwind showcase", delay: 4.0, type: "success" as const },
+  
   { text: "$ echo $STATUS", delay: 4.6, type: "command" as const },
   { text: "✓ Open to collaborate — Let's build something great.", delay: 5.0, type: "success" as const },
 ];
