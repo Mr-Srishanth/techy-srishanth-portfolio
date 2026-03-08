@@ -104,15 +104,21 @@ const ContactSection = () => {
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ delay: 0.4, duration: 0.8 }}
           >
-            {["Name", "Email", "Subject"].map((field) => (
-              <div key={field}>
+            {[
+              { label: "Name", name: "from_name", type: "text" },
+              { label: "Email", name: "from_email", type: "email" },
+              { label: "Subject", name: "subject", type: "text" },
+            ].map((field) => (
+              <div key={field.name}>
                 <label className="font-mono text-xs text-muted-foreground tracking-wider block mb-2">
-                  {field}
+                  {field.label}
                 </label>
                 <input
-                  type={field === "Email" ? "email" : "text"}
+                  type={field.type}
+                  name={field.name}
+                  required
                   className="w-full bg-secondary/50 border border-glass-border/30 rounded-lg px-4 py-3 font-body text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
-                  placeholder={`Your ${field.toLowerCase()}`}
+                  placeholder={`Your ${field.label.toLowerCase()}`}
                 />
               </div>
             ))}
@@ -121,6 +127,8 @@ const ContactSection = () => {
                 Message
               </label>
               <textarea
+                name="message"
+                required
                 rows={4}
                 className="w-full bg-secondary/50 border border-glass-border/30 rounded-lg px-4 py-3 font-body text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all resize-none"
                 placeholder="Your message"
