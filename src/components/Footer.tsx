@@ -18,7 +18,7 @@ const Footer = () => (
             target="_blank"
             rel="noopener noreferrer"
             aria-label={label}
-            onClick={(e) => { try { const tab = window.open('', '_blank'); if (!tab) return; tab.opener = null; tab.location.href = href; e.preventDefault(); } catch {} }}
+            onClick={(e) => { try { const tab = window.open(href, '_blank', 'noopener,noreferrer'); if (tab) e.preventDefault(); } catch {} }}
             className="p-2 rounded-lg text-muted-foreground hover:text-primary transition-colors"
             whileHover={{ scale: 1.1, boxShadow: "0 0 20px hsl(var(--primary) / 0.3)" }}
             whileTap={{ scale: 0.95 }}
