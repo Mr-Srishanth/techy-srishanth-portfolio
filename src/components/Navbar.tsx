@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
-const links = ["Home", "About", "Skills", "Projects", "Journey", "Contact"];
+const links = ["Home", "About", "Skills", "Projects", "My Journey", "Contact"];
 
 const Navbar = () => {
   const [active, setActive] = useState("Home");
@@ -11,7 +11,8 @@ const Navbar = () => {
   const scrollTo = (id: string) => {
     setActive(id);
     setMobileOpen(false);
-    const el = document.getElementById(id.toLowerCase());
+    const sectionId = id === "My Journey" ? "journey" : id.toLowerCase();
+    const el = document.getElementById(sectionId);
     el?.scrollIntoView({ behavior: "smooth" });
   };
 
