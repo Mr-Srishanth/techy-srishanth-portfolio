@@ -18,6 +18,7 @@ const HeroSection = () => {
   const imgY = useTransform(mouseY, [-300, 300], [10, -10]);
   const isMobile = useIsMobile();
   const light = useLightMotion();
+  const playClick = useTypingSound();
 
   useEffect(() => {
     const target = titles[titleIdx];
