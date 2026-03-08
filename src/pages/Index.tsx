@@ -55,12 +55,6 @@ const Index = () => {
           <SectionReveal delay={0.05}>
             <SkillRadarChart />
           </SectionReveal>
-          <SectionReveal delay={0.1}>
-            <SkillSlotMachine />
-          </SectionReveal>
-          <SectionReveal direction="right" delay={0.1}>
-            <SkillDNAHelix />
-          </SectionReveal>
           <SectionReveal direction="right" delay={0.1}>
             <ProjectsSection />
           </SectionReveal>
