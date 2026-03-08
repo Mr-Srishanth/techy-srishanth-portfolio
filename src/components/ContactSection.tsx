@@ -163,6 +163,79 @@ const ContactSection = () => {
           </motion.form>
         </div>
       </div>
+
+      {/* Success Modal */}
+      <AnimatePresence>
+        {showSuccess && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+              onClick={() => setShowSuccess(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+            <motion.div
+              className="relative glass-card p-8 md:p-10 max-w-md w-full text-center space-y-6 border border-primary/30"
+              initial={{ scale: 0.8, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 20 }}
+              transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            >
+              <button
+                onClick={() => setShowSuccess(false)}
+                className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X size={20} />
+              </button>
+
+              <motion.div
+                className="mx-auto w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center neon-glow"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", damping: 12 }}
+              >
+                <CheckCircle className="text-primary" size={32} />
+              </motion.div>
+
+              <motion.h3
+                className="font-display text-2xl font-bold neon-text text-primary"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                Message Sent!
+              </motion.h3>
+
+              <motion.p
+                className="font-body text-muted-foreground leading-relaxed"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                Thank you for reaching out! I'll get back to you as soon as possible.
+              </motion.p>
+
+              <motion.button
+                className="px-8 py-3 rounded-lg bg-primary text-primary-foreground font-display text-sm tracking-wider neon-glow"
+                onClick={() => setShowSuccess(false)}
+                whileHover={{ scale: 1.05, boxShadow: "0 0 30px hsl(200 100% 50% / 0.5)" }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+              >
+                Got it!
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
