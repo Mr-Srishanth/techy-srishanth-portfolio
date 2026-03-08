@@ -9,8 +9,8 @@ const AboutSection = () => {
 
   return (
     <section id="about" className="py-24 relative">
-      <div className="absolute inset-0 grid-bg opacity-10" />
-      <div className="container mx-auto px-4" ref={ref}>
+      <div className="absolute inset-0 grid-bg opacity-10 pointer-events-none" />
+      <div className="container mx-auto px-4 relative z-10" ref={ref}>
         <motion.div
           initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
           animate={inView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
