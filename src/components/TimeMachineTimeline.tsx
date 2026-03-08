@@ -129,10 +129,10 @@ const TimeMachineTimeline = () => {
         {/* Timeline */}
         <div className="relative max-w-2xl mx-auto">
           {/* Animated center line */}
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-[2px] bg-muted/20 md:-translate-x-px">
+          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-[2px] bg-muted/20 md:-translate-x-px overflow-hidden">
             <motion.div
-              className="w-full bg-gradient-to-b from-primary via-neon-cyan to-neon-purple"
-              style={{ height: lineHeight }}
+              className="w-full bg-gradient-to-b from-primary via-neon-cyan to-neon-purple origin-top"
+              style={{ height: lineHeight, willChange: "height" }}
             />
           </div>
 
