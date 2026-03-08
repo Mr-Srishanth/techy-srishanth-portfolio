@@ -9,28 +9,24 @@ const updates = [
     title: "Learning Python & Data Structures",
     desc: "Currently improving programming fundamentals and problem-solving skills.",
     date: "Ongoing",
-    accent: "from-primary to-neon-cyan",
   },
   {
     icon: Brain,
     title: "Exploring Artificial Intelligence",
     desc: "Studying AI and Machine Learning concepts to build intelligent systems.",
     date: "In Progress",
-    accent: "from-neon-purple to-primary",
   },
   {
     icon: Rocket,
     title: "Building Python Mini Projects",
     desc: "Creating small applications to strengthen coding skills and apply theory.",
     date: "Active",
-    accent: "from-neon-cyan to-neon-purple",
   },
   {
     icon: BookOpen,
     title: "Mastering DSA Fundamentals",
     desc: "Working through arrays, linked lists, trees, and sorting algorithms.",
     date: "Ongoing",
-    accent: "from-primary to-neon-purple",
   },
 ];
 
