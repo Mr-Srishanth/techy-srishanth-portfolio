@@ -108,45 +108,111 @@ const CertificatesSection = () => {
                       animate={{ opacity: 1, height: "auto", scale: 1 }}
                       exit={{ opacity: 0, height: 0, scale: 0.9 }}
                       transition={{ duration: 0.4, ease: "easeInOut" }}
-                      className="relative w-[280px] sm:w-[400px] md:w-[500px] overflow-hidden rounded-xl"
+                      className="relative w-[280px] sm:w-[400px] md:w-[500px] overflow-visible rounded-xl"
                     >
-                      {/* Outer soft radial glow */}
-                      <div className="absolute -inset-8 rounded-3xl pointer-events-none opacity-60"
+                      {/* Breathing ambient glow */}
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.3, duration: 0.8 }}
+                        className="absolute -inset-12 rounded-3xl pointer-events-none"
                         style={{
-                          background: "radial-gradient(ellipse at center, hsl(var(--primary) / 0.2) 0%, hsl(var(--primary) / 0.08) 40%, transparent 70%)",
+                          background: "radial-gradient(ellipse at center, hsl(var(--primary) / 0.15) 0%, hsl(var(--primary) / 0.05) 40%, transparent 70%)",
+                          animation: "breathe 4s ease-in-out infinite",
                         }}
                       />
-                      {/* Mid glow ring */}
-                      <div className="absolute -inset-4 rounded-2xl pointer-events-none animate-pulse-glow"
-                        style={{
-                          background: "radial-gradient(ellipse at center, hsl(var(--primary) / 0.12) 0%, transparent 60%)",
-                          boxShadow: "0 0 60px hsl(var(--primary) / 0.15), 0 0 120px hsl(var(--primary) / 0.06)",
-                        }}
-                      />
-                      {/* Inner neon border frame */}
-                      <div className="absolute -inset-1 rounded-xl pointer-events-none border border-primary/40"
-                        style={{
-                          boxShadow: "inset 0 0 20px hsl(var(--primary) / 0.08), 0 0 30px hsl(var(--primary) / 0.2), 0 0 60px hsl(var(--primary) / 0.1), 0 2px 20px hsl(var(--primary) / 0.15)",
-                        }}
-                      />
-                      {/* Corner accent dots */}
-                      <div className="absolute -top-1.5 -left-1.5 w-3 h-3 rounded-full bg-primary/60 shadow-[0_0_8px_hsl(var(--primary)/0.5)] pointer-events-none" />
-                      <div className="absolute -top-1.5 -right-1.5 w-3 h-3 rounded-full bg-primary/60 shadow-[0_0_8px_hsl(var(--primary)/0.5)] pointer-events-none" />
-                      <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 rounded-full bg-primary/60 shadow-[0_0_8px_hsl(var(--primary)/0.5)] pointer-events-none" />
-                      <div className="absolute -bottom-1.5 -right-1.5 w-3 h-3 rounded-full bg-primary/60 shadow-[0_0_8px_hsl(var(--primary)/0.5)] pointer-events-none" />
 
-                      <div className="relative glass-card rounded-xl p-2.5 border border-primary/25 backdrop-blur-sm">
+                      {/* Rotating conic-gradient border */}
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.15, duration: 0.5 }}
+                        className="absolute -inset-[3px] rounded-xl pointer-events-none overflow-hidden"
+                      >
+                        <div
+                          className="absolute inset-0"
+                          style={{
+                            background: "conic-gradient(from 0deg, transparent 0%, hsl(var(--primary)) 10%, transparent 20%, transparent 50%, hsl(var(--primary) / 0.6) 60%, transparent 70%)",
+                            animation: "rotate-glow 3s linear infinite",
+                          }}
+                        />
+                        <div className="absolute inset-[2px] rounded-[10px] bg-background" />
+                      </motion.div>
+
+                      {/* Staggered entrance mid glow */}
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.25, duration: 0.6 }}
+                        className="absolute -inset-4 rounded-2xl pointer-events-none"
+                        style={{
+                          background: "radial-gradient(ellipse at center, hsl(var(--primary) / 0.1) 0%, transparent 60%)",
+                          boxShadow: "0 0 60px hsl(var(--primary) / 0.12), 0 0 120px hsl(var(--primary) / 0.05)",
+                        }}
+                      />
+
+                      {/* L-shaped corner brackets */}
+                      {[
+                        { top: "-6px", left: "-6px", borderTop: "2px solid", borderLeft: "2px solid", borderRadius: "4px 0 0 0" },
+                        { top: "-6px", right: "-6px", borderTop: "2px solid", borderRight: "2px solid", borderRadius: "0 4px 0 0" },
+                        { bottom: "-6px", left: "-6px", borderBottom: "2px solid", borderLeft: "2px solid", borderRadius: "0 0 0 4px" },
+                        { bottom: "-6px", right: "-6px", borderBottom: "2px solid", borderRight: "2px solid", borderRadius: "0 0 4px 0" },
+                      ].map((style, idx) => (
+                        <div
+                          key={idx}
+                          className="absolute w-5 h-5 pointer-events-none"
+                          style={{
+                            ...style,
+                            borderColor: "hsl(var(--primary) / 0.7)",
+                            animation: "corner-pulse 2s ease-in-out infinite",
+                            animationDelay: `${idx * 0.15}s`,
+                            filter: "drop-shadow(0 0 4px hsl(var(--primary) / 0.5))",
+                          }}
+                        />
+                      ))}
+
+                      <div className="relative glass-card rounded-xl p-2.5 border border-primary/25 backdrop-blur-sm overflow-hidden">
+                        {/* Top shimmer light bar */}
+                        <div className="absolute top-0 left-0 w-full h-[2px] overflow-hidden pointer-events-none">
+                          <div
+                            className="w-1/2 h-full"
+                            style={{
+                              background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.8), transparent)",
+                              animation: "shimmer 2s ease-in-out infinite",
+                            }}
+                          />
+                        </div>
+                        {/* Bottom shimmer light bar */}
+                        <div className="absolute bottom-0 left-0 w-full h-[2px] overflow-hidden pointer-events-none">
+                          <div
+                            className="w-1/2 h-full"
+                            style={{
+                              background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.6), transparent)",
+                              animation: "shimmer 2s ease-in-out infinite 1s",
+                            }}
+                          />
+                        </div>
+
                         <button
                           onClick={() => setExpanded(null)}
                           className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-background/90 border border-primary/40 text-primary hover:bg-primary/20 hover:shadow-[0_0_12px_hsl(var(--primary)/0.3)] transition-all duration-200"
                         >
                           <X size={14} />
                         </button>
-                        <img
-                          src={cert.image}
-                          alt={`${cert.title} certificate`}
-                          className="w-full rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
-                        />
+                        <div className="relative rounded-lg overflow-hidden">
+                          <img
+                            src={cert.image}
+                            alt={`${cert.title} certificate`}
+                            className="w-full rounded-lg"
+                          />
+                          {/* Soft vignette overlay */}
+                          <div
+                            className="absolute inset-0 rounded-lg pointer-events-none"
+                            style={{
+                              boxShadow: "inset 0 0 40px hsl(var(--background) / 0.4), inset 0 0 80px hsl(var(--background) / 0.2)",
+                            }}
+                          />
+                        </div>
                       </div>
                     </motion.div>
                   )}
