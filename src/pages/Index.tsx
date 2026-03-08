@@ -41,6 +41,7 @@ const Index = () => {
           <AchievementsSection />
           <GitHubSection />
           <ScrollToTop />
+          <KonamiEasterEgg />
           <ContactSection />
           <Footer />
         </motion.div>
