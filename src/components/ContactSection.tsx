@@ -13,6 +13,7 @@ const ContactSection = () => {
   const inView = useInView(ref, { once: true, margin: light ? "-50px" : "-100px" });
   const [sending, setSending] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [lastSubmitTime, setLastSubmitTime] = useState(0);
   const socialLinkTarget =
     typeof window !== "undefined" && window.top !== window.self ? "_top" : "_blank";
   const dur = light ? 0.5 : 0.8;
