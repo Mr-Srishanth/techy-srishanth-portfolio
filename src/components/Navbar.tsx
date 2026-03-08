@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const links = ["Home", "About", "Skills", "Projects", "My Journey", "Contact"];
 
@@ -53,14 +54,17 @@ const Navbar = () => {
           ))}
         </div>
 
-        <motion.button
-          className="hidden md:block px-5 py-2 rounded-lg font-body text-sm tracking-wider neon-border text-primary hover:bg-primary/10 transition-colors"
+        <div className="hidden md:flex items-center gap-3">
+          <ThemeToggle />
+          <motion.button
+            className="px-5 py-2 rounded-lg font-body text-sm tracking-wider neon-border text-primary hover:bg-primary/10 transition-colors"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => scrollTo("Contact")}
-        >
-          Let's Talk
-        </motion.button>
+            onClick={() => scrollTo("Contact")}
+          >
+            Let's Talk
+          </motion.button>
+        </div>
 
         {/* Mobile toggle */}
         <button className="md:hidden text-foreground" onClick={() => setMobileOpen(!mobileOpen)}>
