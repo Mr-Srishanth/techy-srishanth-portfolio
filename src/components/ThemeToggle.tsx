@@ -79,6 +79,7 @@ const ThemeToggle = () => {
     amber: "text-[hsl(38,100%,55%)]",
     indigo: "text-[hsl(240,80%,60%)]",
     rainbow: "",
+    light: "text-[hsl(40,100%,50%)]",
   };
 
   const isRainbow = theme === "rainbow";
