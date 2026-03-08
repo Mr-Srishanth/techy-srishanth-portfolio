@@ -18,6 +18,7 @@ import KonamiEasterEgg from "@/components/KonamiEasterEgg";
 import CustomCursor from "@/components/CustomCursor";
 import SectionReveal from "@/components/SectionReveal";
 import ParticleBackground from "@/components/ParticleBackground";
+import ScrollProgress from "@/components/ScrollProgress";
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -35,6 +36,7 @@ const Index = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
+          <ScrollProgress />
           <ParticleBackground />
           <Navbar />
           <HeroSection />

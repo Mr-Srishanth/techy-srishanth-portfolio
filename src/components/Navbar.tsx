@@ -1,9 +1,51 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Menu, X } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 
 const links = ["Home", "About", "Skills", "Projects", "My Journey", "Certificates", "Contact"];
+
+const MagneticLink = ({ children, onClick, isActive }: { children: string; onClick: () => void; isActive: boolean }) => {
+  const ref = useRef<HTMLButtonElement>(null);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+
+  const handleMouse = useCallback((e: React.MouseEvent) => {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    setOffset({
+      x: (e.clientX - cx) * 0.3,
+      y: (e.clientY - cy) * 0.4,
+    });
+  }, []);
+
+  const reset = useCallback(() => setOffset({ x: 0, y: 0 }), []);
+
+  return (
+    <motion.button
+      ref={ref}
+      onClick={onClick}
+      onMouseMove={handleMouse}
+      onMouseLeave={reset}
+      animate={{ x: offset.x, y: offset.y }}
+      transition={{ type: "spring", stiffness: 250, damping: 15, mass: 0.5 }}
+      className="relative font-body text-sm tracking-wider uppercase transition-colors"
+    >
+      <span className={isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"}>
+        {children}
+      </span>
+      {isActive && (
+        <motion.div
+          className="absolute -bottom-1 left-0 right-0 h-[2px] bg-primary"
+          layoutId="nav-underline"
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        />
+      )}
+    </motion.button>
+  );
+};
 
 const Navbar = () => {
   const [active, setActive] = useState("Home");
@@ -35,22 +77,9 @@ const Navbar = () => {
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
           {links.map((link) => (
-            <button
-              key={link}
-              onClick={() => scrollTo(link)}
-              className="relative font-body text-sm tracking-wider uppercase transition-colors"
-            >
-              <span className={active === link ? "text-primary" : "text-muted-foreground hover:text-foreground"}>
-                {link}
-              </span>
-              {active === link && (
-                <motion.div
-                  className="absolute -bottom-1 left-0 right-0 h-[2px] bg-primary"
-                  layoutId="nav-underline"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              )}
-            </button>
+            <MagneticLink key={link} onClick={() => scrollTo(link)} isActive={active === link}>
+              {link}
+            </MagneticLink>
           ))}
         </div>
 
@@ -58,8 +87,8 @@ const Navbar = () => {
           <ThemeToggle />
           <motion.button
             className="px-5 py-2 rounded-lg font-body text-sm tracking-wider neon-border text-primary hover:bg-primary/10 transition-colors"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => scrollTo("Contact")}
           >
             Let's Talk
