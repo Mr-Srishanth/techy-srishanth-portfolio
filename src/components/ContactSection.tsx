@@ -1,6 +1,6 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
-import { Mail, MapPin, Send, Github, Linkedin } from "lucide-react";
+import { Mail, MapPin, Send, Github, Linkedin, Instagram } from "lucide-react";
 import emailjs from "@emailjs/browser";
 import { toast } from "sonner";
 
