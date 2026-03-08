@@ -1,16 +1,29 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { Mail, Phone, MapPin, Send, Github, Linkedin } from "lucide-react";
+import emailjs from "@emailjs/browser";
+import { toast } from "sonner";
 
 const ContactSection = () => {
   const ref = useRef(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const [sending, setSending] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formRef.current) return;
     setSending(true);
-    setTimeout(() => setSending(false), 2000);
+    emailjs
+      .sendForm("service_mxd1a9e", "template_qpqqc1k", formRef.current, "JTN6BSs5DTYJqVJbL")
+      .then(() => {
+        toast.success("Message sent successfully!");
+        formRef.current?.reset();
+      })
+      .catch(() => {
+        toast.error("Failed to send message. Please try again.");
+      })
+      .finally(() => setSending(false));
   };
 
   const contactInfo = [
