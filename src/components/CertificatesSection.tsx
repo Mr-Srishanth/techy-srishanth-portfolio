@@ -110,21 +110,42 @@ const CertificatesSection = () => {
                       transition={{ duration: 0.4, ease: "easeInOut" }}
                       className="relative w-[280px] sm:w-[400px] md:w-[500px] overflow-hidden rounded-xl"
                     >
-                      {/* Glow backdrop */}
-                      <div className="absolute -inset-3 rounded-2xl bg-primary/10 blur-xl pointer-events-none" />
-                      <div className="absolute -inset-1 rounded-xl border border-primary/30 shadow-[0_0_40px_hsl(var(--primary)/0.25),0_0_80px_hsl(var(--primary)/0.1)] pointer-events-none" />
+                      {/* Outer soft radial glow */}
+                      <div className="absolute -inset-8 rounded-3xl pointer-events-none opacity-60"
+                        style={{
+                          background: "radial-gradient(ellipse at center, hsl(var(--primary) / 0.2) 0%, hsl(var(--primary) / 0.08) 40%, transparent 70%)",
+                        }}
+                      />
+                      {/* Mid glow ring */}
+                      <div className="absolute -inset-4 rounded-2xl pointer-events-none animate-pulse-glow"
+                        style={{
+                          background: "radial-gradient(ellipse at center, hsl(var(--primary) / 0.12) 0%, transparent 60%)",
+                          boxShadow: "0 0 60px hsl(var(--primary) / 0.15), 0 0 120px hsl(var(--primary) / 0.06)",
+                        }}
+                      />
+                      {/* Inner neon border frame */}
+                      <div className="absolute -inset-1 rounded-xl pointer-events-none border border-primary/40"
+                        style={{
+                          boxShadow: "inset 0 0 20px hsl(var(--primary) / 0.08), 0 0 30px hsl(var(--primary) / 0.2), 0 0 60px hsl(var(--primary) / 0.1), 0 2px 20px hsl(var(--primary) / 0.15)",
+                        }}
+                      />
+                      {/* Corner accent dots */}
+                      <div className="absolute -top-1.5 -left-1.5 w-3 h-3 rounded-full bg-primary/60 shadow-[0_0_8px_hsl(var(--primary)/0.5)] pointer-events-none" />
+                      <div className="absolute -top-1.5 -right-1.5 w-3 h-3 rounded-full bg-primary/60 shadow-[0_0_8px_hsl(var(--primary)/0.5)] pointer-events-none" />
+                      <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 rounded-full bg-primary/60 shadow-[0_0_8px_hsl(var(--primary)/0.5)] pointer-events-none" />
+                      <div className="absolute -bottom-1.5 -right-1.5 w-3 h-3 rounded-full bg-primary/60 shadow-[0_0_8px_hsl(var(--primary)/0.5)] pointer-events-none" />
 
-                      <div className="relative glass-card rounded-xl p-2 border border-primary/20">
+                      <div className="relative glass-card rounded-xl p-2.5 border border-primary/25 backdrop-blur-sm">
                         <button
                           onClick={() => setExpanded(null)}
-                          className="absolute top-3 right-3 z-10 p-1 rounded-full bg-background/80 border border-primary/30 text-primary hover:bg-primary/20 transition-colors"
+                          className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-background/90 border border-primary/40 text-primary hover:bg-primary/20 hover:shadow-[0_0_12px_hsl(var(--primary)/0.3)] transition-all duration-200"
                         >
                           <X size={14} />
                         </button>
                         <img
                           src={cert.image}
                           alt={`${cert.title} certificate`}
-                          className="w-full rounded-lg"
+                          className="w-full rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
                         />
                       </div>
                     </motion.div>
