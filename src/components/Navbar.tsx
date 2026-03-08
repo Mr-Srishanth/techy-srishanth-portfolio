@@ -54,8 +54,10 @@ const Navbar = () => {
           ))}
         </div>
 
-        <motion.button
-          className="hidden md:block px-5 py-2 rounded-lg font-body text-sm tracking-wider neon-border text-primary hover:bg-primary/10 transition-colors"
+        <div className="hidden md:flex items-center gap-3">
+          <ThemeToggle />
+          <motion.button
+            className="px-5 py-2 rounded-lg font-body text-sm tracking-wider neon-border text-primary hover:bg-primary/10 transition-colors"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => scrollTo("Contact")}
