@@ -111,6 +111,23 @@ const HeroSection = () => {
             A passionate student pursuing B.Tech in CSE (AI & ML) at Vignan Institute of Technology and Science (2025–2029), building the future with code.
           </p>
 
+          <motion.div
+            className="glass-card px-4 py-2.5 rounded-lg flex items-center gap-3 max-w-md mb-8"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 1 }}
+          >
+            <motion.span
+              className="inline-block w-2.5 h-2.5 rounded-full bg-green-500 shrink-0"
+              animate={{ scale: [1, 1.3, 1], opacity: [1, 0.6, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+            <span className="font-mono text-xs text-muted-foreground">
+              🔥 Currently working on:{" "}
+              <span className="font-semibold text-foreground">{CURRENT_FOCUS}</span>
+            </span>
+          </motion.div>
+
           <div className="flex gap-4">
             <motion.a
               href="mailto:a.srishanth1733@gmail.com"
