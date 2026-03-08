@@ -13,9 +13,23 @@ const events = [
   },
   {
     year: "2025",
+    title: "Started C Programming",
+    desc: "Began learning C language — pointers, memory management, and low-level programming fundamentals.",
+    icon: Shield,
+    accent: "neon-cyan",
+  },
+  {
+    year: "2025",
     title: "First Python Program",
     desc: "Wrote my first 'Hello World' and fell in love with coding.",
     icon: Code2,
+    accent: "primary",
+  },
+  {
+    year: "2025",
+    title: "Completed C Programming",
+    desc: "Mastered C fundamentals — arrays, structures, file handling, and dynamic memory allocation.",
+    icon: CheckCircle,
     accent: "neon-cyan",
   },
   {
