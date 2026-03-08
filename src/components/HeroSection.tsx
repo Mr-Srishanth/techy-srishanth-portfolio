@@ -97,7 +97,8 @@ const HeroSection = () => {
 
           <div className="flex gap-4">
             <motion.button
-              className="px-8 py-3 rounded-lg bg-primary text-primary-foreground font-body font-semibold tracking-wider neon-glow inline-block text-center"
+              type="button"
+              className="px-8 py-3 rounded-lg bg-primary text-primary-foreground font-body font-semibold tracking-wider neon-glow inline-block text-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               whileHover={{ scale: 1.05, boxShadow: "0 0 30px hsl(var(--primary) / 0.5)" }}
               whileTap={{ scale: 0.95 }}
               onClick={() => {
