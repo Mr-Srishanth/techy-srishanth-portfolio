@@ -43,6 +43,7 @@ const Index = () => {
           <GitHubSection />
           <ScrollToTop />
           <KonamiEasterEgg />
+          <CursorTrail />
           <ContactSection />
           <Footer />
         </motion.div>

@@ -360,6 +360,56 @@
   --sidebar-ring: 280 100% 60%;
 }
 
+.theme-light {
+  --background: 0 0% 97%;
+  --foreground: 220 20% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 220 20% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 20% 10%;
+  --primary: 210 100% 45%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 20% 92%;
+  --secondary-foreground: 220 20% 10%;
+  --muted: 210 15% 90%;
+  --muted-foreground: 215 15% 40%;
+  --accent: 210 100% 45%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 210 20% 82%;
+  --input: 210 20% 90%;
+  --ring: 210 100% 45%;
+  --neon-blue: 210 100% 45%;
+  --neon-cyan: 195 80% 40%;
+  --neon-purple: 260 70% 50%;
+  --glass: 210 20% 95%;
+  --glass-border: 210 30% 80%;
+  --sidebar-background: 0 0% 98%;
+  --sidebar-foreground: 220 20% 10%;
+  --sidebar-primary: 210 100% 45%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 210 20% 92%;
+  --sidebar-accent-foreground: 220 20% 10%;
+  --sidebar-border: 210 20% 82%;
+  --sidebar-ring: 210 100% 45%;
+}
+
+.theme-light .neon-glow {
+  box-shadow: 0 4px 20px hsl(210 100% 45% / 0.15);
+}
+.theme-light .neon-border {
+  box-shadow: 0 2px 10px hsl(210 100% 45% / 0.1);
+}
+.theme-light .neon-text {
+  text-shadow: none;
+}
+.theme-light .grid-bg {
+  background-image:
+    linear-gradient(hsl(210 100% 45% / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(210 100% 45% / 0.05) 1px, transparent 1px);
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
