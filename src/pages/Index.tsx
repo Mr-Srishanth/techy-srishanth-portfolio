@@ -12,6 +12,8 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import SkillRadarChart from "@/components/SkillRadarChart";
 import SkillSolarSystem from "@/components/SkillSolarSystem";
+import SkillCube from "@/components/SkillCube";
+import ScrollWave from "@/components/ScrollWave";
 import AchievementsSection from "@/components/AchievementsSection";
 import CertificatesSection from "@/components/CertificatesSection";
 import ScrollToTop from "@/components/ScrollToTop";
