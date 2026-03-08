@@ -12,6 +12,8 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import SkillRadarChart from "@/components/SkillRadarChart";
 import SkillConstellation from "@/components/SkillConstellation";
+import RPGSkillTree from "@/components/RPGSkillTree";
+import TimeMachineTimeline from "@/components/TimeMachineTimeline";
 
 import AchievementsSection from "@/components/AchievementsSection";
 import CertificatesSection from "@/components/CertificatesSection";
@@ -19,7 +21,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 import KonamiEasterEgg from "@/components/KonamiEasterEgg";
 import CustomCursor from "@/components/CustomCursor";
 import SectionReveal from "@/components/SectionReveal";
-import ParticleBackground from "@/components/ParticleBackground";
+import GenerativeArtBackground from "@/components/GenerativeArtBackground";
 import ScrollProgress from "@/components/ScrollProgress";
 import CommandPalette from "@/components/CommandPalette";
 import SpotlightGlow from "@/components/SpotlightGlow";
