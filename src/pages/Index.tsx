@@ -8,6 +8,7 @@ import SkillsSection from "@/components/SkillsSection";
 import ProjectsSection from "@/components/ProjectsSection";
 import GitHubSection from "@/components/GitHubSection";
 import LearningJourneySection from "@/components/LearningJourneySection";
+import CTASection from "@/components/CTASection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 
@@ -34,6 +35,7 @@ const Index = () => {
           <ProjectsSection />
           <LearningJourneySection />
           <GitHubSection />
+          <CTASection />
           <ContactSection />
           <Footer />
         </motion.div>
