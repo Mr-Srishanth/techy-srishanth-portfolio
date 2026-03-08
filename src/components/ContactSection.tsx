@@ -3,31 +3,27 @@ import { useRef, useState } from "react";
 import { Mail, MapPin, Send, Github, Linkedin, Instagram, CheckCircle, X } from "lucide-react";
 import emailjs from "@emailjs/browser";
 import { toast } from "sonner";
-import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { headingReveal, cardReveal, buttonHover, buttonTap, DUR_REVEAL, EASE_REVEAL, STAGGER } from "@/lib/animations";
 
 const ContactSection = () => {
   const ref = useRef(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const light = useLightMotion();
   const isMobile = useIsMobile();
-  const inView = useInView(ref, { once: true, margin: light ? "-50px" : "-100px" });
+  const inView = useInView(ref, { once: true, margin: "-80px" });
   const [sending, setSending] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [lastSubmitTime, setLastSubmitTime] = useState(0);
   const socialLinkTarget =
     typeof window !== "undefined" && window.top !== window.self ? "_top" : "_blank";
-  const dur = light ? 0.5 : 0.8;
-  const yOff = light ? 20 : 40;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formRef.current) return;
 
-    // Honeypot check
     const honeypot = formRef.current.querySelector<HTMLInputElement>('[name="website_url"]');
     if (honeypot && honeypot.value) return;
 
-    // Rate limit: 60s cooldown
     const now = Date.now();
     if (now - lastSubmitTime < 60000) {
       toast.error("Please wait a moment before sending another message.");
@@ -57,12 +53,7 @@ const ContactSection = () => {
     <section id="contact" className="py-24 relative">
       <div className="absolute inset-0 grid-bg opacity-10 pointer-events-none" />
       <div className="container mx-auto px-4 relative z-10" ref={ref}>
-        <motion.div
-          initial={{ opacity: 0, y: yOff }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: dur }}
-          className="text-center mb-16"
-        >
+        <motion.div {...headingReveal(inView)} className="text-center mb-16">
           <p className="font-mono text-primary text-sm tracking-widest mb-2">{"// CONTACT"}</p>
           <h2 className="font-display text-3xl md:text-4xl font-bold neon-text text-primary">
             Get In Touch
@@ -72,9 +63,9 @@ const ContactSection = () => {
         <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
           <motion.div
             className="space-y-6"
-            initial={{ opacity: 0, x: light ? -20 : -40 }}
+            initial={{ opacity: 0, x: -30 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: 0.2, duration: dur }}
+            transition={{ delay: STAGGER, duration: DUR_REVEAL, ease: EASE_REVEAL }}
           >
             <p className="font-body text-lg text-muted-foreground leading-relaxed">
               I'm always open to discussing new projects, creative ideas, or opportunities to learn and grow.
@@ -84,12 +75,10 @@ const ContactSection = () => {
               <motion.div
                 key={item.label}
                 className="flex items-center gap-4 group cursor-default"
-                initial={{ opacity: 0, y: light ? 10 : 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.4 + i * 0.1 }}
+                {...cardReveal(inView, i, 0.24)}
               >
                 <motion.div
-                  className="p-3 rounded-lg glass-card text-primary group-hover:neon-glow transition-all"
+                  className="p-3 rounded-lg glass-card text-primary group-hover:neon-glow transition-all duration-300"
                   whileHover={isMobile ? undefined : { scale: 1.1 }}
                   whileTap={isMobile ? { scale: 0.95 } : undefined}
                 >
@@ -114,8 +103,8 @@ const ContactSection = () => {
                   target={socialLinkTarget}
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="p-3 rounded-lg glass-card text-muted-foreground hover:text-primary transition-colors cursor-pointer"
-                  whileHover={isMobile ? undefined : { scale: 1.1, boxShadow: "0 0 20px hsl(var(--primary) / 0.3)" }}
+                  className="p-3 rounded-lg glass-card text-muted-foreground hover:text-primary transition-colors duration-200 cursor-pointer"
+                  whileHover={isMobile ? undefined : buttonHover}
                   whileTap={{ scale: 0.95 }}
                 >
                   <Icon size={20} />
@@ -128,11 +117,10 @@ const ContactSection = () => {
             ref={formRef}
             onSubmit={handleSubmit}
             className="glass-card p-8 space-y-5"
-            initial={{ opacity: 0, x: light ? 20 : 40 }}
+            initial={{ opacity: 0, x: 30 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: 0.4, duration: dur }}
+            transition={{ delay: STAGGER * 2, duration: DUR_REVEAL, ease: EASE_REVEAL }}
           >
-            {/* Honeypot field - hidden from humans */}
             <input
               type="text"
               name="website_url"
@@ -154,7 +142,7 @@ const ContactSection = () => {
                   type={field.type}
                   name={field.name}
                   required
-                  className="w-full bg-secondary/50 border border-glass-border/30 rounded-lg px-4 py-3 font-body text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
+                  className="w-full bg-secondary/50 border border-glass-border/30 rounded-lg px-4 py-3 font-body text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all duration-200"
                   placeholder={`Your ${field.label.toLowerCase()}`}
                 />
               </div>
@@ -167,15 +155,15 @@ const ContactSection = () => {
                 name="message"
                 required
                 rows={4}
-                className="w-full bg-secondary/50 border border-glass-border/30 rounded-lg px-4 py-3 font-body text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all resize-none"
+                className="w-full bg-secondary/50 border border-glass-border/30 rounded-lg px-4 py-3 font-body text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all duration-200 resize-none"
                 placeholder="Your message"
               />
             </div>
             <motion.button
               type="submit"
               className="w-full py-3 rounded-lg bg-primary text-primary-foreground font-display text-sm tracking-wider flex items-center justify-center gap-2 neon-glow"
-              whileHover={isMobile ? undefined : { scale: 1.02, boxShadow: "0 0 30px hsl(200 100% 50% / 0.5)" }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={isMobile ? undefined : buttonHover}
+              whileTap={buttonTap}
               disabled={sending}
             >
               {sending ? (
@@ -218,7 +206,7 @@ const ContactSection = () => {
             >
               <button
                 onClick={() => setShowSuccess(false)}
-                className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+                className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors duration-200"
               >
                 <X size={20} />
               </button>
@@ -253,8 +241,8 @@ const ContactSection = () => {
               <motion.button
                 className="px-8 py-3 rounded-lg bg-primary text-primary-foreground font-display text-sm tracking-wider neon-glow"
                 onClick={() => setShowSuccess(false)}
-                whileHover={isMobile ? undefined : { scale: 1.05, boxShadow: "0 0 30px hsl(200 100% 50% / 0.5)" }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={isMobile ? undefined : buttonHover}
+                whileTap={buttonTap}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}

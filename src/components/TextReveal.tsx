@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { DUR_TEXT_REVEAL, WORD_DELAY } from "@/lib/animations";
 
 interface TextRevealProps {
   text: string;
@@ -24,8 +25,8 @@ const TextReveal = ({ text, className = "", highlightWord, highlightClass = "tex
               initial={{ y: "100%", opacity: 0 }}
               animate={inView ? { y: 0, opacity: 1 } : undefined}
               transition={{
-                duration: 0.5,
-                delay: i * 0.08,
+                duration: DUR_TEXT_REVEAL,
+                delay: i * WORD_DELAY,
                 ease: [0.25, 0.46, 0.45, 0.94],
               }}
             >

@@ -1,7 +1,8 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Award, Code2, GraduationCap, Trophy, ExternalLink } from "lucide-react";
-import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { headingReveal, cardReveal, cardHover } from "@/lib/animations";
 
 const achievements = [
   {
@@ -31,24 +32,15 @@ const achievements = [
   },
 ];
 
-const ease: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
-
 const AchievementsSection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const isMobile = useIsMobile();
-  const light = useLightMotion();
 
   return (
     <section id="achievements" className="py-20 relative" ref={ref}>
       <div className="container mx-auto px-4">
-        {/* Heading */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : undefined}
-          transition={{ duration: 0.7, ease }}
-          className="text-center mb-12"
-        >
+        <motion.div {...headingReveal(inView)} className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-display tracking-wider text-foreground mb-4">
             Achievements & <span className="text-primary neon-text">Certifications</span>
           </h2>
@@ -57,19 +49,12 @@ const AchievementsSection = () => {
           </p>
         </motion.div>
 
-        {/* Cards with stagger */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
           {achievements.map((a, i) => (
             <motion.div
               key={a.title}
-              initial={{ opacity: 0, y: 25 }}
-              animate={inView ? { opacity: 1, y: 0 } : undefined}
-              transition={{ duration: 0.6, delay: 0.12 + i * 0.1, ease }}
-              whileHover={isMobile ? undefined : {
-                y: -6,
-                boxShadow: "0 0 25px hsl(var(--primary) / 0.15)",
-                transition: { duration: 0.25 },
-              }}
+              {...cardReveal(inView, i, 0.12)}
+              whileHover={isMobile ? undefined : cardHover}
               className="glass-card p-6 flex flex-col items-center text-center gap-3"
             >
               <div className="p-3 rounded-xl bg-secondary/60">

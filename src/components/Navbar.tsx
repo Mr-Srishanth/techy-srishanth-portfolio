@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
+import { buttonHover, buttonTap, DUR_REVEAL, EASE_REVEAL } from "@/lib/animations";
 
 const links = ["Home", "About", "Skills", "Projects", "My Journey", "Certificates", "Contact"];
 
@@ -61,7 +62,6 @@ const Navbar = () => {
   const [active, setActive] = useState("Home");
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Auto-detect active section via IntersectionObserver
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
     const ids = Object.values(sectionIds);
@@ -98,18 +98,17 @@ const Navbar = () => {
       className="fixed top-0 left-0 right-0 z-40 glass-card border-b border-glass-border/20 backdrop-blur-2xl"
       initial={{ y: -80 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.6, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+      transition={{ duration: DUR_REVEAL, delay: 0.2, ease: EASE_REVEAL }}
     >
       <div className="container mx-auto flex items-center justify-between h-16 px-4">
         <motion.span
           className="font-display text-lg tracking-wider text-primary neon-text cursor-pointer"
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.04 }}
           transition={{ type: "spring", stiffness: 400, damping: 20 }}
         >
           AS
         </motion.span>
 
-        {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
           {links.map((link) => (
             <MagneticLink key={link} onClick={() => scrollTo(link)} isActive={active === link}>
@@ -122,8 +121,8 @@ const Navbar = () => {
           <ThemeToggle />
           <motion.button
             className="px-5 py-2 rounded-lg font-body text-sm tracking-wider neon-border text-primary hover:bg-primary/10 transition-all duration-200"
-            whileHover={{ scale: 1.05, boxShadow: "0 0 20px hsl(var(--primary) / 0.3)" }}
-            whileTap={{ scale: 0.97 }}
+            whileHover={buttonHover}
+            whileTap={buttonTap}
             transition={{ type: "spring", stiffness: 400, damping: 20 }}
             onClick={() => scrollTo("Contact")}
           >
@@ -131,19 +130,17 @@ const Navbar = () => {
           </motion.button>
         </div>
 
-        {/* Mobile toggle */}
         <button className="md:hidden text-foreground" onClick={() => setMobileOpen(!mobileOpen)}>
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
-      {/* Mobile menu */}
       {mobileOpen && (
         <motion.div
           className="md:hidden glass-card border-t border-glass-border/20 p-4 space-y-3"
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
-          transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+          transition={{ duration: 0.3, ease: EASE_REVEAL }}
         >
           {links.map((link) => (
             <button

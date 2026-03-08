@@ -1,7 +1,8 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { BookOpen, Brain, Code2, Rocket, GripHorizontal } from "lucide-react";
-import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { headingReveal, textReveal, cardReveal, cardHover, STAGGER, EASE_REVEAL } from "@/lib/animations";
 
 const updates = [
   {
@@ -34,16 +35,12 @@ const updates = [
   },
 ];
 
-const ease: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
-
 const LearningJourneySection = () => {
   const ref = useRef(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const light = useLightMotion();
   const isMobile = useIsMobile();
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
-  // Drag state
   const [isDragging, setIsDragging] = useState(false);
   const dragStart = useRef({ x: 0, scrollLeft: 0 });
 
@@ -68,13 +65,7 @@ const LearningJourneySection = () => {
       <div className="absolute bottom-1/4 -left-40 w-[400px] h-[400px] rounded-full bg-neon-purple/5 blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto px-4 relative z-10" ref={ref}>
-        {/* Heading */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, ease }}
-          className="text-center mb-16"
-        >
+        <motion.div {...headingReveal(inView)} className="text-center mb-16">
           <p className="font-mono text-primary text-sm tracking-widest mb-2">
             {"// MY LEARNING JOURNEY"}
           </p>
@@ -83,9 +74,7 @@ const LearningJourneySection = () => {
           </h2>
           <motion.p
             className="font-body text-muted-foreground mt-4 max-w-lg mx-auto"
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ delay: 0.15, duration: 0.6, ease }}
+            {...textReveal(inView, STAGGER * 2)}
           >
             Tracking my progress as I build skills and explore new technologies every day.
           </motion.p>
@@ -93,14 +82,13 @@ const LearningJourneySection = () => {
             className="flex items-center justify-center gap-2 mt-3 text-muted-foreground/50"
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
-            transition={{ delay: 0.25, duration: 0.5, ease }}
+            transition={{ delay: STAGGER * 3, duration: 0.5, ease: EASE_REVEAL }}
           >
             <GripHorizontal size={16} />
             <span className="font-mono text-xs tracking-wider">Drag to explore</span>
           </motion.div>
         </motion.div>
 
-        {/* Draggable horizontal timeline */}
         <div className="relative">
           <div className="absolute top-[60px] left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent pointer-events-none z-0" />
 
@@ -119,9 +107,7 @@ const LearningJourneySection = () => {
               <motion.div
                 key={item.title}
                 className="shrink-0 w-[280px] sm:w-[320px] relative pt-[40px]"
-                initial={{ opacity: 0, y: 25 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.2 + i * 0.12, duration: 0.6, ease }}
+                {...cardReveal(inView, i, 0.2)}
               >
                 <div className="absolute top-[52px] left-1/2 -translate-x-1/2 z-10">
                   <div className="w-4 h-4 rounded-full bg-primary neon-glow border-2 border-background" />
@@ -130,12 +116,7 @@ const LearningJourneySection = () => {
 
                 <motion.div
                   className="glass-card p-6 mt-10 group cursor-default relative overflow-hidden rounded-xl"
-                  whileHover={isMobile ? undefined : {
-                    y: -6,
-                    boxShadow: "0 0 30px hsl(var(--primary) / 0.2)",
-                    borderColor: "hsl(var(--primary) / 0.5)",
-                    transition: { duration: 0.25 },
-                  }}
+                  whileHover={isMobile ? undefined : cardHover}
                   whileTap={isMobile ? { scale: 0.98 } : undefined}
                 >
                   <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
@@ -149,7 +130,7 @@ const LearningJourneySection = () => {
                         {item.date}
                       </span>
                     </div>
-                    <h3 className="font-display text-base font-semibold text-foreground mb-2 tracking-wider group-hover:text-primary transition-colors duration-250">
+                    <h3 className="font-display text-base font-semibold text-foreground mb-2 tracking-wider group-hover:text-primary transition-colors duration-300">
                       {item.title}
                     </h3>
                     <p className="font-body text-muted-foreground text-sm leading-relaxed">
