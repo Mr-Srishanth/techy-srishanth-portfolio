@@ -33,7 +33,7 @@ const ThemeToggle = () => {
       const cycle = (timestamp: number) => {
         if (!start) start = timestamp;
         const elapsed = timestamp - start;
-        const hue = Math.round(elapsed / 30) % 360;
+        const hue = Math.round(elapsed / 100) % 360;
         root.style.setProperty("--primary", `${hue} 100% 55%`);
         root.style.setProperty("--accent", `${(hue + 60) % 360} 100% 55%`);
         root.style.setProperty("--neon-blue", `${hue} 100% 55%`);
