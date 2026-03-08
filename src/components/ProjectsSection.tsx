@@ -26,21 +26,23 @@ const projects = [
   },
 ];
 
+const ease: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
+
 const ProjectsSection = () => {
   const ref = useRef(null);
   const light = useLightMotion();
   const isMobile = useIsMobile();
-  const inView = useInView(ref, { once: true, margin: light ? "-50px" : "-100px" });
-  const yOff = light ? 20 : 40;
+  const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
     <section id="projects" className="py-24 relative">
       <div className="absolute inset-0 grid-bg opacity-10 pointer-events-none" />
       <div className="container mx-auto px-4 relative z-10" ref={ref}>
+        {/* Heading */}
         <motion.div
-          initial={{ opacity: 0, y: yOff }}
+          initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: light ? 0.5 : 0.8 }}
+          transition={{ duration: 0.7, ease }}
           className="text-center mb-16"
         >
           <p className="font-mono text-primary text-sm tracking-widest mb-2">{"// PORTFOLIO"}</p>
@@ -49,33 +51,35 @@ const ProjectsSection = () => {
           </h2>
         </motion.div>
 
+        {/* Cards with stagger */}
         <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
           {projects.map((project, i) => (
             <motion.div
               key={project.title}
               className="glass-card p-6 group cursor-default relative overflow-hidden"
-              initial={{ opacity: 0, y: yOff }}
+              initial={{ opacity: 0, y: 25 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: i * 0.15, duration: 0.6 }}
+              transition={{ delay: 0.12 + i * 0.1, duration: 0.6, ease }}
               whileHover={isMobile ? undefined : {
-                y: -5,
+                y: -6,
                 boxShadow: "0 0 30px hsl(200 100% 50% / 0.15)",
                 borderColor: "hsl(200 100% 50% / 0.4)",
+                transition: { duration: 0.25 },
               }}
               whileTap={isMobile ? { scale: 0.98 } : undefined}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-4">
                   <Folder className="text-primary" size={28} />
                   <div className="flex gap-3">
-                    <Github size={18} className="text-muted-foreground hover:text-primary transition-colors cursor-pointer" />
-                    <ExternalLink size={18} className="text-muted-foreground hover:text-primary transition-colors cursor-pointer" />
+                    <Github size={18} className="text-muted-foreground hover:text-primary transition-colors duration-200 cursor-pointer" />
+                    <ExternalLink size={18} className="text-muted-foreground hover:text-primary transition-colors duration-200 cursor-pointer" />
                   </div>
                 </div>
 
-                <h3 className="font-display text-lg font-semibold text-foreground mb-2 tracking-wider group-hover:text-primary transition-colors">
+                <h3 className="font-display text-lg font-semibold text-foreground mb-2 tracking-wider group-hover:text-primary transition-colors duration-250">
                   {project.title}
                 </h3>
                 <p className="font-body text-muted-foreground mb-4 leading-relaxed">

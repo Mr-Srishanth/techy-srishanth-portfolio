@@ -1,12 +1,12 @@
-import { motion, useMotionValue, useTransform, useScroll } from "framer-motion";
+import { motion, useMotionValue, useTransform, useScroll, useSpring } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { toast } from "sonner";
 import profileImg from "@/assets/profile.jpg";
 import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
 
-
 const titles = ["AI & Software Developer", "Learning Python & DSA", "B.Tech CSE (AI & ML)"];
 const CURRENT_FOCUS = "Data Structures & Algorithms";
+const ease: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
 
 const HeroSection = () => {
   const [titleIdx, setTitleIdx] = useState(0);
@@ -15,8 +15,10 @@ const HeroSection = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const imgX = useTransform(mouseX, [-300, 300], [10, -10]);
-  const imgY = useTransform(mouseY, [-300, 300], [10, -10]);
+  const smoothMouseX = useSpring(mouseX, { stiffness: 50, damping: 20 });
+  const smoothMouseY = useSpring(mouseY, { stiffness: 50, damping: 20 });
+  const imgX = useTransform(smoothMouseX, [-300, 300], [8, -8]);
+  const imgY = useTransform(smoothMouseY, [-300, 300], [8, -8]);
   const isMobile = useIsMobile();
   const light = useLightMotion();
 
@@ -49,13 +51,10 @@ const HeroSection = () => {
     mouseY.set(e.clientY - rect.top - rect.height / 2);
   };
 
-  const offset = light ? 30 : 60;
-
   const { scrollY } = useScroll();
   const bgY1 = useTransform(scrollY, [0, 600], [0, -120]);
   const bgY2 = useTransform(scrollY, [0, 600], [0, -80]);
   const gridY = useTransform(scrollY, [0, 600], [0, -50]);
-  const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
 
   return (
     <section
@@ -70,9 +69,9 @@ const HeroSection = () => {
 
       <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center relative z-10">
         <motion.div
-          initial={{ opacity: 0, x: -offset }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: light ? 0.5 : 0.8, delay: 0.3 }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2, ease }}
         >
           {(() => {
             const hour = new Date().getHours();
@@ -80,23 +79,33 @@ const HeroSection = () => {
             return (
               <motion.p
                 className="font-mono text-sm text-primary mb-4 tracking-widest"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6, ease }}
               >
                 {`< ${greeting} />`}
               </motion.p>
             );
           })()}
 
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-2">
+          <motion.h1
+            className="font-display text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35, duration: 0.7, ease }}
+          >
             <span className="text-foreground">I'm </span>
             <span className="text-primary neon-text">Arrabola</span>
             <br />
             <span className="text-foreground">Srishanth</span>
-          </h1>
+          </motion.h1>
 
-          <div className="h-12 mt-4 mb-6">
+          <motion.div
+            className="h-12 mt-4 mb-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.55, duration: 0.6, ease }}
+          >
             <span className="font-mono text-lg md:text-xl text-muted-foreground">
               {displayed}
               <motion.span
@@ -105,17 +114,22 @@ const HeroSection = () => {
                 transition={{ duration: 0.5, repeat: Infinity }}
               />
             </span>
-          </div>
+          </motion.div>
 
-          <p className="font-body text-muted-foreground text-lg mb-8 max-w-md leading-relaxed">
+          <motion.p
+            className="font-body text-muted-foreground text-lg mb-8 max-w-md leading-relaxed"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.7, ease }}
+          >
             A passionate student pursuing B.Tech in CSE (AI & ML) at Vignan Institute of Technology and Science (2025–2029), building the future with code.
-          </p>
+          </motion.p>
 
           <motion.div
             className="glass-card px-4 py-2.5 rounded-lg flex items-center gap-3 max-w-md mb-8"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 1 }}
+            transition={{ duration: 0.6, delay: 0.75, ease }}
           >
             <motion.span
               className="inline-block w-2.5 h-2.5 rounded-full bg-green-500 shrink-0"
@@ -128,37 +142,43 @@ const HeroSection = () => {
             </span>
           </motion.div>
 
-          <div className="flex gap-4">
+          <motion.div
+            className="flex gap-4"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.85, duration: 0.6, ease }}
+          >
             <motion.a
               href="mailto:a.srishanth1733@gmail.com"
-              className="px-8 py-3 rounded-lg bg-primary text-primary-foreground font-body font-semibold tracking-wider neon-glow inline-block text-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="px-8 py-3 rounded-lg bg-primary text-primary-foreground font-body font-semibold tracking-wider neon-glow inline-block text-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-shadow duration-200"
               whileHover={isMobile ? undefined : { scale: 1.05, boxShadow: "0 0 30px hsl(var(--primary) / 0.5)" }}
-              whileTap={{ scale: 0.95 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 400, damping: 20 }}
             >
               Hire Me
             </motion.a>
             <motion.button
-              className="px-8 py-3 rounded-lg neon-border text-muted-foreground font-body font-semibold tracking-wider opacity-50 cursor-not-allowed"
-              whileTap={{ scale: 0.95 }}
+              className="px-8 py-3 rounded-lg neon-border text-muted-foreground font-body font-semibold tracking-wider opacity-50 cursor-not-allowed transition-shadow duration-200"
+              whileTap={{ scale: 0.97 }}
               onClick={() => toast("Resume coming soon!")}
             >
               Download CV
             </motion.button>
-          </div>
+          </motion.div>
         </motion.div>
 
         <motion.div
           className="flex justify-center"
-          initial={{ opacity: 0, x: offset }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: light ? 0.5 : 0.8, delay: 0.5 }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.4, ease }}
         >
           <div className="relative">
             {!light && (
               <motion.div
                 className="absolute inset-0 rounded-full bg-primary/20 blur-[60px]"
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 4, repeat: Infinity }}
+                animate={{ scale: [1, 1.08, 1] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
               />
             )}
             <motion.div

@@ -34,14 +34,14 @@ const updates = [
   },
 ];
 
+const ease: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
+
 const LearningJourneySection = () => {
   const ref = useRef(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const light = useLightMotion();
   const isMobile = useIsMobile();
-  const inView = useInView(ref, { once: true, margin: light ? "-50px" : "-100px" });
-  const yOff = light ? 20 : 40;
-  const dur = light ? 0.5 : 0.8;
+  const inView = useInView(ref, { once: true, margin: "-80px" });
 
   // Drag state
   const [isDragging, setIsDragging] = useState(false);
@@ -68,10 +68,11 @@ const LearningJourneySection = () => {
       <div className="absolute bottom-1/4 -left-40 w-[400px] h-[400px] rounded-full bg-neon-purple/5 blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto px-4 relative z-10" ref={ref}>
+        {/* Heading */}
         <motion.div
-          initial={{ opacity: 0, y: yOff }}
+          initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: dur }}
+          transition={{ duration: 0.7, ease }}
           className="text-center mb-16"
         >
           <p className="font-mono text-primary text-sm tracking-widest mb-2">
@@ -80,21 +81,29 @@ const LearningJourneySection = () => {
           <h2 className="font-display text-3xl md:text-4xl font-bold neon-text text-primary">
             Continuous Growth
           </h2>
-          <p className="font-body text-muted-foreground mt-4 max-w-lg mx-auto">
+          <motion.p
+            className="font-body text-muted-foreground mt-4 max-w-lg mx-auto"
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ delay: 0.15, duration: 0.6, ease }}
+          >
             Tracking my progress as I build skills and explore new technologies every day.
-          </p>
-          <div className="flex items-center justify-center gap-2 mt-3 text-muted-foreground/50">
+          </motion.p>
+          <motion.div
+            className="flex items-center justify-center gap-2 mt-3 text-muted-foreground/50"
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ delay: 0.25, duration: 0.5, ease }}
+          >
             <GripHorizontal size={16} />
             <span className="font-mono text-xs tracking-wider">Drag to explore</span>
-          </div>
+          </motion.div>
         </motion.div>
 
         {/* Draggable horizontal timeline */}
         <div className="relative">
-          {/* Horizontal line */}
           <div className="absolute top-[60px] left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent pointer-events-none z-0" />
 
-          {/* Scroll container */}
           <div
             ref={scrollRef}
             onMouseDown={handleMouseDown}
@@ -104,37 +113,32 @@ const LearningJourneySection = () => {
             className={`flex gap-6 overflow-x-auto pb-4 pt-2 scrollbar-hide ${isDragging ? "cursor-grabbing select-none" : "cursor-grab"}`}
             style={{ scrollBehavior: isDragging ? "auto" : "smooth", scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {/* Spacer start */}
             <div className="shrink-0 w-[calc(50vw-200px)] hidden md:block" />
 
             {updates.map((item, i) => (
               <motion.div
                 key={item.title}
                 className="shrink-0 w-[280px] sm:w-[320px] relative pt-[40px]"
-                initial={{ opacity: 0, y: light ? 15 : 30 }}
+                initial={{ opacity: 0, y: 25 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: i * 0.15, duration: 0.6 }}
+                transition={{ delay: 0.2 + i * 0.12, duration: 0.6, ease }}
               >
-                {/* Timeline dot */}
                 <div className="absolute top-[52px] left-1/2 -translate-x-1/2 z-10">
                   <div className="w-4 h-4 rounded-full bg-primary neon-glow border-2 border-background" />
                 </div>
-
-                {/* Connector line down */}
                 <div className="absolute top-[68px] left-1/2 -translate-x-px w-[2px] h-6 bg-gradient-to-b from-primary/60 to-transparent" />
 
-                {/* Card */}
                 <motion.div
                   className="glass-card p-6 mt-10 group cursor-default relative overflow-hidden rounded-xl"
                   whileHover={isMobile ? undefined : {
                     y: -6,
-                    boxShadow: "0 0 40px hsl(var(--primary) / 0.25)",
+                    boxShadow: "0 0 30px hsl(var(--primary) / 0.2)",
                     borderColor: "hsl(var(--primary) / 0.5)",
+                    transition: { duration: 0.25 },
                   }}
                   whileTap={isMobile ? { scale: 0.98 } : undefined}
                 >
-                  {/* Gradient overlay */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                  <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
 
                   <div className="relative z-10">
                     <div className="flex items-center justify-between mb-3">
@@ -145,7 +149,7 @@ const LearningJourneySection = () => {
                         {item.date}
                       </span>
                     </div>
-                    <h3 className="font-display text-base font-semibold text-foreground mb-2 tracking-wider group-hover:text-primary transition-colors">
+                    <h3 className="font-display text-base font-semibold text-foreground mb-2 tracking-wider group-hover:text-primary transition-colors duration-250">
                       {item.title}
                     </h3>
                     <p className="font-body text-muted-foreground text-sm leading-relaxed">
@@ -156,13 +160,11 @@ const LearningJourneySection = () => {
               </motion.div>
             ))}
 
-            {/* Spacer end */}
             <div className="shrink-0 w-[calc(50vw-200px)] hidden md:block" />
           </div>
         </div>
       </div>
 
-      {/* Hide scrollbar */}
       <style>{`.scrollbar-hide::-webkit-scrollbar { display: none; }`}</style>
     </section>
   );
