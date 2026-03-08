@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 const themes = [
   "blue", "purple", "green", "red", "orange", "pink", "cyan",
-  "gold", "lime", "violet", "rose", "teal", "amber", "indigo", "rainbow",
+  "gold", "lime", "violet", "rose", "teal", "amber", "indigo", "rainbow", "light",
 ] as const;
 type Theme = (typeof themes)[number];
 
