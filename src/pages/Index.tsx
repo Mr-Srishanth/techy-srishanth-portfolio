@@ -64,7 +64,7 @@ const Index = () => {
           <SectionReveal direction="right" delay={0.1}>
             <ProjectsSection />
           </SectionReveal>
-          <SectionReveal>
+          <SectionReveal parallax={false}>
             <TimeMachineTimeline />
           </SectionReveal>
           <SectionReveal>

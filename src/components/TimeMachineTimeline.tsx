@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { motion, useScroll, useTransform, useInView, useSpring } from "framer-motion";
 import { useRef } from "react";
 import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
 import { Rocket, GraduationCap, Code2, Brain, Trophy, Star, Shield, CheckCircle } from "lucide-react";
@@ -88,13 +88,15 @@ const TimeMachineTimeline = () => {
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start 0.85", "end 0.3"],
+    offset: ["start end", "end start"],
   });
 
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 80, damping: 30, restDelta: 0.001 });
+
   // Parallax layers
-  const bgY1 = useTransform(scrollYProgress, [0, 1], [80, -80]);
-  const bgY2 = useTransform(scrollYProgress, [0, 1], [40, -120]);
-  const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  const bgY1 = useTransform(smoothProgress, [0, 1], [80, -80]);
+  const bgY2 = useTransform(smoothProgress, [0, 1], [40, -120]);
+  const lineHeight = useTransform(smoothProgress, [0.05, 0.85], ["0%", "100%"]);
 
   return (
     <section id="timeline" className="py-24 relative overflow-hidden" ref={sectionRef}>
@@ -127,10 +129,10 @@ const TimeMachineTimeline = () => {
         {/* Timeline */}
         <div className="relative max-w-2xl mx-auto">
           {/* Animated center line */}
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-[2px] bg-muted/20 md:-translate-x-px">
+          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-[2px] bg-muted/20 md:-translate-x-px overflow-hidden">
             <motion.div
-              className="w-full bg-gradient-to-b from-primary via-neon-cyan to-neon-purple"
-              style={{ height: lineHeight }}
+              className="w-full bg-gradient-to-b from-primary via-neon-cyan to-neon-purple origin-top"
+              style={{ height: lineHeight, willChange: "height" }}
             />
           </div>
 
