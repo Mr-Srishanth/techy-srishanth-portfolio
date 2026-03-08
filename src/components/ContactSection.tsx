@@ -81,16 +81,23 @@ const ContactSection = () => {
             ))}
 
             <div className="flex gap-4 pt-4">
-              <motion.a
-                href="https://github.com/Mr-Srishanth"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-3 rounded-lg glass-card text-muted-foreground hover:text-primary transition-colors"
-                whileHover={{ scale: 1.1, boxShadow: "0 0 20px hsl(200 100% 50% / 0.3)" }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Github size={20} />
-              </motion.a>
+              {[
+                { Icon: Github, href: "https://github.com/Mr-Srishanth" },
+                { Icon: Linkedin, href: "https://www.linkedin.com/in/a-srishanth-300605397" },
+                { Icon: Instagram, href: "https://instagram.com/mr.srishanth14" },
+              ].map(({ Icon, href }) => (
+                <motion.a
+                  key={href}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 rounded-lg glass-card text-muted-foreground hover:text-primary transition-colors"
+                  whileHover={{ scale: 1.1, boxShadow: "0 0 20px hsl(200 100% 50% / 0.3)" }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Icon size={20} />
+                </motion.a>
+              ))}
             </div>
           </motion.div>
 
