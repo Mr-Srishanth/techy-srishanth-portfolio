@@ -61,8 +61,14 @@ const Index = () => {
           <SectionReveal delay={0.1}>
             <SkillConstellation />
           </SectionReveal>
+          <SectionReveal direction="left" delay={0.1}>
+            <RPGSkillTree />
+          </SectionReveal>
           <SectionReveal direction="right" delay={0.1}>
             <ProjectsSection />
+          </SectionReveal>
+          <SectionReveal>
+            <TimeMachineTimeline />
           </SectionReveal>
           <SectionReveal>
             <LearningJourneySection />
