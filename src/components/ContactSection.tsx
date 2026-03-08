@@ -92,7 +92,7 @@ const ContactSection = () => {
                 <motion.a
                   key={href}
                   href={href}
-                  target="_blank"
+                  target={socialLinkTarget}
                   rel="noopener noreferrer"
                   aria-label={label}
                   className="p-3 rounded-lg glass-card text-muted-foreground hover:text-primary transition-colors cursor-pointer"
