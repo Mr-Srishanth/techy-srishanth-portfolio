@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Palette } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -8,6 +8,8 @@ const themes = [
 ] as const;
 type Theme = (typeof themes)[number];
 
+const RAINBOW_HUES = [0, 30, 60, 120, 180, 210, 270, 330];
+
 const ThemeToggle = () => {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== "undefined") {
@@ -15,6 +17,7 @@ const ThemeToggle = () => {
     }
     return "blue";
   });
+  const rafRef = useRef<number>(0);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -23,6 +26,36 @@ const ThemeToggle = () => {
       root.classList.add(`theme-${theme}`);
     }
     localStorage.setItem("portfolio-theme", theme);
+
+    // Rainbow cycling
+    if (theme === "rainbow") {
+      let start: number | null = null;
+      const cycle = (timestamp: number) => {
+        if (!start) start = timestamp;
+        const elapsed = timestamp - start;
+        const hue = Math.round(elapsed / 30) % 360;
+        root.style.setProperty("--primary", `${hue} 100% 55%`);
+        root.style.setProperty("--accent", `${(hue + 60) % 360} 100% 55%`);
+        root.style.setProperty("--neon-blue", `${hue} 100% 55%`);
+        root.style.setProperty("--neon-cyan", `${(hue + 120) % 360} 100% 50%`);
+        root.style.setProperty("--neon-purple", `${(hue + 240) % 360} 100% 60%`);
+        root.style.setProperty("--ring", `${hue} 100% 55%`);
+        root.style.setProperty("--border", `${hue} 60% 25%`);
+        root.style.setProperty("--glass-border", `${hue} 50% 28%`);
+        rafRef.current = requestAnimationFrame(cycle);
+      };
+      rafRef.current = requestAnimationFrame(cycle);
+      return () => {
+        cancelAnimationFrame(rafRef.current);
+        // Reset inline styles when leaving rainbow
+        const vars = ["--primary", "--accent", "--neon-blue", "--neon-cyan", "--neon-purple", "--ring", "--border", "--glass-border"];
+        vars.forEach((v) => root.style.removeProperty(v));
+      };
+    } else {
+      // Clean up any leftover inline styles from rainbow
+      const vars = ["--primary", "--accent", "--neon-blue", "--neon-cyan", "--neon-purple", "--ring", "--border", "--glass-border"];
+      vars.forEach((v) => root.style.removeProperty(v));
+    }
   }, [theme]);
 
   const cycle = () => {
@@ -45,7 +78,7 @@ const ThemeToggle = () => {
     teal: "text-[hsl(170,100%,40%)]",
     amber: "text-[hsl(38,100%,55%)]",
     indigo: "text-[hsl(240,80%,60%)]",
-    rainbow: "text-[hsl(300,100%,60%)]",
+    rainbow: "",
   };
 
   const isRainbow = theme === "rainbow";
