@@ -22,7 +22,20 @@ const ContactSection = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formRef.current) return;
+
+    // Honeypot check
+    const honeypot = formRef.current.querySelector<HTMLInputElement>('[name="website_url"]');
+    if (honeypot && honeypot.value) return;
+
+    // Rate limit: 60s cooldown
+    const now = Date.now();
+    if (now - lastSubmitTime < 60000) {
+      toast.error("Please wait a moment before sending another message.");
+      return;
+    }
+
     setSending(true);
+    setLastSubmitTime(now);
     emailjs
       .sendForm("service_mxd1a9e", "template_qpqqc1k", formRef.current, "JTN6BSs5DTYJqVJbL")
       .then(() => {
