@@ -236,21 +236,6 @@
   --sidebar-ring: 330 100% 60%;
 }
 
-.theme-cyan {
-  --primary: 185 100% 50%;
-  --primary-foreground: 220 20% 4%;
-  --accent: 185 100% 50%;
-  --accent-foreground: 220 20% 4%;
-  --neon-blue: 185 100% 50%;
-  --neon-cyan: 195 100% 50%;
-  --neon-purple: 170 90% 45%;
-  --border: 185 60% 22%;
-  --glass-border: 185 60% 25%;
-  --ring: 185 100% 50%;
-  --sidebar-primary: 185 100% 50%;
-  --sidebar-border: 185 60% 22%;
-  --sidebar-ring: 185 100% 50%;
-}
 
 .theme-gold {
   --primary: 45 100% 50%;
