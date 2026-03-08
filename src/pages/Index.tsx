@@ -35,6 +35,7 @@ const Index = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
+          <ParticleBackground />
           <Navbar />
           <HeroSection />
           <SectionReveal>
