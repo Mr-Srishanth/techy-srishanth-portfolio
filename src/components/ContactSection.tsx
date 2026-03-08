@@ -98,6 +98,7 @@ const ContactSection = () => {
 
           {/* Form */}
           <motion.form
+            ref={formRef}
             onSubmit={handleSubmit}
             className="glass-card p-8 space-y-5"
             initial={{ opacity: 0, x: 40 }}
