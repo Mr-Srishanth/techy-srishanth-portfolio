@@ -1,5 +1,6 @@
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
+import { toast } from "sonner";
 import profileImg from "@/assets/profile.jpg";
 
 const titles = ["AI & Software Developer", "Learning Python & DSA", "B.Tech CSE (AI & ML)"];
