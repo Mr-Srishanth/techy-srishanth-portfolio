@@ -58,9 +58,6 @@ const Index = () => {
           <SectionReveal delay={0.05}>
             <SkillRadarChart />
           </SectionReveal>
-          <SectionReveal delay={0.1}>
-            <SkillConstellation />
-          </SectionReveal>
           <SectionReveal direction="left" delay={0.1}>
             <RPGSkillTree />
           </SectionReveal>
