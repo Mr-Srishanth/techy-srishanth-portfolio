@@ -5,7 +5,7 @@ import pythonLogo from "@/assets/logos/python.svg";
 import reactLogo from "@/assets/logos/react.svg";
 import gitLogo from "@/assets/logos/git.svg";
 import aimlLogo from "@/assets/logos/aiml.png";
-import { headingReveal, cardReveal, cardHover, EASE_REVEAL } from "@/lib/animations";
+import { headingReveal, cardReveal, cardHover, EASE, DUR_SKILL_BAR } from "@/lib/animations";
 
 const skills = [
   { name: "Python", level: 70, icon: "🐍", logo: pythonLogo },
@@ -58,7 +58,7 @@ const SkillsSection = () => {
                   className="h-full rounded-full bg-gradient-to-r from-primary to-neon-cyan"
                   initial={{ width: 0 }}
                   animate={inView ? { width: `${skill.level}%` } : {}}
-                  transition={{ duration: 1, delay: 0.4 + i * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  transition={{ duration: DUR_SKILL_BAR, delay: 0.4 + i * 0.08, ease: EASE }}
                   style={{ boxShadow: "0 0 10px hsl(var(--primary) / 0.5)" }}
                 />
               </div>

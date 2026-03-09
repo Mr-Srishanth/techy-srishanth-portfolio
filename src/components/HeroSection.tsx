@@ -57,7 +57,7 @@ const HeroSection = () => {
   const gridY = useTransform(scrollY, [0, 600], [0, -50]);
 
   // Stagger delays for hero elements
-  const d = (i: number) => 0.2 + i * STAGGER;
+  const d = (i: number) => i * STAGGER;
 
   return (
     <section
