@@ -5,7 +5,7 @@ import pythonLogo from "@/assets/logos/python.svg";
 import reactLogo from "@/assets/logos/react.svg";
 import gitLogo from "@/assets/logos/git.svg";
 import aimlLogo from "@/assets/logos/aiml.png";
-import { headingReveal, cardReveal, cardHover, EASE_REVEAL } from "@/lib/animations";
+import { headingReveal, cardReveal, cardHover, EASE, DUR_SKILL_BAR } from "@/lib/animations";
 
 const skills = [
   { name: "Python", level: 70, icon: "🐍", logo: pythonLogo },
