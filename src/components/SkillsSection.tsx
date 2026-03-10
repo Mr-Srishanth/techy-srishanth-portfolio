@@ -36,9 +36,9 @@ const SkillsSection = () => {
           {skills.map((skill, i) => (
             <motion.div
               key={skill.name}
-              className="glass-card p-6 group"
+              className={`glass-card p-6 group ${skill.upcoming ? "opacity-60" : ""}`}
               {...cardReveal(inView, i, 0.12)}
-              whileHover={isMobile ? undefined : cardHover}
+              whileHover={isMobile ? undefined : skill.upcoming ? undefined : cardHover}
               whileTap={isMobile ? { scale: 0.98 } : undefined}
             >
               <div className="flex items-center justify-between mb-3">
@@ -52,8 +52,15 @@ const SkillsSection = () => {
                     {skill.name}
                   </span>
                 </div>
-                <span className="font-mono text-sm text-primary">
-                  {skill.upcoming ? "Learning Soon" : `${skill.level}%`}
+                <span className="font-mono text-sm text-primary flex items-center gap-1.5">
+                  {skill.upcoming ? (
+                    <>
+                      <Lock size={14} className="text-muted-foreground" />
+                      <span className="text-muted-foreground">Learning Soon</span>
+                    </>
+                  ) : (
+                    `${skill.level}%`
+                  )}
                 </span>
               </div>
               <div className="h-2 rounded-full bg-secondary overflow-hidden">
@@ -62,7 +69,7 @@ const SkillsSection = () => {
                   initial={{ width: 0 }}
                   animate={inView ? { width: `${skill.level}%` } : {}}
                   transition={{ duration: DUR_SKILL_BAR, delay: 0.4 + i * 0.08, ease: EASE }}
-                  style={{ boxShadow: "0 0 10px hsl(var(--primary) / 0.5)" }}
+                  style={{ boxShadow: skill.upcoming ? "none" : "0 0 10px hsl(var(--primary) / 0.5)" }}
                 />
               </div>
             </motion.div>

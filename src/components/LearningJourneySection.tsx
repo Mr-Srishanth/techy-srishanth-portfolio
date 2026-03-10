@@ -7,6 +7,13 @@ import { headingReveal, textReveal, cardReveal, cardHover, STAGGER, EASE_REVEAL 
 const updates = [
   {
     icon: Code2,
+    title: "C Programming",
+    desc: "Mastered core C programming concepts including pointers, memory management, and systems programming.",
+    date: "Completed ✅",
+    color: "from-primary/20 to-primary/5",
+  },
+  {
+    icon: Code2,
     title: "Learning Python & Data Structures",
     desc: "Currently improving programming fundamentals and problem-solving skills.",
     date: "Ongoing",

@@ -13,7 +13,8 @@ const RAINBOW_HUES = [0, 30, 60, 120, 180, 210, 270, 330];
 const ThemeToggle = () => {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== "undefined") {
-      return (localStorage.getItem("portfolio-theme") as Theme) || "blue";
+      const saved = localStorage.getItem("portfolio-theme") as Theme | null;
+      if (saved && themes.includes(saved)) return saved;
     }
     return "blue";
   });
