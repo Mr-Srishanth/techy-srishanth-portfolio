@@ -51,7 +51,9 @@ const SkillsSection = () => {
                     {skill.name}
                   </span>
                 </div>
-                <span className="font-mono text-sm text-primary">{skill.level}%</span>
+                <span className="font-mono text-sm text-primary">
+                  {skill.upcoming ? "Learning Soon" : `${skill.level}%`}
+                </span>
               </div>
               <div className="h-2 rounded-full bg-secondary overflow-hidden">
                 <motion.div
