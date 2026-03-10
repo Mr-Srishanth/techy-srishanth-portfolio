@@ -8,9 +8,9 @@ import aimlLogo from "@/assets/logos/aiml.png";
 import { headingReveal, cardReveal, cardHover, EASE, DUR_SKILL_BAR } from "@/lib/animations";
 
 const skills = [
+  { name: "C Programming", level: 90, icon: "⚙️" },
   { name: "Python", level: 50, icon: "🐍", logo: pythonLogo },
   { name: "Data Structures", level: 25, icon: "🏗️" },
-  { name: "C Programming", level: 90, icon: "⚙️" },
   { name: "Machine Learning", level: 10, icon: "🤖", logo: aimlLogo },
   { name: "React", level: 0, icon: "⚛️", logo: reactLogo, upcoming: true },
   { name: "Git", level: 0, icon: "🧩", logo: gitLogo, upcoming: true },
