@@ -1,5 +1,6 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { Lock } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import pythonLogo from "@/assets/logos/python.svg";
 import reactLogo from "@/assets/logos/react.svg";
@@ -8,9 +9,9 @@ import aimlLogo from "@/assets/logos/aiml.png";
 import { headingReveal, cardReveal, cardHover, EASE, DUR_SKILL_BAR } from "@/lib/animations";
 
 const skills = [
+  { name: "C Programming", level: 90, icon: "⚙️" },
   { name: "Python", level: 50, icon: "🐍", logo: pythonLogo },
   { name: "Data Structures", level: 25, icon: "🏗️" },
-  { name: "C Programming", level: 90, icon: "⚙️" },
   { name: "Machine Learning", level: 10, icon: "🤖", logo: aimlLogo },
   { name: "React", level: 0, icon: "⚛️", logo: reactLogo, upcoming: true },
   { name: "Git", level: 0, icon: "🧩", logo: gitLogo, upcoming: true },
@@ -35,9 +36,9 @@ const SkillsSection = () => {
           {skills.map((skill, i) => (
             <motion.div
               key={skill.name}
-              className="glass-card p-6 group"
+              className={`glass-card p-6 group ${skill.upcoming ? "opacity-60" : ""}`}
               {...cardReveal(inView, i, 0.12)}
-              whileHover={isMobile ? undefined : cardHover}
+              whileHover={isMobile ? undefined : skill.upcoming ? undefined : cardHover}
               whileTap={isMobile ? { scale: 0.98 } : undefined}
             >
               <div className="flex items-center justify-between mb-3">
@@ -51,8 +52,15 @@ const SkillsSection = () => {
                     {skill.name}
                   </span>
                 </div>
-                <span className="font-mono text-sm text-primary">
-                  {skill.upcoming ? "Learning Soon" : `${skill.level}%`}
+                <span className="font-mono text-sm text-primary flex items-center gap-1.5">
+                  {skill.upcoming ? (
+                    <>
+                      <Lock size={14} className="text-muted-foreground" />
+                      <span className="text-muted-foreground">Learning Soon</span>
+                    </>
+                  ) : (
+                    `${skill.level}%`
+                  )}
                 </span>
               </div>
               <div className="h-2 rounded-full bg-secondary overflow-hidden">
@@ -61,7 +69,7 @@ const SkillsSection = () => {
                   initial={{ width: 0 }}
                   animate={inView ? { width: `${skill.level}%` } : {}}
                   transition={{ duration: DUR_SKILL_BAR, delay: 0.4 + i * 0.08, ease: EASE }}
-                  style={{ boxShadow: "0 0 10px hsl(var(--primary) / 0.5)" }}
+                  style={{ boxShadow: skill.upcoming ? "none" : "0 0 10px hsl(var(--primary) / 0.5)" }}
                 />
               </div>
             </motion.div>
