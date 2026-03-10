@@ -8,12 +8,12 @@ import aimlLogo from "@/assets/logos/aiml.png";
 import { headingReveal, cardReveal, cardHover, EASE, DUR_SKILL_BAR } from "@/lib/animations";
 
 const skills = [
-  { name: "Python", level: 70, icon: "🐍", logo: pythonLogo },
-  { name: "Data Structures", level: 55, icon: "🏗️" },
-  { name: "C Programming", level: 60, icon: "⚙️" },
-  { name: "React", level: 75, icon: "⚛️", logo: reactLogo },
-  { name: "Machine Learning (Basics)", level: 40, icon: "🤖", logo: aimlLogo },
-  { name: "Git", level: 65, icon: "🧩", logo: gitLogo },
+  { name: "Python", level: 50, icon: "🐍", logo: pythonLogo },
+  { name: "Data Structures", level: 25, icon: "🏗️" },
+  { name: "C Programming", level: 90, icon: "⚙️" },
+  { name: "Machine Learning", level: 10, icon: "🤖", logo: aimlLogo },
+  { name: "React", level: 0, icon: "⚛️", logo: reactLogo, upcoming: true },
+  { name: "Git", level: 0, icon: "🧩", logo: gitLogo, upcoming: true },
 ];
 
 const SkillsSection = () => {
@@ -51,7 +51,9 @@ const SkillsSection = () => {
                     {skill.name}
                   </span>
                 </div>
-                <span className="font-mono text-sm text-primary">{skill.level}%</span>
+                <span className="font-mono text-sm text-primary">
+                  {skill.upcoming ? "Learning Soon" : `${skill.level}%`}
+                </span>
               </div>
               <div className="h-2 rounded-full bg-secondary overflow-hidden">
                 <motion.div
