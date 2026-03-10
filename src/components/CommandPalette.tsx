@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ArrowRight, Palette, Navigation } from "lucide-react";
 
@@ -12,55 +12,104 @@ const sections = [
   { label: "Contact", id: "contact" },
 ];
 
-const themes = [
-  "blue", "purple", "green", "red", "orange", "pink",
-  "gold", "lime", "indigo", "rainbow", "light",
+export const themes = [
+  "blue", "rainbow", "orange", "green", "gold",
+  "lime", "purple", "cyan", "red", "light",
 ] as const;
+export type Theme = (typeof themes)[number];
 
 const CommandPalette = () => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const toggle = useCallback(() => {
     setOpen((v) => !v);
     setQuery("");
+    setSelectedIndex(0);
   }, []);
+
+  // Build filtered items list
+  const q = query.toLowerCase();
+  const filteredSections = sections.filter((s) => s.label.toLowerCase().includes(q));
+  const filteredThemes = themes.filter((t) => t.includes(q));
+  const showSections = q === "" || filteredSections.length > 0;
+  const showThemes = q === "" || filteredThemes.length > 0;
+
+  // Flat list of all visible items for keyboard nav
+  type Item = { type: "section"; id: string; label: string } | { type: "theme"; name: string };
+  const items: Item[] = [];
+  if (showSections) filteredSections.forEach((s) => items.push({ type: "section", id: s.id, label: s.label }));
+  if (showThemes) filteredThemes.forEach((t) => items.push({ type: "theme", name: t }));
+
+  const totalItems = items.length;
+
+  const navigateTo = useCallback((id: string) => {
+    setOpen(false);
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
+  const applyTheme = useCallback((theme: string) => {
+    setOpen(false);
+    const root = document.documentElement;
+    themes.forEach((t) => root.classList.remove(`theme-${t}`));
+    if (theme !== "blue") root.classList.add(`theme-${theme}`);
+    localStorage.setItem("portfolio-theme", theme);
+    window.dispatchEvent(new StorageEvent("storage", { key: "portfolio-theme", newValue: theme }));
+  }, []);
+
+  const executeItem = useCallback((item: Item) => {
+    if (item.type === "section") navigateTo(item.id);
+    else applyTheme(item.name);
+  }, [navigateTo, applyTheme]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
         toggle();
+        return;
       }
-      if (e.key === "Escape") setOpen(false);
+      if (!open) return;
+
+      if (e.key === "Escape") {
+        setOpen(false);
+        return;
+      }
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setSelectedIndex((i) => (i + 1) % totalItems);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setSelectedIndex((i) => (i - 1 + totalItems) % totalItems);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (items[selectedIndex]) executeItem(items[selectedIndex]);
+      } else if (e.key >= "1" && e.key <= "9") {
+        // Number keys for themes (1-9)
+        const themeIndex = parseInt(e.key) - 1;
+        if (themeIndex < themes.length) {
+          e.preventDefault();
+          applyTheme(themes[themeIndex]);
+        }
+      } else if (e.key === "0") {
+        // 0 = 10th theme (light)
+        if (themes.length >= 10) {
+          e.preventDefault();
+          applyTheme(themes[9]);
+        }
+      }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [toggle]);
+  }, [toggle, open, totalItems, selectedIndex, items, executeItem, applyTheme]);
 
-  const q = query.toLowerCase();
+  // Reset index when query changes
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [query]);
 
-  const filteredSections = sections.filter((s) =>
-    s.label.toLowerCase().includes(q)
-  );
-  const filteredThemes = themes.filter((t) => t.includes(q));
-  const showThemes = q === "" || filteredThemes.length > 0;
-  const showSections = q === "" || filteredSections.length > 0;
-
-  const navigateTo = (id: string) => {
-    setOpen(false);
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const applyTheme = (theme: string) => {
-    setOpen(false);
-    const root = document.documentElement;
-    themes.forEach((t) => root.classList.remove(`theme-${t}`));
-    if (theme !== "blue") root.classList.add(`theme-${theme}`);
-    localStorage.setItem("portfolio-theme", theme);
-    // Force re-render of ThemeToggle by dispatching storage event
-    window.dispatchEvent(new StorageEvent("storage", { key: "portfolio-theme", newValue: theme }));
-  };
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   return (
     <AnimatePresence>
@@ -96,24 +145,33 @@ const CommandPalette = () => {
                 </kbd>
               </div>
 
-              <div className="max-h-[300px] overflow-y-auto p-2">
+              <div className="max-h-[300px] overflow-y-auto p-2" ref={scrollRef}>
                 {/* Navigate section */}
                 {showSections && (
                   <div className="mb-2">
                     <p className="px-2 py-1 text-[10px] uppercase tracking-widest text-muted-foreground font-mono">
                       Navigate
                     </p>
-                    {filteredSections.map((s) => (
-                      <button
-                        key={s.id}
-                        onClick={() => navigateTo(s.id)}
-                        className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-body text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
-                      >
-                        <Navigation size={14} className="text-muted-foreground" />
-                        {s.label}
-                        <ArrowRight size={12} className="ml-auto text-muted-foreground" />
-                      </button>
-                    ))}
+                    {filteredSections.map((s) => {
+                      const idx = items.findIndex((i) => i.type === "section" && i.id === s.id);
+                      const isSelected = idx === selectedIndex;
+                      return (
+                        <button
+                          key={s.id}
+                          onClick={() => navigateTo(s.id)}
+                          onMouseEnter={() => setSelectedIndex(idx)}
+                          className={`flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-body transition-colors ${
+                            isSelected
+                              ? "bg-primary/20 text-primary"
+                              : "text-foreground hover:bg-primary/10 hover:text-primary"
+                          }`}
+                        >
+                          <Navigation size={14} className="text-muted-foreground" />
+                          {s.label}
+                          <ArrowRight size={12} className="ml-auto text-muted-foreground" />
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
 
@@ -121,19 +179,32 @@ const CommandPalette = () => {
                 {showThemes && (
                   <div>
                     <p className="px-2 py-1 text-[10px] uppercase tracking-widest text-muted-foreground font-mono">
-                      Themes
+                      Themes (1-0)
                     </p>
                     <div className="grid grid-cols-2 gap-1">
-                      {filteredThemes.map((t) => (
-                        <button
-                          key={t}
-                          onClick={() => applyTheme(t)}
-                          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-body text-foreground hover:bg-primary/10 hover:text-primary transition-colors capitalize"
-                        >
-                          <Palette size={14} className="text-muted-foreground" />
-                          {t}
-                        </button>
-                      ))}
+                      {filteredThemes.map((t) => {
+                        const idx = items.findIndex((i) => i.type === "theme" && i.name === t);
+                        const isSelected = idx === selectedIndex;
+                        const themeNum = themes.indexOf(t) + 1;
+                        return (
+                          <button
+                            key={t}
+                            onClick={() => applyTheme(t)}
+                            onMouseEnter={() => setSelectedIndex(idx)}
+                            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-body transition-colors capitalize ${
+                              isSelected
+                                ? "bg-primary/20 text-primary"
+                                : "text-foreground hover:bg-primary/10 hover:text-primary"
+                            }`}
+                          >
+                            <Palette size={14} className="text-muted-foreground" />
+                            {t}
+                            <span className="ml-auto text-[10px] font-mono text-muted-foreground">
+                              {themeNum <= 9 ? themeNum : 0}
+                            </span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -149,6 +220,7 @@ const CommandPalette = () => {
               <div className="px-4 py-2 border-t border-border flex items-center gap-4 text-[10px] text-muted-foreground font-mono">
                 <span>↑↓ Navigate</span>
                 <span>↵ Select</span>
+                <span>1-0 Theme</span>
                 <span>ESC Close</span>
               </div>
             </div>
