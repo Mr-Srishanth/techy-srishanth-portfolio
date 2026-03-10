@@ -54,8 +54,11 @@
 }
 
 @layer base {
-  * {
+  *,
+  *::before,
+  *::after {
     @apply border-border;
+    transition: background-color 400ms ease, color 400ms ease, border-color 400ms ease, box-shadow 400ms ease, fill 400ms ease, stroke 400ms ease;
   }
   body {
     @apply bg-background text-foreground font-body antialiased;
