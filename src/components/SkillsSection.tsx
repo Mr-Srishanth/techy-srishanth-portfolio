@@ -1,5 +1,6 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { Lock } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import pythonLogo from "@/assets/logos/python.svg";
 import reactLogo from "@/assets/logos/react.svg";
