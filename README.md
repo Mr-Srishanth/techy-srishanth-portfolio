@@ -1,73 +1,97 @@
-# Welcome to your Lovable project
+# 🌐 Personal Portfolio Website
 
-## Project info
+This repository contains the source code for my personal developer portfolio.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+The website showcases my skills, projects, and learning journey as a Computer Science student focused on Artificial Intelligence and Software Development.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 👨‍💻 About the Portfolio
 
-**Use Lovable**
+This portfolio website highlights:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+* My technical skills
+* My featured projects
+* My learning progress
+* Ways to contact me
 
-Changes made via Lovable will be committed automatically to this repo.
+The goal of this website is to create a professional online presence and demonstrate my development work.
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## ✨ Features
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+* Modern developer portfolio design
+* Multiple theme system
+* Command palette (Ctrl + K)
+* Skills section with progress bars
+* Project showcase
+* Learning journey timeline
+* Smooth animations
+* Responsive layout for desktop and mobile
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 🛠 Technologies Used
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+* HTML
+* CSS
+* JavaScript
+* Modern UI animations
 
-# Step 3: Install the necessary dependencies.
-npm i
+This portfolio was **developed with the assistance of Lovable AI** for rapid design and layout generation.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+---
 
-**Edit a file directly in GitHub**
+## 📂 Sections of the Website
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Hero Section
 
-**Use GitHub Codespaces**
+Introduction and quick navigation buttons.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### About
 
-## What technologies are used for this project?
+Brief description about me and my learning focus.
 
-This project is built with:
+### Skills
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Technology and tools I am currently using or learning.
 
-## How can I deploy this project?
+### Projects
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+Featured programming projects with GitHub links.
 
-## Can I connect a custom domain to my Lovable project?
+### Learning Journey
 
-Yes, you can!
+Shows my continuous progress in programming and AI.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Contact
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Ways to connect with me.
+
+---
+
+## 🚀 Live Website
+
+You can view the portfolio here:
+
+https://techy-srishanth.lovable.app
+
+---
+
+## 📬 Contact
+
+Email
+[a.srishanth1733@gmail.com](mailto:a.srishanth1733@gmail.com)
+
+GitHub
+https://github.com/Mr-Srishanth
+
+LinkedIn
+https://www.linkedin.com/in/a-srishanth-300605397
+
+---
+
+## 📄 Note
+
+This portfolio was created as a learning project and continues to evolve as I build more projects and improve my development skills.
