@@ -81,6 +81,7 @@ https://techy-srishanth.lovable.app
 ---
 
 ## 📬 Contact
+![Portfolio Preview](portfolio-preview.png)
 
 Email
 [a.srishanth1733@gmail.com](mailto:a.srishanth1733@gmail.com)
