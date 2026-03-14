@@ -35,7 +35,20 @@ const GenerativeArtBackground = () => {
     // Flow field parameters
     const cellSize = isMobile ? 25 : 18;
     const noiseScale = 0.003;
-    const particleCount = isMobile ? 120 : 300;
+    const particleCount = isMobile ? 80 : 220;
+
+    // Glowing star particles
+    const starCount = isMobile ? 30 : 60;
+    interface Star {
+      x: number; y: number; size: number; baseAlpha: number; twinkleSpeed: number;
+    }
+    const stars: Star[] = Array.from({ length: starCount }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 1.8 + 0.4,
+      baseAlpha: Math.random() * 0.4 + 0.15,
+      twinkleSpeed: Math.random() * 2 + 1,
+    }));
 
     // Simple value noise
     const perm = new Uint8Array(512);
