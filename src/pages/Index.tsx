@@ -14,7 +14,6 @@ import SkillRadarChart from "@/components/SkillRadarChart";
 import SkillConstellation from "@/components/SkillConstellation";
 import RPGSkillTree from "@/components/RPGSkillTree";
 import TimeMachineTimeline from "@/components/TimeMachineTimeline";
-
 import AchievementsSection from "@/components/AchievementsSection";
 import CertificatesSection from "@/components/CertificatesSection";
 import ScrollToTop from "@/components/ScrollToTop";
@@ -25,6 +24,9 @@ import GenerativeArtBackground from "@/components/GenerativeArtBackground";
 import ScrollProgress from "@/components/ScrollProgress";
 import CommandPalette from "@/components/CommandPalette";
 import SpotlightGlow from "@/components/SpotlightGlow";
+import AIChatbot from "@/components/AIChatbot";
+import MiniGameSection from "@/components/MiniGameSection";
+import HiddenTerminal from "@/components/HiddenTerminal";
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -83,8 +85,13 @@ const Index = () => {
           <KonamiEasterEgg />
           <CustomCursor />
           <SectionReveal>
+            <MiniGameSection />
+          </SectionReveal>
+          <SectionReveal>
             <ContactSection />
           </SectionReveal>
+          <AIChatbot />
+          <HiddenTerminal />
           <Footer />
         </motion.div>
       )}
