@@ -172,6 +172,34 @@ const GenerativeArtBackground = () => {
         ctx.stroke();
       }
 
+      // Draw glowing stars
+      for (const star of stars) {
+        const alpha = star.baseAlpha + Math.sin(t * star.twinkleSpeed * 4) * 0.15;
+        // Mouse proximity glow
+        let boost = 0;
+        if (mx >= 0 && !isMobile) {
+          const dx = mx - star.x;
+          const dy = my - star.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) boost = (150 - dist) / 150 * 0.4;
+        }
+        const finalAlpha = Math.min(alpha + boost, 0.9);
+        const finalSize = star.size + boost * 2;
+
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, finalSize, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${baseHue}, 80%, 70%, ${finalAlpha})`;
+        ctx.fill();
+
+        // Subtle glow
+        if (finalSize > 1.2) {
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, finalSize * 3, 0, Math.PI * 2);
+          ctx.fillStyle = `hsla(${baseHue}, 80%, 70%, ${finalAlpha * 0.15})`;
+          ctx.fill();
+        }
+      }
+
       rafRef.current = requestAnimationFrame(draw);
     };
 
