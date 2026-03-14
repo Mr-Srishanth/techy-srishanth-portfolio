@@ -85,8 +85,13 @@ const Index = () => {
           <KonamiEasterEgg />
           <CustomCursor />
           <SectionReveal>
+            <MiniGameSection />
+          </SectionReveal>
+          <SectionReveal>
             <ContactSection />
           </SectionReveal>
+          <AIChatbot />
+          <HiddenTerminal />
           <Footer />
         </motion.div>
       )}
