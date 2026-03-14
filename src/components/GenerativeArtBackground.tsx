@@ -35,20 +35,7 @@ const GenerativeArtBackground = () => {
     // Flow field parameters
     const cellSize = isMobile ? 25 : 18;
     const noiseScale = 0.003;
-    const particleCount = isMobile ? 80 : 220;
-
-    // Glowing star particles
-    const starCount = isMobile ? 30 : 60;
-    interface Star {
-      x: number; y: number; size: number; baseAlpha: number; twinkleSpeed: number;
-    }
-    const stars: Star[] = Array.from({ length: starCount }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      size: Math.random() * 1.8 + 0.4,
-      baseAlpha: Math.random() * 0.4 + 0.15,
-      twinkleSpeed: Math.random() * 2 + 1,
-    }));
+    const particleCount = isMobile ? 120 : 300;
 
     // Simple value noise
     const perm = new Uint8Array(512);
@@ -170,34 +157,6 @@ const GenerativeArtBackground = () => {
         ctx.strokeStyle = `hsla(${hue}, 70%, 55%, ${alpha})`;
         ctx.lineWidth = 1.2;
         ctx.stroke();
-      }
-
-      // Draw glowing stars
-      for (const star of stars) {
-        const alpha = star.baseAlpha + Math.sin(t * star.twinkleSpeed * 4) * 0.15;
-        // Mouse proximity glow
-        let boost = 0;
-        if (mx >= 0 && !isMobile) {
-          const dx = mx - star.x;
-          const dy = my - star.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 150) boost = (150 - dist) / 150 * 0.4;
-        }
-        const finalAlpha = Math.min(alpha + boost, 0.9);
-        const finalSize = star.size + boost * 2;
-
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, finalSize, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${baseHue}, 80%, 70%, ${finalAlpha})`;
-        ctx.fill();
-
-        // Subtle glow
-        if (finalSize > 1.2) {
-          ctx.beginPath();
-          ctx.arc(star.x, star.y, finalSize * 3, 0, Math.PI * 2);
-          ctx.fillStyle = `hsla(${baseHue}, 80%, 70%, ${finalAlpha * 0.15})`;
-          ctx.fill();
-        }
       }
 
       rafRef.current = requestAnimationFrame(draw);

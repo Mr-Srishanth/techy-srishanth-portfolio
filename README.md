@@ -1,4 +1,3 @@
-![Portfolio Preview](portfolio.preview.png)
 # 🌐 Personal Portfolio Website
 
 This repository contains the source code for my personal developer portfolio.
@@ -81,7 +80,6 @@ https://techy-srishanth.lovable.app
 ---
 
 ## 📬 Contact
-![Portfolio Preview](portfolio-preview.png)
 
 Email
 [a.srishanth1733@gmail.com](mailto:a.srishanth1733@gmail.com)
