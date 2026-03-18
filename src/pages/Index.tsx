@@ -28,6 +28,7 @@ import CommandPalette from "@/components/CommandPalette";
 import SpotlightGlow from "@/components/SpotlightGlow";
 
 const Index = () => {
+  useCtrlS();
   const [loading, setLoading] = useState(true);
   const handleComplete = useCallback(() => setLoading(false), []);
 
