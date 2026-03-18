@@ -1,14 +1,17 @@
 import { motion, useMotionValue, useTransform, useScroll, useSpring } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { toast } from "sonner";
-import profileImg from "@/assets/profile.jpg";
+import defaultProfileImg from "@/assets/profile.jpg";
 import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
 import { EASE_HERO, DUR_HERO, STAGGER, buttonHover, buttonTap, DUR_MICRO } from "@/lib/animations";
+import { usePortfolio } from "@/contexts/PortfolioContext";
 
-const titles = ["AI & Software Developer", "Learning Python & DSA", "B.Tech CSE (AI & ML)"];
-const CURRENT_FOCUS = "Data Structures & Algorithms";
+const defaultTitles = ["AI & Software Developer", "Learning Python & DSA", "B.Tech CSE (AI & ML)"];
 
 const HeroSection = () => {
+  const { data } = usePortfolio();
+  const titles = [data.heroSubtitle, ...defaultTitles.slice(1)];
+
   const [titleIdx, setTitleIdx] = useState(0);
   const [displayed, setDisplayed] = useState("");
   const [typing, setTyping] = useState(true);
@@ -21,6 +24,11 @@ const HeroSection = () => {
   const imgY = useTransform(smoothMouseY, [-300, 300], [8, -8]);
   const isMobile = useIsMobile();
   const light = useLightMotion();
+
+  const profileImg = data.profileImage || defaultProfileImg;
+  const nameParts = data.heroName.split(" ");
+  const firstName = nameParts.slice(0, -1).join(" ") || nameParts[0];
+  const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
 
   useEffect(() => {
     const target = titles[titleIdx];
@@ -56,7 +64,6 @@ const HeroSection = () => {
   const bgY2 = useTransform(scrollY, [0, 600], [0, -80]);
   const gridY = useTransform(scrollY, [0, 600], [0, -50]);
 
-  // Stagger delays for hero elements
   const d = (i: number) => i * STAGGER;
 
   return (
@@ -110,9 +117,13 @@ const HeroSection = () => {
             transition={{ delay: d(2), duration: DUR_HERO, ease: EASE_HERO }}
           >
             <span className="text-foreground">I'm </span>
-            <span className="text-primary neon-text">Arrabola</span>
-            <br />
-            <span className="text-foreground">Srishanth</span>
+            <span className="text-primary neon-text">{firstName}</span>
+            {lastName && (
+              <>
+                <br />
+                <span className="text-foreground">{lastName}</span>
+              </>
+            )}
           </motion.h1>
 
           <motion.div
@@ -137,7 +148,7 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: d(4), duration: 0.7, ease: EASE_HERO }}
           >
-            A passionate student pursuing B.Tech in CSE (AI & ML) at Vignan Institute of Technology and Science (2025–2029), building the future with code.
+            {data.heroBio}
           </motion.p>
 
           <motion.div
@@ -153,7 +164,7 @@ const HeroSection = () => {
             />
             <span className="font-mono text-xs text-muted-foreground">
               🔥 Currently working on:{" "}
-              <span className="font-semibold text-foreground">{CURRENT_FOCUS}</span>
+              <span className="font-semibold text-foreground">{data.currentFocus}</span>
             </span>
           </motion.div>
 
@@ -200,7 +211,7 @@ const HeroSection = () => {
               className={`relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden neon-border ${light ? "" : "animate-float"}`}
               style={isMobile ? undefined : { x: imgX, y: imgY }}
             >
-              <img src={profileImg} alt="Arrabola Srishanth" className="w-full h-full object-cover" />
+              <img src={profileImg} alt={data.heroName} className="w-full h-full object-cover" />
             </motion.div>
             {!light && (
               <motion.div

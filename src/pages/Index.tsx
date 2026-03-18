@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useCtrlS } from "@/hooks/useCtrlS";
 import LoadingScreen from "@/components/LoadingScreen";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
@@ -27,6 +28,7 @@ import CommandPalette from "@/components/CommandPalette";
 import SpotlightGlow from "@/components/SpotlightGlow";
 
 const Index = () => {
+  useCtrlS();
   const [loading, setLoading] = useState(true);
   const handleComplete = useCallback(() => setLoading(false), []);
 
