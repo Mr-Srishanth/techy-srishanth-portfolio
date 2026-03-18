@@ -3,11 +3,13 @@ import { useRef } from "react";
 import { GraduationCap, Code2, Brain } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { headingReveal, textReveal, cardReveal, cardHover, STAGGER } from "@/lib/animations";
+import { usePortfolio } from "@/contexts/PortfolioContext";
 
 const AboutSection = () => {
   const ref = useRef(null);
   const isMobile = useIsMobile();
   const inView = useInView(ref, { once: true, margin: "-80px" });
+  const { data } = usePortfolio();
 
   return (
     <section id="about" className="py-24 relative">
@@ -23,13 +25,13 @@ const AboutSection = () => {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <motion.div {...textReveal(inView, STAGGER)}>
             <h3 className="font-display text-2xl font-bold mb-4 text-foreground">
-              Aspiring AI & Software Developer
+              {data.aboutTitle}
             </h3>
             <p className="font-body text-muted-foreground text-lg leading-relaxed mb-6">
-              I'm Arrabola Srishanth, a first-year B.Tech student in Computer Science (AI & ML) at Vignan Institute of Technology and Science. I'm passionate about artificial intelligence, machine learning, and building software that makes a difference.
+              {data.aboutP1}
             </p>
             <p className="font-body text-muted-foreground text-lg leading-relaxed">
-              Currently learning Python and Data Structures, I'm dedicated to mastering the foundations of computer science while exploring the exciting frontiers of AI technology.
+              {data.aboutP2}
             </p>
           </motion.div>
 

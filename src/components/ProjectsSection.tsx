@@ -3,34 +3,13 @@ import { useRef } from "react";
 import { ExternalLink, Github, Folder } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { headingReveal, cardReveal, cardHover } from "@/lib/animations";
-
-const projects = [
-  {
-    title: "Python Calculator",
-    desc: "A feature-rich calculator built with Python, supporting basic and scientific operations.",
-    tags: ["Python", "CLI"],
-  },
-  {
-    title: "Student Management System",
-    desc: "A CRUD application for managing student records with file handling.",
-    tags: ["Python", "File I/O"],
-  },
-  {
-    title: "Portfolio Website",
-    desc: "This futuristic portfolio built with React, TypeScript, and Framer Motion.",
-    tags: ["React", "TypeScript", "Framer Motion"],
-  },
-  {
-    title: "DSA Practice Tracker",
-    desc: "A tool to track progress on Data Structures and Algorithms problems.",
-    tags: ["Python", "Data Structures"],
-  },
-];
+import { usePortfolio } from "@/contexts/PortfolioContext";
 
 const ProjectsSection = () => {
   const ref = useRef(null);
   const isMobile = useIsMobile();
   const inView = useInView(ref, { once: true, margin: "-80px" });
+  const { data } = usePortfolio();
 
   return (
     <section id="projects" className="py-24 relative">
@@ -44,15 +23,21 @@ const ProjectsSection = () => {
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-          {projects.map((project, i) => (
+          {data.projects.map((project, i) => (
             <motion.div
-              key={project.title}
+              key={`${project.title}-${i}`}
               className="glass-card p-6 group cursor-default relative overflow-hidden"
               {...cardReveal(inView, i, 0.12)}
               whileHover={isMobile ? undefined : cardHover}
               whileTap={isMobile ? { scale: 0.98 } : undefined}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+              {project.image && (
+                <div className="relative z-10 mb-4 rounded-lg overflow-hidden h-40">
+                  <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
+                </div>
+              )}
 
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-4">
