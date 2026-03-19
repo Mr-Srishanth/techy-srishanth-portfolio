@@ -28,6 +28,12 @@ export interface PortfolioData {
   projects: ProjectData[];
 }
 
+export interface HistoryEntry {
+  snapshot: PortfolioData;
+  timestamp: number;
+  label: string;
+}
+
 const DEFAULT_DATA: PortfolioData = {
   heroName: "Arrabola Srishanth",
   heroSubtitle: "AI & Software Developer",
@@ -53,12 +59,43 @@ const DEFAULT_DATA: PortfolioData = {
   ],
 };
 
-const STORAGE_KEY = "portfolio-data";
+const DRAFT_KEY = "portfolio-draft-data";
+const PERMANENT_KEY = "portfolio-permanent-data";
+const HISTORY_KEY = "portfolio-history-data";
+
+function loadJson<T>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return fallback;
+}
 
 interface PortfolioContextType {
+  /** The live data used by the website (permanent or default) */
   data: PortfolioData;
-  updateData: (partial: Partial<PortfolioData>) => void;
+  /** The draft data used in admin editing */
+  draft: PortfolioData;
+  /** Update draft data */
+  updateDraft: (partial: Partial<PortfolioData>) => void;
+  /** Save draft → permanent */
+  savePermanently: () => void;
+  /** Reset everything to defaults */
   resetData: () => void;
+  /** Version history */
+  history: HistoryEntry[];
+  /** Restore a history snapshot into draft */
+  restoreFromHistory: (index: number) => void;
+  /** Clear history */
+  clearHistory: () => void;
+  /** Undo */
+  undo: () => void;
+  /** Redo */
+  redo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
+  /** Legacy compat */
+  updateData: (partial: Partial<PortfolioData>) => void;
 }
 
 const PortfolioContext = createContext<PortfolioContextType | null>(null);
@@ -69,39 +106,134 @@ export const usePortfolio = () => {
   return ctx;
 };
 
+const MAX_HISTORY = 50;
+const MAX_UNDO = 30;
+
 export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [data, setData] = useState<PortfolioData>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        return { ...DEFAULT_DATA, ...JSON.parse(saved) };
-      }
-    } catch {}
-    return DEFAULT_DATA;
+  // Permanent data is what the website shows
+  const [permanent, setPermanent] = useState<PortfolioData>(() => {
+    return loadJson(PERMANENT_KEY, DEFAULT_DATA);
   });
 
-  const saveTimer = useRef<ReturnType<typeof setTimeout>>();
+  // Draft data is what admin edits
+  const [draft, setDraft] = useState<PortfolioData>(() => {
+    return loadJson(DRAFT_KEY, permanent);
+  });
 
-  // Auto-save with 2s debounce
+  // Version history
+  const [history, setHistory] = useState<HistoryEntry[]>(() => {
+    return loadJson(HISTORY_KEY, []);
+  });
+
+  // Undo/redo stacks
+  const [undoStack, setUndoStack] = useState<PortfolioData[]>([]);
+  const [redoStack, setRedoStack] = useState<PortfolioData[]>([]);
+
+  const saveTimer = useRef<ReturnType<typeof setTimeout>>();
+  const lastDraftJson = useRef(JSON.stringify(draft));
+
+  // Auto-save draft with 2s debounce + push history snapshot
   useEffect(() => {
+    const currentJson = JSON.stringify(draft);
+    if (currentJson === lastDraftJson.current) return;
+
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }, 2000);
-    return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
-  }, [data]);
+      localStorage.setItem(DRAFT_KEY, currentJson);
 
-  const updateData = useCallback((partial: Partial<PortfolioData>) => {
-    setData(prev => ({ ...prev, ...partial }));
+      // Push history snapshot
+      const entry: HistoryEntry = {
+        snapshot: JSON.parse(currentJson),
+        timestamp: Date.now(),
+        label: `Auto-save`,
+      };
+      setHistory(prev => {
+        const next = [entry, ...prev].slice(0, MAX_HISTORY);
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+        return next;
+      });
+
+      lastDraftJson.current = currentJson;
+    }, 2000);
+
+    return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
+  }, [draft]);
+
+  // Save permanent data when it changes
+  useEffect(() => {
+    localStorage.setItem(PERMANENT_KEY, JSON.stringify(permanent));
+  }, [permanent]);
+
+  const updateDraft = useCallback((partial: Partial<PortfolioData>) => {
+    setDraft(prev => {
+      // Push current state to undo stack
+      setUndoStack(us => [...us.slice(-(MAX_UNDO - 1)), prev]);
+      setRedoStack([]);
+      return { ...prev, ...partial };
+    });
   }, []);
+
+  const savePermanently = useCallback(() => {
+    setPermanent(draft);
+  }, [draft]);
 
   const resetData = useCallback(() => {
-    setData(DEFAULT_DATA);
-    localStorage.removeItem(STORAGE_KEY);
+    setDraft(DEFAULT_DATA);
+    setPermanent(DEFAULT_DATA);
+    setHistory([]);
+    setUndoStack([]);
+    setRedoStack([]);
+    localStorage.removeItem(DRAFT_KEY);
+    localStorage.removeItem(PERMANENT_KEY);
+    localStorage.removeItem(HISTORY_KEY);
   }, []);
 
+  const restoreFromHistory = useCallback((index: number) => {
+    const entry = history[index];
+    if (!entry) return;
+    setUndoStack(us => [...us.slice(-(MAX_UNDO - 1)), draft]);
+    setRedoStack([]);
+    setDraft(entry.snapshot);
+  }, [history, draft]);
+
+  const clearHistory = useCallback(() => {
+    setHistory([]);
+    localStorage.removeItem(HISTORY_KEY);
+  }, []);
+
+  const undo = useCallback(() => {
+    if (undoStack.length === 0) return;
+    const prev = undoStack[undoStack.length - 1];
+    setUndoStack(us => us.slice(0, -1));
+    setRedoStack(rs => [...rs, draft]);
+    setDraft(prev);
+  }, [undoStack, draft]);
+
+  const redo = useCallback(() => {
+    if (redoStack.length === 0) return;
+    const next = redoStack[redoStack.length - 1];
+    setRedoStack(rs => rs.slice(0, -1));
+    setUndoStack(us => [...us, draft]);
+    setDraft(next);
+  }, [redoStack, draft]);
+
   return (
-    <PortfolioContext.Provider value={{ data, updateData, resetData }}>
+    <PortfolioContext.Provider value={{
+      data: permanent,
+      draft,
+      updateDraft,
+      savePermanently,
+      resetData,
+      history,
+      restoreFromHistory,
+      clearHistory,
+      undo,
+      redo,
+      canUndo: undoStack.length > 0,
+      canRedo: redoStack.length > 0,
+      // Legacy compat: updateData maps to updateDraft
+      updateData: updateDraft,
+    }}>
       {children}
     </PortfolioContext.Provider>
   );

@@ -1,7 +1,10 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, User, FileText, Wrench, FolderOpen, Image, Plus, X, Upload, GripVertical } from "lucide-react";
+import {
+  LogOut, User, FileText, Wrench, FolderOpen, Image, Plus, X, Upload,
+  ArrowLeft, Save, Undo2, Redo2, Eye, History, Clock, RotateCcw, Trash2
+} from "lucide-react";
 import { toast } from "sonner";
 import { usePortfolio, type SkillData, type ProjectData } from "@/contexts/PortfolioContext";
 
@@ -11,6 +14,7 @@ const TABS = [
   { id: "skills", label: "Skills", icon: Wrench },
   { id: "projects", label: "Projects", icon: FolderOpen },
   { id: "images", label: "Images", icon: Image },
+  { id: "history", label: "History", icon: History },
 ] as const;
 
 type TabId = typeof TABS[number]["id"];
@@ -64,11 +68,15 @@ const ImageDropZone = ({ label, currentImage, onUpload }: { label: string; curre
 // ── Main Dashboard ──
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const { data, updateData, resetData } = usePortfolio();
+  const {
+    draft, updateDraft, savePermanently, resetData,
+    history, restoreFromHistory, clearHistory,
+    undo, redo, canUndo, canRedo
+  } = usePortfolio();
   const [tab, setTab] = useState<TabId>("profile");
   const [newSkill, setNewSkill] = useState("");
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
-  const lastSaveRef = useRef(JSON.stringify(data));
+  const lastSaveRef = useRef(JSON.stringify(draft));
 
   useEffect(() => {
     if (sessionStorage.getItem("admin-auth") !== "true") {
@@ -78,15 +86,31 @@ const AdminDashboard = () => {
 
   // Auto-save toast
   useEffect(() => {
-    const current = JSON.stringify(data);
+    const current = JSON.stringify(draft);
     if (current === lastSaveRef.current) return;
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => {
       lastSaveRef.current = current;
-      toast.success("Saved successfully");
-    }, 2100); // slightly after the 2s context save
+      toast.success("Draft saved");
+    }, 2100);
     return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
-  }, [data]);
+  }, [draft]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+      }
+      if ((e.ctrlKey || e.metaKey) && (e.key === "y" || (e.key === "z" && e.shiftKey))) {
+        e.preventDefault();
+        redo();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [undo, redo]);
 
   const logout = () => {
     sessionStorage.removeItem("admin-auth");
@@ -94,23 +118,28 @@ const AdminDashboard = () => {
     navigate("/admin");
   };
 
-  const field = (label: string, value: string, key: keyof typeof data) => (
+  const handleSavePermanently = () => {
+    savePermanently();
+    toast.success("Saved permanently — live on website!");
+  };
+
+  const field = (label: string, value: string, key: keyof typeof draft) => (
     <div className="space-y-1.5" key={key}>
       <label className="text-sm font-mono text-muted-foreground">{label}</label>
       <input
         value={value}
-        onChange={e => updateData({ [key]: e.target.value })}
+        onChange={e => updateDraft({ [key]: e.target.value })}
         className="w-full px-4 py-2.5 rounded-lg bg-secondary/50 border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
       />
     </div>
   );
 
-  const textArea = (label: string, value: string, key: keyof typeof data) => (
+  const textArea = (label: string, value: string, key: keyof typeof draft) => (
     <div className="space-y-1.5" key={key}>
       <label className="text-sm font-mono text-muted-foreground">{label}</label>
       <textarea
         value={value}
-        onChange={e => updateData({ [key]: e.target.value })}
+        onChange={e => updateDraft({ [key]: e.target.value })}
         rows={4}
         className="w-full px-4 py-2.5 rounded-lg bg-secondary/50 border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm resize-none"
       />
@@ -120,33 +149,37 @@ const AdminDashboard = () => {
   const addSkill = () => {
     if (!newSkill.trim()) return;
     const skill: SkillData = { name: newSkill.trim(), level: 50, icon: "💡" };
-    updateData({ skills: [...data.skills, skill] });
+    updateDraft({ skills: [...draft.skills, skill] });
     setNewSkill("");
     toast.success(`Added "${skill.name}"`);
   };
 
   const removeSkill = (idx: number) => {
-    const updated = data.skills.filter((_, i) => i !== idx);
-    updateData({ skills: updated });
+    updateDraft({ skills: draft.skills.filter((_, i) => i !== idx) });
   };
 
   const updateSkill = (idx: number, partial: Partial<SkillData>) => {
-    const updated = data.skills.map((s, i) => i === idx ? { ...s, ...partial } : s);
-    updateData({ skills: updated });
+    const updated = draft.skills.map((s, i) => i === idx ? { ...s, ...partial } : s);
+    updateDraft({ skills: updated });
   };
 
   const addProject = () => {
     const p: ProjectData = { title: "New Project", desc: "Description here", tags: [] };
-    updateData({ projects: [...data.projects, p] });
+    updateDraft({ projects: [...draft.projects, p] });
   };
 
   const removeProject = (idx: number) => {
-    updateData({ projects: data.projects.filter((_, i) => i !== idx) });
+    updateDraft({ projects: draft.projects.filter((_, i) => i !== idx) });
   };
 
   const updateProject = (idx: number, partial: Partial<ProjectData>) => {
-    const updated = data.projects.map((p, i) => i === idx ? { ...p, ...partial } : p);
-    updateData({ projects: updated });
+    const updated = draft.projects.map((p, i) => i === idx ? { ...p, ...partial } : p);
+    updateDraft({ projects: updated });
+  };
+
+  const formatTime = (ts: number) => {
+    const d = new Date(ts);
+    return d.toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
   };
 
   return (
@@ -156,15 +189,66 @@ const AdminDashboard = () => {
       {/* Header */}
       <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/80 border-b border-border/50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <h1 className="font-display text-lg font-bold text-primary tracking-wider">Admin Dashboard</h1>
           <div className="flex items-center gap-3">
-            <button onClick={resetData} className="text-xs font-mono text-muted-foreground hover:text-destructive transition-colors">Reset All</button>
             <motion.button
-              onClick={logout}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all text-sm font-mono"
+              onClick={() => navigate("/")}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-all text-sm font-mono"
               whileTap={{ scale: 0.95 }}
             >
-              <LogOut size={14} /> Logout
+              <ArrowLeft size={16} /> Back
+            </motion.button>
+            <h1 className="font-display text-lg font-bold text-primary tracking-wider hidden sm:block">Admin Dashboard</h1>
+          </div>
+          <div className="flex items-center gap-2">
+            {/* Undo / Redo */}
+            <motion.button
+              onClick={undo}
+              disabled={!canUndo}
+              className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              whileTap={{ scale: 0.95 }}
+              title="Undo (Ctrl+Z)"
+            >
+              <Undo2 size={16} />
+            </motion.button>
+            <motion.button
+              onClick={redo}
+              disabled={!canRedo}
+              className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              whileTap={{ scale: 0.95 }}
+              title="Redo (Ctrl+Y)"
+            >
+              <Redo2 size={16} />
+            </motion.button>
+
+            <div className="w-px h-6 bg-border mx-1 hidden sm:block" />
+
+            {/* Preview */}
+            <motion.button
+              onClick={() => window.open("/preview", "_blank")}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-secondary/50 text-foreground hover:bg-secondary transition-all text-sm font-mono"
+              whileTap={{ scale: 0.95 }}
+            >
+              <Eye size={14} /> Preview
+            </motion.button>
+
+            {/* Save Permanently */}
+            <motion.button
+              onClick={handleSavePermanently}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-mono text-sm neon-glow"
+              whileTap={{ scale: 0.95 }}
+            >
+              <Save size={14} /> Publish
+            </motion.button>
+
+            <div className="w-px h-6 bg-border mx-1 hidden sm:block" />
+
+            <button onClick={resetData} className="text-xs font-mono text-muted-foreground hover:text-destructive transition-colors">Reset</button>
+            <motion.button
+              onClick={logout}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all text-sm font-mono"
+              whileTap={{ scale: 0.95 }}
+            >
+              <LogOut size={14} />
             </motion.button>
           </div>
         </div>
@@ -212,19 +296,19 @@ const AdminDashboard = () => {
               {tab === "profile" && (
                 <>
                   <h2 className="font-display text-xl font-bold text-foreground">Profile Info</h2>
-                  {field("Display Name", data.heroName, "heroName")}
-                  {field("Subtitle / Role", data.heroSubtitle, "heroSubtitle")}
-                  {textArea("Bio", data.heroBio, "heroBio")}
-                  {field("Current Focus", data.currentFocus, "currentFocus")}
+                  {field("Display Name", draft.heroName, "heroName")}
+                  {field("Subtitle / Role", draft.heroSubtitle, "heroSubtitle")}
+                  {textArea("Bio", draft.heroBio, "heroBio")}
+                  {field("Current Focus", draft.currentFocus, "currentFocus")}
                 </>
               )}
 
               {tab === "about" && (
                 <>
                   <h2 className="font-display text-xl font-bold text-foreground">About Section</h2>
-                  {field("Section Title", data.aboutTitle, "aboutTitle")}
-                  {textArea("Paragraph 1", data.aboutP1, "aboutP1")}
-                  {textArea("Paragraph 2", data.aboutP2, "aboutP2")}
+                  {field("Section Title", draft.aboutTitle, "aboutTitle")}
+                  {textArea("Paragraph 1", draft.aboutP1, "aboutP1")}
+                  {textArea("Paragraph 2", draft.aboutP2, "aboutP2")}
                 </>
               )}
 
@@ -248,7 +332,7 @@ const AdminDashboard = () => {
                     </motion.button>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {data.skills.map((skill, i) => (
+                    {draft.skills.map((skill, i) => (
                       <motion.div
                         key={`${skill.name}-${i}`}
                         layout
@@ -268,7 +352,7 @@ const AdminDashboard = () => {
 
                   <div className="space-y-3 mt-4">
                     <p className="text-sm font-mono text-muted-foreground">Edit skill levels:</p>
-                    {data.skills.map((skill, i) => (
+                    {draft.skills.map((skill, i) => (
                       <div key={`edit-${i}`} className="flex items-center gap-3">
                         <input
                           value={skill.name}
@@ -311,7 +395,7 @@ const AdminDashboard = () => {
                     </motion.button>
                   </div>
                   <div className="space-y-4">
-                    {data.projects.map((project, i) => (
+                    {draft.projects.map((project, i) => (
                       <motion.div
                         key={i}
                         layout
@@ -357,11 +441,62 @@ const AdminDashboard = () => {
                   <h2 className="font-display text-xl font-bold text-foreground">Images</h2>
                   <ImageDropZone
                     label="Profile Image"
-                    currentImage={data.profileImage || undefined}
-                    onUpload={b64 => updateData({ profileImage: b64 })}
+                    currentImage={draft.profileImage || undefined}
+                    onUpload={b64 => updateDraft({ profileImage: b64 })}
                   />
                   <p className="text-xs text-muted-foreground font-mono mt-4">
                     Project images can be uploaded in the Projects tab.
+                  </p>
+                </>
+              )}
+
+              {tab === "history" && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <h2 className="font-display text-xl font-bold text-foreground">Version History</h2>
+                    {history.length > 0 && (
+                      <button
+                        onClick={() => { clearHistory(); toast.success("History cleared"); }}
+                        className="flex items-center gap-1.5 text-xs font-mono text-muted-foreground hover:text-destructive transition-colors"
+                      >
+                        <Trash2 size={12} /> Clear
+                      </button>
+                    )}
+                  </div>
+                  {history.length === 0 ? (
+                    <p className="text-sm text-muted-foreground font-mono py-8 text-center">
+                      No history yet. Start editing to create snapshots.
+                    </p>
+                  ) : (
+                    <div className="space-y-2 max-h-[60vh] overflow-y-auto">
+                      {history.map((entry, i) => (
+                        <motion.div
+                          key={`${entry.timestamp}-${i}`}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.03 }}
+                          className="flex items-center justify-between px-4 py-3 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-all"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Clock size={14} className="text-muted-foreground" />
+                            <div>
+                              <p className="text-sm font-mono text-foreground">{entry.label}</p>
+                              <p className="text-xs text-muted-foreground">{formatTime(entry.timestamp)}</p>
+                            </div>
+                          </div>
+                          <motion.button
+                            onClick={() => { restoreFromHistory(i); toast.success("Snapshot restored to draft"); }}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-mono hover:bg-primary/20 transition-all"
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            <RotateCcw size={12} /> Restore
+                          </motion.button>
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
+                  <p className="text-xs text-muted-foreground font-mono mt-2">
+                    Restoring a snapshot updates your draft only. Click "Publish" to make it live.
                   </p>
                 </>
               )}
