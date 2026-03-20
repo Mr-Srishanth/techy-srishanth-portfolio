@@ -1,6 +1,8 @@
 import { useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { X } from "lucide-react";
 import { useCtrlS } from "@/hooks/useCtrlS";
+import { usePortfolio } from "@/contexts/PortfolioContext";
 import LoadingScreen from "@/components/LoadingScreen";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
@@ -27,10 +29,44 @@ import ScrollProgress from "@/components/ScrollProgress";
 import CommandPalette from "@/components/CommandPalette";
 import SpotlightGlow from "@/components/SpotlightGlow";
 
+const GreetingBanner = () => {
+  const { data } = usePortfolio();
+  const [dismissed, setDismissed] = useState(false);
+  const activeGreeting = data.greetings?.find(g => g.active);
+
+  if (!activeGreeting || dismissed) return null;
+
+  return (
+    <motion.div
+      initial={{ y: -80, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ y: -80, opacity: 0 }}
+      className="fixed top-0 inset-x-0 z-[60] bg-primary/95 backdrop-blur-lg text-primary-foreground"
+    >
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3 min-w-0">
+          {activeGreeting.image && (
+            <img src={activeGreeting.image} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
+          )}
+          <div className="min-w-0">
+            {activeGreeting.title && <p className="font-display font-bold text-sm truncate">{activeGreeting.title}</p>}
+            {activeGreeting.message && <p className="text-xs opacity-90 truncate">{activeGreeting.message}</p>}
+          </div>
+        </div>
+        <button onClick={() => setDismissed(true)} className="shrink-0 p-1 hover:bg-primary-foreground/20 rounded transition-colors">
+          <X size={16} />
+        </button>
+      </div>
+    </motion.div>
+  );
+};
+
 const Index = () => {
   useCtrlS();
+  const { data } = usePortfolio();
   const [loading, setLoading] = useState(true);
   const handleComplete = useCallback(() => setLoading(false), []);
+  const s = data.sections ?? { about: true, skills: true, skillRadar: true, rpgSkillTree: true, projects: true, timeline: true, learningJourney: true, achievements: true, certificates: true, github: true, contact: true };
 
   return (
     <>
@@ -44,6 +80,7 @@ const Index = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
+          <GreetingBanner />
           <ScrollProgress />
           <GenerativeArtBackground />
           
@@ -51,42 +88,20 @@ const Index = () => {
           <CommandPalette />
           <Navbar />
           <HeroSection />
-          <SectionReveal>
-            <AboutSection />
-          </SectionReveal>
-          <SectionReveal direction="left" delay={0.1}>
-            <SkillsSection />
-          </SectionReveal>
-          <SectionReveal delay={0.05}>
-            <SkillRadarChart />
-          </SectionReveal>
-          <SectionReveal direction="left" delay={0.1}>
-            <RPGSkillTree />
-          </SectionReveal>
-          <SectionReveal direction="right" delay={0.1}>
-            <ProjectsSection />
-          </SectionReveal>
-          <SectionReveal parallax={false}>
-            <TimeMachineTimeline />
-          </SectionReveal>
-          <SectionReveal>
-            <LearningJourneySection />
-          </SectionReveal>
-          <SectionReveal direction="left" delay={0.1}>
-            <AchievementsSection />
-          </SectionReveal>
-          <SectionReveal>
-            <CertificatesSection />
-          </SectionReveal>
-          <SectionReveal direction="right" delay={0.1}>
-            <GitHubSection />
-          </SectionReveal>
+          {s.about && <SectionReveal><AboutSection /></SectionReveal>}
+          {s.skills && <SectionReveal direction="left" delay={0.1}><SkillsSection /></SectionReveal>}
+          {s.skillRadar && <SectionReveal delay={0.05}><SkillRadarChart /></SectionReveal>}
+          {s.rpgSkillTree && <SectionReveal direction="left" delay={0.1}><RPGSkillTree /></SectionReveal>}
+          {s.projects && <SectionReveal direction="right" delay={0.1}><ProjectsSection /></SectionReveal>}
+          {s.timeline && <SectionReveal parallax={false}><TimeMachineTimeline /></SectionReveal>}
+          {s.learningJourney && <SectionReveal><LearningJourneySection /></SectionReveal>}
+          {s.achievements && <SectionReveal direction="left" delay={0.1}><AchievementsSection /></SectionReveal>}
+          {s.certificates && <SectionReveal><CertificatesSection /></SectionReveal>}
+          {s.github && <SectionReveal direction="right" delay={0.1}><GitHubSection /></SectionReveal>}
           <ScrollToTop />
           <KonamiEasterEgg />
           <CustomCursor />
-          <SectionReveal>
-            <ContactSection />
-          </SectionReveal>
+          {s.contact && <SectionReveal><ContactSection /></SectionReveal>}
           <Footer />
         </motion.div>
       )}

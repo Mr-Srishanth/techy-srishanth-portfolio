@@ -15,6 +15,34 @@ export interface ProjectData {
   image?: string;
 }
 
+export interface CertificateData {
+  title: string;
+  issuer: string;
+  image?: string;
+  link?: string;
+}
+
+export interface GreetingData {
+  title: string;
+  message: string;
+  image?: string;
+  active: boolean;
+}
+
+export interface SectionVisibility {
+  about: boolean;
+  skills: boolean;
+  skillRadar: boolean;
+  rpgSkillTree: boolean;
+  projects: boolean;
+  timeline: boolean;
+  learningJourney: boolean;
+  achievements: boolean;
+  certificates: boolean;
+  github: boolean;
+  contact: boolean;
+}
+
 export interface PortfolioData {
   heroName: string;
   heroSubtitle: string;
@@ -26,6 +54,9 @@ export interface PortfolioData {
   profileImage: string;
   skills: SkillData[];
   projects: ProjectData[];
+  certificates: CertificateData[];
+  greetings: GreetingData[];
+  sections: SectionVisibility;
 }
 
 export interface HistoryEntry {
@@ -33,6 +64,20 @@ export interface HistoryEntry {
   timestamp: number;
   label: string;
 }
+
+const DEFAULT_SECTIONS: SectionVisibility = {
+  about: true,
+  skills: true,
+  skillRadar: true,
+  rpgSkillTree: true,
+  projects: true,
+  timeline: true,
+  learningJourney: true,
+  achievements: true,
+  certificates: true,
+  github: true,
+  contact: true,
+};
 
 const DEFAULT_DATA: PortfolioData = {
   heroName: "Arrabola Srishanth",
@@ -57,6 +102,14 @@ const DEFAULT_DATA: PortfolioData = {
     { title: "Portfolio Website", desc: "This futuristic portfolio built with React, TypeScript, and Framer Motion.", tags: ["React", "TypeScript", "Framer Motion"] },
     { title: "DSA Practice Tracker", desc: "A tool to track progress on Data Structures and Algorithms problems.", tags: ["Python", "Data Structures"] },
   ],
+  certificates: [
+    { title: "Python Basics", issuer: "Coursera", link: "#" },
+    { title: "Web Development", issuer: "freeCodeCamp", link: "#" },
+    { title: "AI Fundamentals", issuer: "Google", link: "#" },
+    { title: "Hackathon", issuer: "", image: "" },
+  ],
+  greetings: [],
+  sections: { ...DEFAULT_SECTIONS },
 };
 
 const DRAFT_KEY = "portfolio-draft-data";
@@ -66,35 +119,24 @@ const HISTORY_KEY = "portfolio-history-data";
 function loadJson<T>(key: string, fallback: T): T {
   try {
     const raw = localStorage.getItem(key);
-    if (raw) return JSON.parse(raw);
+    if (raw) return { ...fallback, ...JSON.parse(raw) };
   } catch {}
   return fallback;
 }
 
 interface PortfolioContextType {
-  /** The live data used by the website (permanent or default) */
   data: PortfolioData;
-  /** The draft data used in admin editing */
   draft: PortfolioData;
-  /** Update draft data */
   updateDraft: (partial: Partial<PortfolioData>) => void;
-  /** Save draft → permanent */
   savePermanently: () => void;
-  /** Reset everything to defaults */
   resetData: () => void;
-  /** Version history */
   history: HistoryEntry[];
-  /** Restore a history snapshot into draft */
   restoreFromHistory: (index: number) => void;
-  /** Clear history */
   clearHistory: () => void;
-  /** Undo */
   undo: () => void;
-  /** Redo */
   redo: () => void;
   canUndo: boolean;
   canRedo: boolean;
-  /** Legacy compat */
   updateData: (partial: Partial<PortfolioData>) => void;
 }
 
@@ -110,128 +152,75 @@ const MAX_HISTORY = 50;
 const MAX_UNDO = 30;
 
 export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Permanent data is what the website shows
-  const [permanent, setPermanent] = useState<PortfolioData>(() => {
-    return loadJson(PERMANENT_KEY, DEFAULT_DATA);
-  });
-
-  // Draft data is what admin edits
-  const [draft, setDraft] = useState<PortfolioData>(() => {
-    return loadJson(DRAFT_KEY, permanent);
-  });
-
-  // Version history
+  const [permanent, setPermanent] = useState<PortfolioData>(() => loadJson(PERMANENT_KEY, DEFAULT_DATA));
+  const [draft, setDraft] = useState<PortfolioData>(() => loadJson(DRAFT_KEY, loadJson(PERMANENT_KEY, DEFAULT_DATA)));
   const [history, setHistory] = useState<HistoryEntry[]>(() => {
-    return loadJson(HISTORY_KEY, []);
+    try { const raw = localStorage.getItem(HISTORY_KEY); if (raw) return JSON.parse(raw); } catch {} return [];
   });
-
-  // Undo/redo stacks
   const [undoStack, setUndoStack] = useState<PortfolioData[]>([]);
   const [redoStack, setRedoStack] = useState<PortfolioData[]>([]);
-
   const saveTimer = useRef<ReturnType<typeof setTimeout>>();
   const lastDraftJson = useRef(JSON.stringify(draft));
 
-  // Auto-save draft with 2s debounce + push history snapshot
   useEffect(() => {
     const currentJson = JSON.stringify(draft);
     if (currentJson === lastDraftJson.current) return;
-
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
       localStorage.setItem(DRAFT_KEY, currentJson);
-
-      // Push history snapshot
-      const entry: HistoryEntry = {
-        snapshot: JSON.parse(currentJson),
-        timestamp: Date.now(),
-        label: `Auto-save`,
-      };
+      const entry: HistoryEntry = { snapshot: JSON.parse(currentJson), timestamp: Date.now(), label: "Auto-save" };
       setHistory(prev => {
         const next = [entry, ...prev].slice(0, MAX_HISTORY);
         localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
         return next;
       });
-
       lastDraftJson.current = currentJson;
     }, 2000);
-
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
   }, [draft]);
 
-  // Save permanent data when it changes
-  useEffect(() => {
-    localStorage.setItem(PERMANENT_KEY, JSON.stringify(permanent));
-  }, [permanent]);
+  useEffect(() => { localStorage.setItem(PERMANENT_KEY, JSON.stringify(permanent)); }, [permanent]);
 
   const updateDraft = useCallback((partial: Partial<PortfolioData>) => {
     setDraft(prev => {
-      // Push current state to undo stack
       setUndoStack(us => [...us.slice(-(MAX_UNDO - 1)), prev]);
       setRedoStack([]);
       return { ...prev, ...partial };
     });
   }, []);
 
-  const savePermanently = useCallback(() => {
-    setPermanent(draft);
-  }, [draft]);
+  const savePermanently = useCallback(() => { setPermanent(draft); }, [draft]);
 
   const resetData = useCallback(() => {
-    setDraft(DEFAULT_DATA);
-    setPermanent(DEFAULT_DATA);
-    setHistory([]);
-    setUndoStack([]);
-    setRedoStack([]);
-    localStorage.removeItem(DRAFT_KEY);
-    localStorage.removeItem(PERMANENT_KEY);
-    localStorage.removeItem(HISTORY_KEY);
+    setDraft(DEFAULT_DATA); setPermanent(DEFAULT_DATA); setHistory([]); setUndoStack([]); setRedoStack([]);
+    localStorage.removeItem(DRAFT_KEY); localStorage.removeItem(PERMANENT_KEY); localStorage.removeItem(HISTORY_KEY);
   }, []);
 
   const restoreFromHistory = useCallback((index: number) => {
-    const entry = history[index];
-    if (!entry) return;
-    setUndoStack(us => [...us.slice(-(MAX_UNDO - 1)), draft]);
-    setRedoStack([]);
-    setDraft(entry.snapshot);
+    const entry = history[index]; if (!entry) return;
+    setUndoStack(us => [...us.slice(-(MAX_UNDO - 1)), draft]); setRedoStack([]);
+    setDraft({ ...DEFAULT_DATA, ...entry.snapshot });
   }, [history, draft]);
 
-  const clearHistory = useCallback(() => {
-    setHistory([]);
-    localStorage.removeItem(HISTORY_KEY);
-  }, []);
+  const clearHistory = useCallback(() => { setHistory([]); localStorage.removeItem(HISTORY_KEY); }, []);
 
   const undo = useCallback(() => {
     if (undoStack.length === 0) return;
     const prev = undoStack[undoStack.length - 1];
-    setUndoStack(us => us.slice(0, -1));
-    setRedoStack(rs => [...rs, draft]);
-    setDraft(prev);
+    setUndoStack(us => us.slice(0, -1)); setRedoStack(rs => [...rs, draft]); setDraft(prev);
   }, [undoStack, draft]);
 
   const redo = useCallback(() => {
     if (redoStack.length === 0) return;
     const next = redoStack[redoStack.length - 1];
-    setRedoStack(rs => rs.slice(0, -1));
-    setUndoStack(us => [...us, draft]);
-    setDraft(next);
+    setRedoStack(rs => rs.slice(0, -1)); setUndoStack(us => [...us, draft]); setDraft(next);
   }, [redoStack, draft]);
 
   return (
     <PortfolioContext.Provider value={{
-      data: permanent,
-      draft,
-      updateDraft,
-      savePermanently,
-      resetData,
-      history,
-      restoreFromHistory,
-      clearHistory,
-      undo,
-      redo,
-      canUndo: undoStack.length > 0,
-      canRedo: redoStack.length > 0,
-      // Legacy compat: updateData maps to updateDraft
+      data: permanent, draft, updateDraft, savePermanently, resetData,
+      history, restoreFromHistory, clearHistory,
+      undo, redo, canUndo: undoStack.length > 0, canRedo: redoStack.length > 0,
       updateData: updateDraft,
     }}>
       {children}
@@ -239,4 +228,4 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   );
 };
 
-export { DEFAULT_DATA };
+export { DEFAULT_DATA, DEFAULT_SECTIONS };
