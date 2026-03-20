@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useCtrlS } from "@/hooks/useCtrlS";
@@ -66,6 +66,18 @@ const Index = () => {
   const { data } = usePortfolio();
   const [loading, setLoading] = useState(true);
   const handleComplete = useCallback(() => setLoading(false), []);
+
+  // Track visits
+  useEffect(() => {
+    try {
+      const key = "portfolio-analytics";
+      const raw = localStorage.getItem(key);
+      const a = raw ? JSON.parse(raw) : { visits: 0, lastUpdate: 0 };
+      a.visits = (a.visits || 0) + 1;
+      localStorage.setItem(key, JSON.stringify(a));
+    } catch {}
+  }, []);
+
   const s = data.sections ?? { about: true, skills: true, skillRadar: true, rpgSkillTree: true, projects: true, timeline: true, learningJourney: true, achievements: true, certificates: true, github: true, contact: true };
 
   return (

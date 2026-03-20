@@ -396,3 +396,24 @@ button, a[role="button"], [role="button"] {
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--neon-blue) / 0.5);
 }
+
+/* Admin light theme override */
+.admin-light {
+  --background: 0 0% 97%;
+  --foreground: 220 15% 15%;
+  --card: 0 0% 100%;
+  --card-foreground: 220 15% 15%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 15% 15%;
+  --muted: 220 10% 92%;
+  --muted-foreground: 220 10% 40%;
+  --secondary: 220 10% 92%;
+  --secondary-foreground: 220 15% 15%;
+  --accent: 220 10% 92%;
+  --accent-foreground: 220 15% 15%;
+  --border: 220 10% 85%;
+  --input: 220 10% 85%;
+  --ring: 200 100% 50%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+}
