@@ -138,6 +138,8 @@ interface PortfolioContextType {
   canUndo: boolean;
   canRedo: boolean;
   updateData: (partial: Partial<PortfolioData>) => void;
+  isPreview: boolean;
+  setPreviewMode: (v: boolean) => void;
 }
 
 const PortfolioContext = createContext<PortfolioContextType | null>(null);
