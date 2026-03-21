@@ -221,10 +221,11 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   return (
     <PortfolioContext.Provider value={{
-      data: permanent, draft, updateDraft, savePermanently, resetData,
+      data: isPreview ? draft : permanent, draft, updateDraft, savePermanently, resetData,
       history, restoreFromHistory, clearHistory,
       undo, redo, canUndo: undoStack.length > 0, canRedo: redoStack.length > 0,
       updateData: updateDraft,
+      isPreview, setPreviewMode: setIsPreview,
     }}>
       {children}
     </PortfolioContext.Provider>
