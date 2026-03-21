@@ -161,6 +161,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   });
   const [undoStack, setUndoStack] = useState<PortfolioData[]>([]);
   const [redoStack, setRedoStack] = useState<PortfolioData[]>([]);
+  const [isPreview, setIsPreview] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout>>();
   const lastDraftJson = useRef(JSON.stringify(draft));
 
