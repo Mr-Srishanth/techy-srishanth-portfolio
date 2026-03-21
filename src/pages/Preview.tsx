@@ -1,95 +1,112 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Monitor, Smartphone } from "lucide-react";
 import { usePortfolio } from "@/contexts/PortfolioContext";
+
+// Import actual site components
+import Navbar from "@/components/Navbar";
+import HeroSection from "@/components/HeroSection";
+import AboutSection from "@/components/AboutSection";
+import SkillsSection from "@/components/SkillsSection";
+import ProjectsSection from "@/components/ProjectsSection";
+import GitHubSection from "@/components/GitHubSection";
+import LearningJourneySection from "@/components/LearningJourneySection";
+import ContactSection from "@/components/ContactSection";
+import Footer from "@/components/Footer";
+import SkillRadarChart from "@/components/SkillRadarChart";
+import RPGSkillTree from "@/components/RPGSkillTree";
+import TimeMachineTimeline from "@/components/TimeMachineTimeline";
+import AchievementsSection from "@/components/AchievementsSection";
+import CertificatesSection from "@/components/CertificatesSection";
+import ScrollToTop from "@/components/ScrollToTop";
+import SectionReveal from "@/components/SectionReveal";
+import GenerativeArtBackground from "@/components/GenerativeArtBackground";
+import ScrollProgress from "@/components/ScrollProgress";
+import SpotlightGlow from "@/components/SpotlightGlow";
 
 const Preview = () => {
   const navigate = useNavigate();
-  const { draft } = usePortfolio();
+  const { draft, setPreviewMode } = usePortfolio();
+  const [viewport, setViewport] = useState<"desktop" | "mobile">("desktop");
+
+  useEffect(() => {
+    setPreviewMode(true);
+    return () => setPreviewMode(false);
+  }, [setPreviewMode]);
+
+  const s = draft.sections ?? {
+    about: true, skills: true, skillRadar: true, rpgSkillTree: true,
+    projects: true, timeline: true, learningJourney: true,
+    achievements: true, certificates: true, github: true, contact: true,
+  };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="fixed top-0 inset-x-0 z-50 bg-primary/90 backdrop-blur-lg text-primary-foreground">
+    <div className="min-h-screen bg-muted/30">
+      {/* Preview Toolbar */}
+      <div className="fixed top-0 inset-x-0 z-[70] bg-primary/95 backdrop-blur-lg text-primary-foreground shadow-lg">
         <div className="container mx-auto px-4 h-12 flex items-center justify-between">
-          <span className="text-sm font-mono font-semibold tracking-wider">PREVIEW MODE — Draft Data</span>
-          <motion.button onClick={() => navigate("/admin/dashboard")} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary-foreground/20 hover:bg-primary-foreground/30 transition-all text-sm font-mono" whileTap={{ scale: 0.95 }}>
-            <ArrowLeft size={14} /> Back to Edit
-          </motion.button>
+          <div className="flex items-center gap-3">
+            <motion.button
+              onClick={() => navigate("/admin/dashboard")}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary-foreground/20 hover:bg-primary-foreground/30 transition-colors text-sm font-mono"
+              whileTap={{ scale: 0.95 }}
+            >
+              <ArrowLeft size={14} /> Back to Edit
+            </motion.button>
+            <span className="text-xs font-mono opacity-70 hidden sm:inline">PREVIEW MODE — Showing draft data</span>
+          </div>
+
+          <div className="flex items-center gap-1 bg-primary-foreground/10 rounded-lg p-0.5">
+            <button
+              onClick={() => setViewport("desktop")}
+              className={`p-1.5 rounded-md transition-colors ${viewport === "desktop" ? "bg-primary-foreground/25" : "hover:bg-primary-foreground/10"}`}
+              title="Desktop view"
+            >
+              <Monitor size={16} />
+            </button>
+            <button
+              onClick={() => setViewport("mobile")}
+              className={`p-1.5 rounded-md transition-colors ${viewport === "mobile" ? "bg-primary-foreground/25" : "hover:bg-primary-foreground/10"}`}
+              title="Mobile view"
+            >
+              <Smartphone size={16} />
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="pt-16 pb-12 container mx-auto px-4 max-w-3xl space-y-8">
-        {/* Hero */}
-        <section className="glass-card p-8 text-center space-y-4">
-          {draft.profileImage && <img src={draft.profileImage} alt="Profile" className="w-24 h-24 rounded-full mx-auto object-cover border-2 border-primary/30" />}
-          <h1 className="font-display text-3xl font-bold text-foreground">{draft.heroName}</h1>
-          <p className="text-primary font-mono">{draft.heroSubtitle}</p>
-          <p className="text-muted-foreground text-sm max-w-lg mx-auto">{draft.heroBio}</p>
-        </section>
-
-        {/* About */}
-        <section className="glass-card p-6 space-y-3">
-          <h2 className="font-display text-xl font-bold text-foreground">{draft.aboutTitle}</h2>
-          <p className="text-muted-foreground text-sm">{draft.aboutP1}</p>
-          <p className="text-muted-foreground text-sm">{draft.aboutP2}</p>
-        </section>
-
-        {/* Skills */}
-        <section className="glass-card p-6 space-y-3">
-          <h2 className="font-display text-xl font-bold text-foreground">Skills</h2>
-          <div className="flex flex-wrap gap-2">
-            {draft.skills.map((s, i) => (
-              <span key={i} className="px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-sm font-mono text-foreground">
-                {s.name} {s.upcoming ? "🔒" : `${s.level}%`}
-              </span>
-            ))}
+      {/* Preview Container */}
+      <div className="pt-12">
+        <div
+          className={`mx-auto transition-all duration-500 ease-out ${
+            viewport === "mobile"
+              ? "max-w-[390px] shadow-2xl border-x border-border/50"
+              : "w-full"
+          }`}
+          style={{ minHeight: "calc(100vh - 3rem)" }}
+        >
+          <div className="relative bg-background overflow-hidden">
+            <ScrollProgress />
+            <GenerativeArtBackground />
+            <SpotlightGlow />
+            <Navbar />
+            <HeroSection />
+            {s.about && <SectionReveal><AboutSection /></SectionReveal>}
+            {s.skills && <SectionReveal direction="left" delay={0.1}><SkillsSection /></SectionReveal>}
+            {s.skillRadar && <SectionReveal delay={0.05}><SkillRadarChart /></SectionReveal>}
+            {s.rpgSkillTree && <SectionReveal direction="left" delay={0.1}><RPGSkillTree /></SectionReveal>}
+            {s.projects && <SectionReveal direction="right" delay={0.1}><ProjectsSection /></SectionReveal>}
+            {s.timeline && <SectionReveal parallax={false}><TimeMachineTimeline /></SectionReveal>}
+            {s.learningJourney && <SectionReveal><LearningJourneySection /></SectionReveal>}
+            {s.achievements && <SectionReveal direction="left" delay={0.1}><AchievementsSection /></SectionReveal>}
+            {s.certificates && <SectionReveal><CertificatesSection /></SectionReveal>}
+            {s.github && <SectionReveal direction="right" delay={0.1}><GitHubSection /></SectionReveal>}
+            <ScrollToTop />
+            {s.contact && <SectionReveal><ContactSection /></SectionReveal>}
+            <Footer />
           </div>
-        </section>
-
-        {/* Projects */}
-        <section className="glass-card p-6 space-y-4">
-          <h2 className="font-display text-xl font-bold text-foreground">Projects</h2>
-          {draft.projects.map((p, i) => (
-            <div key={i} className="p-4 rounded-lg bg-secondary/30 border border-border/50 space-y-2">
-              {p.image && <img src={p.image} alt={p.title} className="w-full h-32 object-cover rounded-lg" />}
-              <h3 className="font-semibold text-foreground">{p.title}</h3>
-              <p className="text-sm text-muted-foreground">{p.desc}</p>
-              <div className="flex flex-wrap gap-1">
-                {p.tags.map((t, j) => <span key={j} className="px-2 py-0.5 rounded bg-primary/10 text-primary text-xs font-mono">{t}</span>)}
-              </div>
-            </div>
-          ))}
-        </section>
-
-        {/* Certificates */}
-        {draft.certificates.length > 0 && (
-          <section className="glass-card p-6 space-y-4">
-            <h2 className="font-display text-xl font-bold text-foreground">Certificates</h2>
-            {draft.certificates.map((c, i) => (
-              <div key={i} className="p-4 rounded-lg bg-secondary/30 border border-border/50 space-y-2">
-                {c.image && <img src={c.image} alt={c.title} className="w-full h-32 object-cover rounded-lg" />}
-                <h3 className="font-semibold text-foreground">{c.title}</h3>
-                {c.issuer && <p className="text-sm text-muted-foreground">{c.issuer}</p>}
-              </div>
-            ))}
-          </section>
-        )}
-
-        {/* Greetings */}
-        {draft.greetings.length > 0 && (
-          <section className="glass-card p-6 space-y-4">
-            <h2 className="font-display text-xl font-bold text-foreground">Greetings</h2>
-            {draft.greetings.map((g, i) => (
-              <div key={i} className={`p-4 rounded-lg border space-y-2 ${g.active ? "bg-primary/10 border-primary/30" : "bg-secondary/30 border-border/50"}`}>
-                <div className="flex items-center gap-2">
-                  <h3 className="font-semibold text-foreground">{g.title || "(untitled)"}</h3>
-                  {g.active && <span className="text-xs px-2 py-0.5 rounded-full bg-primary text-primary-foreground font-mono">Active</span>}
-                </div>
-                <p className="text-sm text-muted-foreground">{g.message}</p>
-              </div>
-            ))}
-          </section>
-        )}
+        </div>
       </div>
     </div>
   );

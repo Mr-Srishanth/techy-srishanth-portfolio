@@ -138,6 +138,8 @@ interface PortfolioContextType {
   canUndo: boolean;
   canRedo: boolean;
   updateData: (partial: Partial<PortfolioData>) => void;
+  isPreview: boolean;
+  setPreviewMode: (v: boolean) => void;
 }
 
 const PortfolioContext = createContext<PortfolioContextType | null>(null);
@@ -159,6 +161,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   });
   const [undoStack, setUndoStack] = useState<PortfolioData[]>([]);
   const [redoStack, setRedoStack] = useState<PortfolioData[]>([]);
+  const [isPreview, setIsPreview] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout>>();
   const lastDraftJson = useRef(JSON.stringify(draft));
 
@@ -218,10 +221,11 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   return (
     <PortfolioContext.Provider value={{
-      data: permanent, draft, updateDraft, savePermanently, resetData,
+      data: isPreview ? draft : permanent, draft, updateDraft, savePermanently, resetData,
       history, restoreFromHistory, clearHistory,
       undo, redo, canUndo: undoStack.length > 0, canRedo: redoStack.length > 0,
       updateData: updateDraft,
+      isPreview, setPreviewMode: setIsPreview,
     }}>
       {children}
     </PortfolioContext.Provider>
