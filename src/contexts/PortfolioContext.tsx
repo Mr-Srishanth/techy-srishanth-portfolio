@@ -1,6 +1,8 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
+import React, { createContext, useContext, useState, useCallback, useRef } from "react";
+import { usePortfolioData } from "@/hooks/usePortfolioData";
 
 export interface SkillData {
+  id?: string;
   name: string;
   level: number;
   icon: string;
@@ -9,6 +11,7 @@ export interface SkillData {
 }
 
 export interface ProjectData {
+  id?: string;
   title: string;
   desc: string;
   tags: string[];
@@ -16,6 +19,7 @@ export interface ProjectData {
 }
 
 export interface CertificateData {
+  id?: string;
   title: string;
   issuer: string;
   image?: string;
@@ -23,6 +27,7 @@ export interface CertificateData {
 }
 
 export interface GreetingData {
+  id?: string;
   title: string;
   message: string;
   image?: string;
@@ -66,17 +71,9 @@ export interface HistoryEntry {
 }
 
 const DEFAULT_SECTIONS: SectionVisibility = {
-  about: true,
-  skills: true,
-  skillRadar: true,
-  rpgSkillTree: true,
-  projects: true,
-  timeline: true,
-  learningJourney: true,
-  achievements: true,
-  certificates: true,
-  github: true,
-  contact: true,
+  about: true, skills: true, skillRadar: true, rpgSkillTree: true, projects: true,
+  timeline: true, learningJourney: true, achievements: true, certificates: true,
+  github: true, contact: true,
 };
 
 const DEFAULT_DATA: PortfolioData = {
@@ -88,47 +85,21 @@ const DEFAULT_DATA: PortfolioData = {
   aboutP1: "I'm Arrabola Srishanth, a first-year B.Tech student in Computer Science (AI & ML) at Vignan Institute of Technology and Science. I'm passionate about artificial intelligence, machine learning, and building software that makes a difference.",
   aboutP2: "Currently learning Python and Data Structures, I'm dedicated to mastering the foundations of computer science while exploring the exciting frontiers of AI technology.",
   profileImage: "",
-  skills: [
-    { name: "C Programming", level: 90, icon: "⚙️" },
-    { name: "Python", level: 50, icon: "🐍" },
-    { name: "Data Structures", level: 25, icon: "🏗️" },
-    { name: "Machine Learning", level: 10, icon: "🤖" },
-    { name: "React", level: 0, icon: "⚛️", upcoming: true },
-    { name: "Git", level: 0, icon: "🧩", upcoming: true },
-  ],
-  projects: [
-    { title: "Python Calculator", desc: "A feature-rich calculator built with Python, supporting basic and scientific operations.", tags: ["Python", "CLI"] },
-    { title: "Student Management System", desc: "A CRUD application for managing student records with file handling.", tags: ["Python", "File I/O"] },
-    { title: "Portfolio Website", desc: "This futuristic portfolio built with React, TypeScript, and Framer Motion.", tags: ["React", "TypeScript", "Framer Motion"] },
-    { title: "DSA Practice Tracker", desc: "A tool to track progress on Data Structures and Algorithms problems.", tags: ["Python", "Data Structures"] },
-  ],
-  certificates: [
-    { title: "Python Basics", issuer: "Coursera", link: "#" },
-    { title: "Web Development", issuer: "freeCodeCamp", link: "#" },
-    { title: "AI Fundamentals", issuer: "Google", link: "#" },
-    { title: "Hackathon", issuer: "", image: "" },
-  ],
+  skills: [],
+  projects: [],
+  certificates: [],
   greetings: [],
   sections: { ...DEFAULT_SECTIONS },
 };
 
-const DRAFT_KEY = "portfolio-draft-data";
-const PERMANENT_KEY = "portfolio-permanent-data";
-const HISTORY_KEY = "portfolio-history-data";
-
-function loadJson<T>(key: string, fallback: T): T {
-  try {
-    const raw = localStorage.getItem(key);
-    if (raw) return { ...fallback, ...JSON.parse(raw) };
-  } catch {}
-  return fallback;
-}
+const MAX_UNDO = 30;
 
 interface PortfolioContextType {
   data: PortfolioData;
   draft: PortfolioData;
+  loading: boolean;
   updateDraft: (partial: Partial<PortfolioData>) => void;
-  savePermanently: () => void;
+  savePermanently: () => Promise<void>;
   resetData: () => void;
   history: HistoryEntry[];
   restoreFromHistory: (index: number) => void;
@@ -150,82 +121,100 @@ export const usePortfolio = () => {
   return ctx;
 };
 
-const MAX_HISTORY = 50;
-const MAX_UNDO = 30;
-
 export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [permanent, setPermanent] = useState<PortfolioData>(() => loadJson(PERMANENT_KEY, DEFAULT_DATA));
-  const [draft, setDraft] = useState<PortfolioData>(() => loadJson(DRAFT_KEY, loadJson(PERMANENT_KEY, DEFAULT_DATA)));
-  const [history, setHistory] = useState<HistoryEntry[]>(() => {
-    try { const raw = localStorage.getItem(HISTORY_KEY); if (raw) return JSON.parse(raw); } catch {} return [];
-  });
+  const { data: dbData, loading, saveToDatabase, refetch } = usePortfolioData();
+  const [draftOverride, setDraftOverride] = useState<PortfolioData | null>(null);
   const [undoStack, setUndoStack] = useState<PortfolioData[]>([]);
   const [redoStack, setRedoStack] = useState<PortfolioData[]>([]);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [isPreview, setIsPreview] = useState(false);
-  const saveTimer = useRef<ReturnType<typeof setTimeout>>();
-  const lastDraftJson = useRef(JSON.stringify(draft));
+  const draftInitialized = useRef(false);
 
-  useEffect(() => {
-    const currentJson = JSON.stringify(draft);
-    if (currentJson === lastDraftJson.current) return;
-    if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => {
-      localStorage.setItem(DRAFT_KEY, currentJson);
-      const entry: HistoryEntry = { snapshot: JSON.parse(currentJson), timestamp: Date.now(), label: "Auto-save" };
-      setHistory(prev => {
-        const next = [entry, ...prev].slice(0, MAX_HISTORY);
-        localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
-        return next;
-      });
-      lastDraftJson.current = currentJson;
-    }, 2000);
-    return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
-  }, [draft]);
+  // Draft is either the override (admin editing) or the DB data
+  const draft = draftOverride ?? dbData;
 
-  useEffect(() => { localStorage.setItem(PERMANENT_KEY, JSON.stringify(permanent)); }, [permanent]);
+  // When DB data loads for the first time, sync draft
+  if (!loading && !draftInitialized.current && dbData.heroName) {
+    draftInitialized.current = true;
+  }
 
   const updateDraft = useCallback((partial: Partial<PortfolioData>) => {
-    setDraft(prev => {
-      setUndoStack(us => [...us.slice(-(MAX_UNDO - 1)), prev]);
+    setDraftOverride(prev => {
+      const current = prev ?? dbData;
+      setUndoStack(us => [...us.slice(-(MAX_UNDO - 1)), current]);
       setRedoStack([]);
-      return { ...prev, ...partial };
+      return { ...current, ...partial };
     });
-  }, []);
+  }, [dbData]);
 
-  const savePermanently = useCallback(() => { setPermanent(draft); }, [draft]);
+  const savePermanently = useCallback(async () => {
+    const toSave = draftOverride ?? dbData;
+    await saveToDatabase(toSave);
+    // Add to history
+    setHistory(prev => [{
+      snapshot: { ...toSave },
+      timestamp: Date.now(),
+      label: "Published",
+    }, ...prev].slice(0, 50));
+    // Clear draft override since DB now matches
+    setDraftOverride(null);
+  }, [draftOverride, dbData, saveToDatabase]);
 
-  const resetData = useCallback(() => {
-    setDraft(DEFAULT_DATA); setPermanent(DEFAULT_DATA); setHistory([]); setUndoStack([]); setRedoStack([]);
-    localStorage.removeItem(DRAFT_KEY); localStorage.removeItem(PERMANENT_KEY); localStorage.removeItem(HISTORY_KEY);
-  }, []);
+  const resetData = useCallback(async () => {
+    setDraftOverride(null);
+    setUndoStack([]);
+    setRedoStack([]);
+    setHistory([]);
+    await saveToDatabase(DEFAULT_DATA);
+  }, [saveToDatabase]);
 
   const restoreFromHistory = useCallback((index: number) => {
-    const entry = history[index]; if (!entry) return;
-    setUndoStack(us => [...us.slice(-(MAX_UNDO - 1)), draft]); setRedoStack([]);
-    setDraft({ ...DEFAULT_DATA, ...entry.snapshot });
+    const entry = history[index];
+    if (!entry) return;
+    setUndoStack(us => [...us.slice(-(MAX_UNDO - 1)), draft]);
+    setRedoStack([]);
+    setDraftOverride({ ...DEFAULT_DATA, ...entry.snapshot });
   }, [history, draft]);
 
-  const clearHistory = useCallback(() => { setHistory([]); localStorage.removeItem(HISTORY_KEY); }, []);
+  const clearHistory = useCallback(() => { setHistory([]); }, []);
 
   const undo = useCallback(() => {
     if (undoStack.length === 0) return;
     const prev = undoStack[undoStack.length - 1];
-    setUndoStack(us => us.slice(0, -1)); setRedoStack(rs => [...rs, draft]); setDraft(prev);
+    setUndoStack(us => us.slice(0, -1));
+    setRedoStack(rs => [...rs, draft]);
+    setDraftOverride(prev);
   }, [undoStack, draft]);
 
   const redo = useCallback(() => {
     if (redoStack.length === 0) return;
     const next = redoStack[redoStack.length - 1];
-    setRedoStack(rs => rs.slice(0, -1)); setUndoStack(us => [...us, draft]); setDraft(next);
+    setRedoStack(rs => rs.slice(0, -1));
+    setUndoStack(us => [...us, draft]);
+    setDraftOverride(next);
   }, [redoStack, draft]);
+
+  // For public visitors: always show DB data
+  // For preview mode: show draft
+  const visibleData = isPreview ? draft : dbData;
 
   return (
     <PortfolioContext.Provider value={{
-      data: isPreview ? draft : permanent, draft, updateDraft, savePermanently, resetData,
-      history, restoreFromHistory, clearHistory,
-      undo, redo, canUndo: undoStack.length > 0, canRedo: redoStack.length > 0,
+      data: visibleData,
+      draft,
+      loading,
+      updateDraft,
+      savePermanently,
+      resetData,
+      history,
+      restoreFromHistory,
+      clearHistory,
+      undo, redo,
+      canUndo: undoStack.length > 0,
+      canRedo: redoStack.length > 0,
       updateData: updateDraft,
-      isPreview, setPreviewMode: setIsPreview,
+      isPreview,
+      setPreviewMode: setIsPreview,
     }}>
       {children}
     </PortfolioContext.Provider>
