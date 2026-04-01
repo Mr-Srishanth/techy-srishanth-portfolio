@@ -191,7 +191,9 @@ const AdminDashboard = () => {
 
   const logout = () => { sessionStorage.removeItem("admin-auth"); toast.success("Logged out"); navigate("/admin"); };
 
-  const handleSavePermanently = () => {
+  const [publishing, setPublishing] = useState(false);
+
+  const handleSavePermanently = async () => {
     const nameErr = validateNotEmpty(draft.heroName, "Name");
     const subtitleErr = validateNotEmpty(draft.heroSubtitle, "Subtitle");
     if (nameErr || subtitleErr) {
@@ -201,10 +203,18 @@ const AdminDashboard = () => {
       return;
     }
     setErrors({});
-    savePermanently();
-    setLastUpdate();
-    setAnalytics(getAnalytics());
-    toast.success("Saved permanently — live on website!");
+    setPublishing(true);
+    try {
+      await savePermanently();
+      setLastUpdate();
+      setAnalytics(getAnalytics());
+      toast.success("Published to database — live everywhere!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to publish. Please try again.");
+    } finally {
+      setPublishing(false);
+    }
   };
 
   const setFieldError = (key: string, value: string) => {
