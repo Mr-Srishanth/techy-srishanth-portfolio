@@ -330,7 +330,7 @@ const AdminDashboard = () => {
             <motion.button onClick={redo} disabled={!canRedo} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed" whileTap={{ scale: 0.95 }} title="Redo (Ctrl+Y)"><Redo2 size={16} /></motion.button>
             <div className="w-px h-6 bg-border mx-1 hidden sm:block" />
             <motion.button onClick={() => window.open("/preview", "_blank")} className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-secondary/50 text-foreground hover:bg-secondary transition-all text-sm font-mono" whileTap={{ scale: 0.95 }}><Eye size={14} /> Preview</motion.button>
-            <motion.button onClick={handleSavePermanently} className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-mono text-sm neon-glow" whileTap={{ scale: 0.95 }}><Save size={14} /> Publish</motion.button>
+            <motion.button onClick={handleSavePermanently} disabled={publishing} className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-mono text-sm neon-glow disabled:opacity-50" whileTap={{ scale: 0.95 }}><Save size={14} /> {publishing ? "Publishing..." : "Publish"}</motion.button>
             <div className="w-px h-6 bg-border mx-1 hidden sm:block" />
             <button onClick={resetData} className="text-xs font-mono text-muted-foreground hover:text-destructive transition-colors">Reset</button>
             <motion.button onClick={logout} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all text-sm font-mono" whileTap={{ scale: 0.95 }}><LogOut size={14} /></motion.button>
