@@ -14,7 +14,231 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      certificates: {
+        Row: {
+          created_at: string
+          id: string
+          image: string | null
+          issuer: string
+          link: string | null
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image?: string | null
+          issuer?: string
+          link?: string | null
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image?: string | null
+          issuer?: string
+          link?: string | null
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      greetings: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          image: string | null
+          message: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          image?: string | null
+          message?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          image?: string | null
+          message?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      portfolio_content: {
+        Row: {
+          about_p1: string
+          about_p2: string
+          about_title: string
+          created_at: string
+          current_focus: string
+          hero_bio: string
+          hero_name: string
+          hero_subtitle: string
+          id: string
+          profile_image: string
+          updated_at: string
+        }
+        Insert: {
+          about_p1?: string
+          about_p2?: string
+          about_title?: string
+          created_at?: string
+          current_focus?: string
+          hero_bio?: string
+          hero_name?: string
+          hero_subtitle?: string
+          id?: string
+          profile_image?: string
+          updated_at?: string
+        }
+        Update: {
+          about_p1?: string
+          about_p2?: string
+          about_title?: string
+          created_at?: string
+          current_focus?: string
+          hero_bio?: string
+          hero_name?: string
+          hero_subtitle?: string
+          id?: string
+          profile_image?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          image: string | null
+          sort_order: number
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          image?: string | null
+          sort_order?: number
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          image?: string | null
+          sort_order?: number
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      section_visibility: {
+        Row: {
+          about: boolean
+          achievements: boolean
+          certificates: boolean
+          contact: boolean
+          created_at: string
+          github: boolean
+          id: string
+          learning_journey: boolean
+          projects: boolean
+          rpg_skill_tree: boolean
+          skill_radar: boolean
+          skills: boolean
+          timeline: boolean
+          updated_at: string
+        }
+        Insert: {
+          about?: boolean
+          achievements?: boolean
+          certificates?: boolean
+          contact?: boolean
+          created_at?: string
+          github?: boolean
+          id?: string
+          learning_journey?: boolean
+          projects?: boolean
+          rpg_skill_tree?: boolean
+          skill_radar?: boolean
+          skills?: boolean
+          timeline?: boolean
+          updated_at?: string
+        }
+        Update: {
+          about?: boolean
+          achievements?: boolean
+          certificates?: boolean
+          contact?: boolean
+          created_at?: string
+          github?: boolean
+          id?: string
+          learning_journey?: boolean
+          projects?: boolean
+          rpg_skill_tree?: boolean
+          skill_radar?: boolean
+          skills?: boolean
+          timeline?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      skills: {
+        Row: {
+          created_at: string
+          icon: string
+          id: string
+          level: number
+          logo: string | null
+          name: string
+          sort_order: number
+          upcoming: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string
+          id?: string
+          level?: number
+          logo?: string | null
+          name: string
+          sort_order?: number
+          upcoming?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string
+          id?: string
+          level?: number
+          logo?: string | null
+          name?: string
+          sort_order?: number
+          upcoming?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
