@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { usePortfolio, type SkillData, type ProjectData, type CertificateData, type GreetingData, type SectionVisibility } from "@/contexts/PortfolioContext";
+import { supabase } from "@/integrations/supabase/client";
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors,
   type DragEndEvent
