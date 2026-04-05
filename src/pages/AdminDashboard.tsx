@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { usePortfolio, type SkillData, type ProjectData, type CertificateData, type GreetingData, type SectionVisibility } from "@/contexts/PortfolioContext";
+import { supabase } from "@/integrations/supabase/client";
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors,
   type DragEndEvent
@@ -163,7 +164,13 @@ const AdminDashboard = () => {
   }, [adminTheme]);
 
   useEffect(() => {
-    if (sessionStorage.getItem("admin-auth") !== "true") navigate("/admin");
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) navigate("/admin");
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) navigate("/admin");
+    });
+    return () => subscription.unsubscribe();
   }, [navigate]);
 
   useEffect(() => {
@@ -189,7 +196,11 @@ const AdminDashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const logout = () => { sessionStorage.removeItem("admin-auth"); toast.success("Logged out"); navigate("/admin"); };
+  const logout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Logged out");
+    navigate("/admin");
+  };
 
   const [publishing, setPublishing] = useState(false);
 
