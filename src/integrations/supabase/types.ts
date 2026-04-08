@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          color: string
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          link: string | null
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          link?: string | null
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          link?: string | null
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       certificates: {
         Row: {
           created_at: string
@@ -84,11 +120,16 @@ export type Database = {
           about_title: string
           created_at: string
           current_focus: string
+          email: string
+          github_url: string
           hero_bio: string
           hero_name: string
           hero_subtitle: string
           id: string
+          instagram_url: string
+          linkedin_url: string
           profile_image: string
+          resume_url: string
           updated_at: string
         }
         Insert: {
@@ -97,11 +138,16 @@ export type Database = {
           about_title?: string
           created_at?: string
           current_focus?: string
+          email?: string
+          github_url?: string
           hero_bio?: string
           hero_name?: string
           hero_subtitle?: string
           id?: string
+          instagram_url?: string
+          linkedin_url?: string
           profile_image?: string
+          resume_url?: string
           updated_at?: string
         }
         Update: {
@@ -110,11 +156,16 @@ export type Database = {
           about_title?: string
           created_at?: string
           current_focus?: string
+          email?: string
+          github_url?: string
           hero_bio?: string
           hero_name?: string
           hero_subtitle?: string
           id?: string
+          instagram_url?: string
+          linkedin_url?: string
           profile_image?: string
+          resume_url?: string
           updated_at?: string
         }
         Relationships: []
@@ -123,8 +174,10 @@ export type Database = {
         Row: {
           created_at: string
           description: string
+          github_url: string | null
           id: string
           image: string | null
+          live_url: string | null
           sort_order: number
           tags: string[]
           title: string
@@ -133,8 +186,10 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string
+          github_url?: string | null
           id?: string
           image?: string | null
+          live_url?: string | null
           sort_order?: number
           tags?: string[]
           title: string
@@ -143,8 +198,10 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string
+          github_url?: string | null
           id?: string
           image?: string | null
+          live_url?: string | null
           sort_order?: number
           tags?: string[]
           title?: string
