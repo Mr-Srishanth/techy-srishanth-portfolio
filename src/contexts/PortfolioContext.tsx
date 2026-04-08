@@ -16,6 +16,8 @@ export interface ProjectData {
   desc: string;
   tags: string[];
   image?: string;
+  live_url?: string;
+  github_url?: string;
 }
 
 export interface CertificateData {
@@ -32,6 +34,16 @@ export interface GreetingData {
   message: string;
   image?: string;
   active: boolean;
+}
+
+export interface AchievementData {
+  id?: string;
+  title: string;
+  description: string;
+  icon: string;
+  link?: string;
+  color: string;
+  sort_order?: number;
 }
 
 export interface SectionVisibility {
@@ -61,7 +73,14 @@ export interface PortfolioData {
   projects: ProjectData[];
   certificates: CertificateData[];
   greetings: GreetingData[];
+  achievements: AchievementData[];
   sections: SectionVisibility;
+  // Social links
+  githubUrl: string;
+  linkedinUrl: string;
+  instagramUrl: string;
+  email: string;
+  resumeUrl: string;
 }
 
 export interface HistoryEntry {
@@ -89,7 +108,13 @@ const DEFAULT_DATA: PortfolioData = {
   projects: [],
   certificates: [],
   greetings: [],
+  achievements: [],
   sections: { ...DEFAULT_SECTIONS },
+  githubUrl: "",
+  linkedinUrl: "",
+  instagramUrl: "",
+  email: "",
+  resumeUrl: "",
 };
 
 const MAX_UNDO = 30;
@@ -130,10 +155,8 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [isPreview, setIsPreview] = useState(false);
   const draftInitialized = useRef(false);
 
-  // Draft is either the override (admin editing) or the DB data
   const draft = draftOverride ?? dbData;
 
-  // When DB data loads for the first time, sync draft
   if (!loading && !draftInitialized.current && dbData.heroName) {
     draftInitialized.current = true;
   }
@@ -150,13 +173,11 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const savePermanently = useCallback(async () => {
     const toSave = draftOverride ?? dbData;
     await saveToDatabase(toSave);
-    // Add to history
     setHistory(prev => [{
       snapshot: { ...toSave },
       timestamp: Date.now(),
       label: "Published",
     }, ...prev].slice(0, 50));
-    // Clear draft override since DB now matches
     setDraftOverride(null);
   }, [draftOverride, dbData, saveToDatabase]);
 
@@ -194,8 +215,6 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setDraftOverride(next);
   }, [redoStack, draft]);
 
-  // For public visitors: always show DB data
-  // For preview mode: show draft
   const visibleData = isPreview ? draft : dbData;
 
   return (

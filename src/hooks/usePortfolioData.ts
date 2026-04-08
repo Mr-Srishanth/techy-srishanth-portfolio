@@ -1,15 +1,19 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
-import type { PortfolioData, SkillData, ProjectData, CertificateData, GreetingData, SectionVisibility } from "@/contexts/PortfolioContext";
+import type { PortfolioData, SkillData, ProjectData, CertificateData, GreetingData, AchievementData, SectionVisibility } from "@/contexts/PortfolioContext";
 
-// Map DB rows to app types
 function mapSkill(row: Tables<"skills">): SkillData & { id: string } {
   return { id: row.id, name: row.name, level: row.level, icon: row.icon, logo: row.logo ?? undefined, upcoming: row.upcoming };
 }
 
 function mapProject(row: Tables<"projects">): ProjectData & { id: string } {
-  return { id: row.id, title: row.title, desc: row.description, tags: row.tags, image: row.image ?? undefined };
+  return {
+    id: row.id, title: row.title, desc: row.description, tags: row.tags,
+    image: row.image ?? undefined,
+    live_url: (row as any).live_url ?? undefined,
+    github_url: (row as any).github_url ?? undefined,
+  };
 }
 
 function mapCertificate(row: Tables<"certificates">): CertificateData & { id: string } {
@@ -18,6 +22,14 @@ function mapCertificate(row: Tables<"certificates">): CertificateData & { id: st
 
 function mapGreeting(row: Tables<"greetings">): GreetingData & { id: string } {
   return { id: row.id, title: row.title, message: row.message, image: row.image ?? undefined, active: row.active };
+}
+
+function mapAchievement(row: Tables<"achievements">): AchievementData & { id: string } {
+  return {
+    id: row.id, title: row.title, description: row.description,
+    icon: row.icon, link: row.link ?? undefined, color: row.color,
+    sort_order: row.sort_order,
+  };
 }
 
 function mapSections(row: Tables<"section_visibility">): SectionVisibility {
@@ -38,12 +50,12 @@ const DEFAULT_SECTIONS: SectionVisibility = {
 const DEFAULT_DATA: PortfolioData = {
   heroName: "Arrabola Srishanth",
   heroSubtitle: "AI & Software Developer",
-  heroBio: "",
-  currentFocus: "Data Structures & Algorithms",
+  heroBio: "", currentFocus: "Data Structures & Algorithms",
   aboutTitle: "Aspiring AI & Software Developer",
   aboutP1: "", aboutP2: "", profileImage: "",
-  skills: [], projects: [], certificates: [], greetings: [],
+  skills: [], projects: [], certificates: [], greetings: [], achievements: [],
   sections: { ...DEFAULT_SECTIONS },
+  githubUrl: "", linkedinUrl: "", instagramUrl: "", email: "", resumeUrl: "",
 };
 
 export function usePortfolioData() {
@@ -54,13 +66,14 @@ export function usePortfolioData() {
 
   const fetchAll = useCallback(async () => {
     try {
-      const [contentRes, skillsRes, projectsRes, certsRes, greetingsRes, sectionsRes] = await Promise.all([
+      const [contentRes, skillsRes, projectsRes, certsRes, greetingsRes, sectionsRes, achievementsRes] = await Promise.all([
         supabase.from("portfolio_content").select("*").limit(1).single(),
         supabase.from("skills").select("*").order("sort_order"),
         supabase.from("projects").select("*").order("sort_order"),
         supabase.from("certificates").select("*").order("sort_order"),
         supabase.from("greetings").select("*"),
         supabase.from("section_visibility").select("*").limit(1).single(),
+        supabase.from("achievements").select("*").order("sort_order"),
       ]);
 
       const content = contentRes.data;
@@ -78,10 +91,16 @@ export function usePortfolioData() {
         aboutP1: content?.about_p1 ?? DEFAULT_DATA.aboutP1,
         aboutP2: content?.about_p2 ?? DEFAULT_DATA.aboutP2,
         profileImage: content?.profile_image ?? "",
+        githubUrl: (content as any)?.github_url ?? "",
+        linkedinUrl: (content as any)?.linkedin_url ?? "",
+        instagramUrl: (content as any)?.instagram_url ?? "",
+        email: (content as any)?.email ?? "",
+        resumeUrl: (content as any)?.resume_url ?? "",
         skills: (skillsRes.data ?? []).map(mapSkill),
         projects: (projectsRes.data ?? []).map(mapProject),
         certificates: (certsRes.data ?? []).map(mapCertificate),
         greetings: (greetingsRes.data ?? []).map(mapGreeting),
+        achievements: (achievementsRes.data ?? []).map(mapAchievement),
         sections: sections ? mapSections(sections) : { ...DEFAULT_SECTIONS },
       });
     } catch (err) {
@@ -91,10 +110,8 @@ export function usePortfolioData() {
     }
   }, []);
 
-  // Initial fetch
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
-  // Real-time subscriptions for public visitors
   useEffect(() => {
     const channel = supabase
       .channel("portfolio-realtime")
@@ -104,19 +121,19 @@ export function usePortfolioData() {
       .on("postgres_changes", { event: "*", schema: "public", table: "certificates" }, () => fetchAll())
       .on("postgres_changes", { event: "*", schema: "public", table: "greetings" }, () => fetchAll())
       .on("postgres_changes", { event: "*", schema: "public", table: "section_visibility" }, () => fetchAll())
+      .on("postgres_changes", { event: "*", schema: "public", table: "achievements" }, () => fetchAll())
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
   }, [fetchAll]);
 
-  // Save all data to Supabase
   const saveToDatabase = useCallback(async (portfolioData: PortfolioData) => {
     const skills = portfolioData.skills as (SkillData & { id?: string })[];
     const projects = portfolioData.projects as (ProjectData & { id?: string })[];
     const certificates = portfolioData.certificates as (CertificateData & { id?: string })[];
     const greetings = portfolioData.greetings as (GreetingData & { id?: string })[];
+    const achievements = portfolioData.achievements as (AchievementData & { id?: string })[];
 
-    // Update portfolio content
     const contentPayload = {
       hero_name: portfolioData.heroName,
       hero_subtitle: portfolioData.heroSubtitle,
@@ -126,16 +143,21 @@ export function usePortfolioData() {
       about_p1: portfolioData.aboutP1,
       about_p2: portfolioData.aboutP2,
       profile_image: portfolioData.profileImage,
+      github_url: portfolioData.githubUrl,
+      linkedin_url: portfolioData.linkedinUrl,
+      instagram_url: portfolioData.instagramUrl,
+      email: portfolioData.email,
+      resume_url: portfolioData.resumeUrl,
     };
 
     if (contentId) {
-      await supabase.from("portfolio_content").update(contentPayload).eq("id", contentId);
+      await supabase.from("portfolio_content").update(contentPayload as any).eq("id", contentId);
     } else {
-      const { data: newContent } = await supabase.from("portfolio_content").insert(contentPayload).select("id").single();
+      const { data: newContent } = await supabase.from("portfolio_content").insert(contentPayload as any).select("id").single();
       if (newContent) setContentId(newContent.id);
     }
 
-    // Sync skills: delete all, re-insert with sort_order
+    // Sync skills
     await supabase.from("skills").delete().neq("id", "00000000-0000-0000-0000-000000000000");
     if (skills.length > 0) {
       await supabase.from("skills").insert(
@@ -153,7 +175,9 @@ export function usePortfolioData() {
         projects.map((p, i) => ({
           title: p.title, description: p.desc, tags: p.tags,
           image: p.image ?? null, sort_order: i,
-        }))
+          live_url: p.live_url ?? null,
+          github_url: p.github_url ?? null,
+        } as any))
       );
     }
 
@@ -175,6 +199,17 @@ export function usePortfolioData() {
         greetings.map(g => ({
           title: g.title, message: g.message,
           image: g.image ?? null, active: g.active,
+        }))
+      );
+    }
+
+    // Sync achievements
+    await supabase.from("achievements").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+    if (achievements.length > 0) {
+      await supabase.from("achievements").insert(
+        achievements.map((a, i) => ({
+          title: a.title, description: a.description, icon: a.icon,
+          link: a.link ?? null, color: a.color, sort_order: i,
         }))
       );
     }
@@ -201,7 +236,6 @@ export function usePortfolioData() {
       if (newSections) setSectionsId(newSections.id);
     }
 
-    // Refetch to get fresh IDs
     await fetchAll();
   }, [contentId, sectionsId, fetchAll]);
 

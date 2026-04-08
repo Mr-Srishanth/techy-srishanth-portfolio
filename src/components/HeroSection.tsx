@@ -5,6 +5,7 @@ import defaultProfileImg from "@/assets/profile.jpg";
 import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
 import { EASE_HERO, DUR_HERO, STAGGER, buttonHover, buttonTap, DUR_MICRO } from "@/lib/animations";
 import { usePortfolio } from "@/contexts/PortfolioContext";
+import { Download } from "lucide-react";
 
 const defaultTitles = ["AI & Software Developer", "Learning Python & DSA", "B.Tech CSE (AI & ML)"];
 
@@ -66,6 +67,10 @@ const HeroSection = () => {
 
   const d = (i: number) => i * STAGGER;
 
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <section
       id="home"
@@ -117,7 +122,9 @@ const HeroSection = () => {
             transition={{ delay: d(2), duration: DUR_HERO, ease: EASE_HERO }}
           >
             <span className="text-foreground">I'm </span>
-            <span className="text-primary neon-text">{firstName}</span>
+            <span className="bg-gradient-to-r from-primary via-[hsl(var(--neon-cyan))] to-primary bg-clip-text text-transparent neon-text">
+              {firstName}
+            </span>
             {lastName && (
               <>
                 <br />
@@ -126,8 +133,17 @@ const HeroSection = () => {
             )}
           </motion.h1>
 
+          <motion.p
+            className="font-body text-lg md:text-xl text-muted-foreground mt-2 mb-4 max-w-md"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: d(2.5), duration: 0.6, ease: EASE_HERO }}
+          >
+            I build AI-powered apps and smart systems
+          </motion.p>
+
           <motion.div
-            className="h-12 mt-4 mb-6"
+            className="h-12 mb-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: d(3), duration: 0.6, ease: EASE_HERO }}
@@ -169,27 +185,40 @@ const HeroSection = () => {
           </motion.div>
 
           <motion.div
-            className="flex gap-4"
+            className="flex gap-4 flex-wrap"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: d(6), duration: 0.6, ease: EASE_HERO }}
           >
-            <motion.a
-              href="mailto:a.srishanth1733@gmail.com"
+            <motion.button
+              onClick={() => scrollTo("projects")}
               className="px-8 py-3 rounded-lg bg-primary text-primary-foreground font-body font-semibold tracking-wider neon-glow inline-block text-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               whileHover={isMobile ? undefined : buttonHover}
               whileTap={buttonTap}
               transition={{ type: "spring", stiffness: 400, damping: 20 }}
             >
-              Hire Me
-            </motion.a>
-            <motion.button
-              className="px-8 py-3 rounded-lg neon-border text-muted-foreground font-body font-semibold tracking-wider opacity-50 cursor-not-allowed"
-              whileTap={buttonTap}
-              onClick={() => toast("Resume coming soon!")}
-            >
-              Download CV
+              View Projects
             </motion.button>
+            <motion.button
+              onClick={() => scrollTo("contact")}
+              className="px-8 py-3 rounded-lg neon-border text-foreground font-body font-semibold tracking-wider hover:bg-primary/10 transition-colors"
+              whileHover={isMobile ? undefined : buttonHover}
+              whileTap={buttonTap}
+            >
+              Contact Me
+            </motion.button>
+            {data.resumeUrl && (
+              <motion.a
+                href={data.resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3 rounded-lg border border-border text-muted-foreground font-body font-semibold tracking-wider hover:text-foreground hover:border-primary/50 transition-colors inline-flex items-center gap-2"
+                whileHover={isMobile ? undefined : buttonHover}
+                whileTap={buttonTap}
+              >
+                <Download size={16} /> Resume
+              </motion.a>
+            )}
           </motion.div>
         </motion.div>
 
