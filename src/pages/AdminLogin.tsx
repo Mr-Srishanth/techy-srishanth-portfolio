@@ -10,7 +10,6 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isFirstTime, setIsFirstTime] = useState(false);
   const navigate = useNavigate();
 
   // If already logged in, redirect
