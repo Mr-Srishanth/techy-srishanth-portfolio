@@ -36,27 +36,6 @@ const AdminLogin = () => {
     }
   };
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !password) {
-      toast.error("Please fill in all fields");
-      return;
-    }
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters");
-      return;
-    }
-    setLoading(true);
-    const { error } = await supabase.auth.signUp({ email, password });
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
-    } else {
-      toast.success("Account created! You are now logged in.");
-      navigate("/admin/dashboard");
-    }
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
       <div className="absolute inset-0 grid-bg opacity-10 pointer-events-none" />
@@ -74,15 +53,11 @@ const AdminLogin = () => {
           >
             <Lock className="text-primary" size={28} />
           </motion.div>
-          <h1 className="font-display text-2xl font-bold text-foreground">
-            {isFirstTime ? "Create Admin Account" : "Admin Access"}
-          </h1>
-          <p className="text-muted-foreground text-sm mt-1 font-mono">
-            {isFirstTime ? "First-time setup" : "Restricted area"}
-          </p>
+          <h1 className="font-display text-2xl font-bold text-foreground">Admin Access</h1>
+          <p className="text-muted-foreground text-sm mt-1 font-mono">Restricted area</p>
         </div>
 
-        <form onSubmit={isFirstTime ? handleSignUp : handleLogin} className="space-y-5">
+        <form onSubmit={handleLogin} className="space-y-5">
           <div className="relative">
             <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
@@ -120,17 +95,9 @@ const AdminLogin = () => {
             whileTap={{ scale: loading ? 1 : 0.98 }}
             disabled={loading}
           >
-            {loading ? "Please wait..." : isFirstTime ? "Create Account" : "Access Dashboard"}
+            {loading ? "Please wait..." : "Access Dashboard"}
           </motion.button>
         </form>
-
-        <button
-          onClick={() => setIsFirstTime(!isFirstTime)}
-          className="w-full mt-4 text-center text-muted-foreground text-xs font-mono hover:text-foreground transition-colors flex items-center justify-center gap-1"
-        >
-          <UserPlus size={12} />
-          {isFirstTime ? "Already have an account? Sign in" : "First time? Create admin account"}
-        </button>
 
         <p className="text-center text-muted-foreground text-xs mt-4 font-mono">
           Press Ctrl+S from main site to access
