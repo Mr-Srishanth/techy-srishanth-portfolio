@@ -1,19 +1,16 @@
 import { motion, useMotionValue, useTransform, useScroll, useSpring } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
-import { toast } from "sonner";
 import defaultProfileImg from "@/assets/profile.jpg";
 import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
-import { EASE_HERO, DUR_HERO, STAGGER, buttonHover, buttonTap, DUR_MICRO } from "@/lib/animations";
+import { EASE_HERO, DUR_HERO, STAGGER, buttonHover, buttonTap } from "@/lib/animations";
 import { usePortfolio } from "@/contexts/PortfolioContext";
-import { Download } from "lucide-react";
+import { Download, ChevronDown } from "lucide-react";
 
-const defaultTitles = ["AI & Software Developer", "Learning Python & DSA", "B.Tech CSE (AI & ML)"];
+const roles = ["Developer", "Builder", "Problem Solver", "AI Enthusiast"];
 
 const HeroSection = () => {
   const { data } = usePortfolio();
-  const titles = [data.heroSubtitle, ...defaultTitles.slice(1)];
-
-  const [titleIdx, setTitleIdx] = useState(0);
+  const [roleIdx, setRoleIdx] = useState(0);
   const [displayed, setDisplayed] = useState("");
   const [typing, setTyping] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -31,8 +28,9 @@ const HeroSection = () => {
   const firstName = nameParts.slice(0, -1).join(" ") || nameParts[0];
   const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
 
+  // Typing animation for roles
   useEffect(() => {
-    const target = titles[titleIdx];
+    const target = roles[roleIdx];
     if (typing) {
       if (displayed.length < target.length) {
         const t = setTimeout(() => setDisplayed(target.slice(0, displayed.length + 1)), 60);
@@ -46,11 +44,11 @@ const HeroSection = () => {
         const t = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 30);
         return () => clearTimeout(t);
       } else {
-        setTitleIdx((i) => (i + 1) % titles.length);
+        setRoleIdx((i) => (i + 1) % roles.length);
         setTyping(true);
       }
     }
-  }, [displayed, typing, titleIdx]);
+  }, [displayed, typing, roleIdx]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (isMobile) return;
@@ -96,8 +94,8 @@ const HeroSection = () => {
 
       <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 40, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: DUR_HERO, delay: d(0), ease: EASE_HERO }}
         >
           {(() => {
@@ -133,25 +131,37 @@ const HeroSection = () => {
             )}
           </motion.h1>
 
+          {/* Bold tagline */}
           <motion.p
-            className="font-body text-lg md:text-xl text-muted-foreground mt-2 mb-4 max-w-md"
+            className="font-display text-xl md:text-2xl font-bold text-foreground mt-3 mb-1"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: d(2.5), duration: 0.6, ease: EASE_HERO }}
           >
-            I build AI-powered apps and smart systems
+            I build systems, not just projects.
           </motion.p>
 
-          <motion.div
-            className="h-12 mb-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+          <motion.p
+            className="font-body text-base md:text-lg text-muted-foreground mb-4 max-w-md"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: d(3), duration: 0.6, ease: EASE_HERO }}
           >
-            <span className="font-mono text-lg md:text-xl text-muted-foreground">
+            AI-powered apps, automation, and real-world solutions.
+          </motion.p>
+
+          {/* Typing roles */}
+          <motion.div
+            className="h-10 mb-6 flex items-center gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: d(3.5), duration: 0.6, ease: EASE_HERO }}
+          >
+            <span className="font-mono text-sm text-muted-foreground/60">{">"}</span>
+            <span className="font-mono text-lg text-primary">
               {displayed}
               <motion.span
-                className="inline-block w-[2px] h-5 bg-primary ml-1 align-middle"
+                className="inline-block w-[2px] h-5 bg-primary ml-0.5 align-middle"
                 animate={{ opacity: [1, 0] }}
                 transition={{ duration: 0.5, repeat: Infinity }}
               />
@@ -197,7 +207,7 @@ const HeroSection = () => {
               whileTap={buttonTap}
               transition={{ type: "spring", stiffness: 400, damping: 20 }}
             >
-              View Projects
+              Explore My Work
             </motion.button>
             <motion.button
               onClick={() => scrollTo("contact")}
@@ -253,6 +263,22 @@ const HeroSection = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 2, duration: 0.8, ease: EASE_HERO }}
+      >
+        <span className="font-mono text-[10px] text-muted-foreground/50 tracking-widest uppercase">Scroll</span>
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <ChevronDown size={20} className="text-primary/50" />
+        </motion.div>
+      </motion.div>
     </section>
   );
 };
