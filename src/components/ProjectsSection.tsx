@@ -37,7 +37,8 @@ const ProjectsSection = () => {
 
               {project.image && (
                 <div className="relative z-10 mb-4 rounded-lg overflow-hidden h-40">
-                  <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
+                  <img src={project.image} alt={project.title} className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
               )}
 

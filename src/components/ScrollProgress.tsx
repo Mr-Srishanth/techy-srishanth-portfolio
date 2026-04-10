@@ -5,11 +5,11 @@ const ScrollProgress = () => {
 
   return (
     <motion.div
-      className="fixed top-0 left-0 right-0 h-[3px] z-50 origin-left"
+      className="fixed top-0 left-0 right-0 h-[2px] z-[55] origin-left"
       style={{
         scaleX: scrollYProgress,
-        background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)))",
-        boxShadow: "0 0 10px hsl(var(--primary) / 0.5), 0 0 20px hsl(var(--primary) / 0.3)",
+        background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--neon-cyan)), hsl(var(--primary)))",
+        boxShadow: "0 0 12px hsl(var(--primary) / 0.6), 0 0 24px hsl(var(--primary) / 0.2)",
       }}
     />
   );
