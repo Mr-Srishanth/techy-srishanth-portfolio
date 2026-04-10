@@ -25,9 +25,9 @@ const SectionReveal = ({ children, className = "", direction = "up", delay = 0, 
   const bgY = useSpring(rawY, smooth);
 
   const offsets = {
-    up: { x: 0, y: REVEAL_Y },
-    left: { x: -30, y: 0 },
-    right: { x: 30, y: 0 },
+    up: { x: 0, y: 40 },
+    left: { x: -40, y: 0 },
+    right: { x: 40, y: 0 },
   };
 
   return (
