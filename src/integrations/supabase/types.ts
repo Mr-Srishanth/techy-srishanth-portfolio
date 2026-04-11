@@ -183,6 +183,7 @@ export type Database = {
           problem: string | null
           solution: string | null
           sort_order: number
+          tagline: string | null
           tags: string[]
           title: string
           updated_at: string
@@ -199,6 +200,7 @@ export type Database = {
           problem?: string | null
           solution?: string | null
           sort_order?: number
+          tagline?: string | null
           tags?: string[]
           title: string
           updated_at?: string
@@ -215,6 +217,7 @@ export type Database = {
           problem?: string | null
           solution?: string | null
           sort_order?: number
+          tagline?: string | null
           tags?: string[]
           title?: string
           updated_at?: string

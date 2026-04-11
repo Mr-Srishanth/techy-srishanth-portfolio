@@ -142,7 +142,10 @@ const ProjectsSection = () => {
                 </div>
               )}
 
-              <h3 className="font-display text-2xl font-bold text-foreground mb-3">{selectedProject.title}</h3>
+              <h3 className="font-display text-2xl font-bold text-foreground mb-1">{selectedProject.title}</h3>
+              {selectedProject.tagline && (
+                <p className="font-mono text-sm text-primary mb-3">{selectedProject.tagline}</p>
+              )}
               <p className="font-body text-muted-foreground leading-relaxed mb-6">{selectedProject.desc}</p>
 
               {/* Problem / Solution / Impact */}
