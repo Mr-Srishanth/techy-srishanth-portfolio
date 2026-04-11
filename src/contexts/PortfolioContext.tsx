@@ -14,6 +14,7 @@ export interface ProjectData {
   id?: string;
   title: string;
   desc: string;
+  tagline?: string;
   tags: string[];
   image?: string;
   live_url?: string;

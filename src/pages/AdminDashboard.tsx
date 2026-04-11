@@ -221,7 +221,7 @@ const AdminDashboard = () => {
   const removeSkill = (idx: number) => updateDraft({ skills: draft.skills.filter((_, i) => i !== idx) });
   const updateSkill = (idx: number, partial: Partial<SkillData>) => updateDraft({ skills: draft.skills.map((s, i) => i === idx ? { ...s, ...partial } : s) });
 
-  const addProject = () => updateDraft({ projects: [...draft.projects, { title: "New Project", desc: "Description here", tags: [], live_url: "", github_url: "", doc_url: "", problem: "", solution: "", impact: "" }] });
+  const addProject = () => updateDraft({ projects: [...draft.projects, { title: "New Project", desc: "Description here", tagline: "", tags: [], live_url: "", github_url: "", doc_url: "", problem: "", solution: "", impact: "" }] });
   const removeProject = (idx: number) => updateDraft({ projects: draft.projects.filter((_, i) => i !== idx) });
   const updateProject = (idx: number, partial: Partial<ProjectData>) => updateDraft({ projects: draft.projects.map((p, i) => i === idx ? { ...p, ...partial } : p) });
 
@@ -317,6 +317,7 @@ const AdminDashboard = () => {
               {tab === "profile" && (
                 <>
                   <h2 className="font-display text-xl font-bold text-foreground">Profile Info</h2>
+                  <ImageDropZone label="Profile Picture" currentImage={draft.profileImage || undefined} onUpload={url => updateDraft({ profileImage: url })} folder="profile" />
                   {field("Display Name", draft.heroName, "heroName", true)}
                   {field("Subtitle / Role", draft.heroSubtitle, "heroSubtitle", true)}
                   {textArea("Bio", draft.heroBio, "heroBio")}
@@ -394,6 +395,7 @@ const AdminDashboard = () => {
                             <div className="glass-card p-4 space-y-3 relative">
                               <button onClick={() => removeProject(i)} className="absolute top-3 right-3 text-muted-foreground hover:text-destructive transition-colors"><X size={16} /></button>
                               <input value={project.title} onChange={e => updateProject(i, { title: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm font-semibold" placeholder="Project title" />
+                              <input value={project.tagline || ""} onChange={e => updateProject(i, { tagline: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="Tagline (short subtitle)" />
                               <textarea value={project.desc} onChange={e => updateProject(i, { desc: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm resize-none" rows={2} placeholder="Description" />
                               <input value={project.tags.join(", ")} onChange={e => updateProject(i, { tags: e.target.value.split(",").map(t => t.trim()).filter(Boolean) })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="Tags (comma separated)" />
                               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

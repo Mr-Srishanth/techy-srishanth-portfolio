@@ -10,6 +10,7 @@ function mapSkill(row: Tables<"skills">): SkillData & { id: string } {
 function mapProject(row: Tables<"projects">): ProjectData & { id: string } {
   return {
     id: row.id, title: row.title, desc: row.description, tags: row.tags,
+    tagline: (row as any).tagline ?? undefined,
     image: row.image ?? undefined,
     live_url: (row as any).live_url ?? undefined,
     github_url: (row as any).github_url ?? undefined,
@@ -178,6 +179,7 @@ export function usePortfolioData() {
       await supabase.from("projects").insert(
         projects.map((p, i) => ({
           title: p.title, description: p.desc, tags: p.tags,
+          tagline: p.tagline ?? null,
           image: p.image ?? null, sort_order: i,
           live_url: p.live_url ?? null,
           github_url: p.github_url ?? null,
