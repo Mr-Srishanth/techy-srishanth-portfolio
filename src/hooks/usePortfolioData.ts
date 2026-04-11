@@ -13,6 +13,10 @@ function mapProject(row: Tables<"projects">): ProjectData & { id: string } {
     image: row.image ?? undefined,
     live_url: (row as any).live_url ?? undefined,
     github_url: (row as any).github_url ?? undefined,
+    doc_url: (row as any).doc_url ?? undefined,
+    problem: (row as any).problem ?? undefined,
+    solution: (row as any).solution ?? undefined,
+    impact: (row as any).impact ?? undefined,
   };
 }
 
@@ -177,6 +181,10 @@ export function usePortfolioData() {
           image: p.image ?? null, sort_order: i,
           live_url: p.live_url ?? null,
           github_url: p.github_url ?? null,
+          doc_url: p.doc_url ?? null,
+          problem: p.problem ?? null,
+          solution: p.solution ?? null,
+          impact: p.impact ?? null,
         } as any))
       );
     }

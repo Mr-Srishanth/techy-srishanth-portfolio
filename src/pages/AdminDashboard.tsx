@@ -221,7 +221,7 @@ const AdminDashboard = () => {
   const removeSkill = (idx: number) => updateDraft({ skills: draft.skills.filter((_, i) => i !== idx) });
   const updateSkill = (idx: number, partial: Partial<SkillData>) => updateDraft({ skills: draft.skills.map((s, i) => i === idx ? { ...s, ...partial } : s) });
 
-  const addProject = () => updateDraft({ projects: [...draft.projects, { title: "New Project", desc: "Description here", tags: [], live_url: "", github_url: "" }] });
+  const addProject = () => updateDraft({ projects: [...draft.projects, { title: "New Project", desc: "Description here", tags: [], live_url: "", github_url: "", doc_url: "", problem: "", solution: "", impact: "" }] });
   const removeProject = (idx: number) => updateDraft({ projects: draft.projects.filter((_, i) => i !== idx) });
   const updateProject = (idx: number, partial: Partial<ProjectData>) => updateDraft({ projects: draft.projects.map((p, i) => i === idx ? { ...p, ...partial } : p) });
 
@@ -396,7 +396,7 @@ const AdminDashboard = () => {
                               <input value={project.title} onChange={e => updateProject(i, { title: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm font-semibold" placeholder="Project title" />
                               <textarea value={project.desc} onChange={e => updateProject(i, { desc: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm resize-none" rows={2} placeholder="Description" />
                               <input value={project.tags.join(", ")} onChange={e => updateProject(i, { tags: e.target.value.split(",").map(t => t.trim()).filter(Boolean) })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="Tags (comma separated)" />
-                              <div className="grid grid-cols-2 gap-3">
+                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 <div className="space-y-1">
                                   <label className="text-xs font-mono text-muted-foreground">Live URL</label>
                                   <input value={project.live_url || ""} onChange={e => updateProject(i, { live_url: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="https://..." />
@@ -404,6 +404,24 @@ const AdminDashboard = () => {
                                 <div className="space-y-1">
                                   <label className="text-xs font-mono text-muted-foreground">GitHub URL</label>
                                   <input value={project.github_url || ""} onChange={e => updateProject(i, { github_url: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="https://github.com/..." />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-xs font-mono text-muted-foreground">Docs URL</label>
+                                  <input value={project.doc_url || ""} onChange={e => updateProject(i, { doc_url: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="https://docs..." />
+                                </div>
+                              </div>
+                              <div className="space-y-3">
+                                <div className="space-y-1">
+                                  <label className="text-xs font-mono text-muted-foreground">Problem</label>
+                                  <textarea value={project.problem || ""} onChange={e => updateProject(i, { problem: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm resize-none" rows={2} placeholder="What problem does this solve?" />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-xs font-mono text-muted-foreground">Solution</label>
+                                  <textarea value={project.solution || ""} onChange={e => updateProject(i, { solution: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm resize-none" rows={2} placeholder="How does it solve it?" />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-xs font-mono text-muted-foreground">Impact</label>
+                                  <textarea value={project.impact || ""} onChange={e => updateProject(i, { impact: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm resize-none" rows={2} placeholder="What was the result/impact?" />
                                 </div>
                               </div>
                               <ImageDropZone label="Project Image" currentImage={project.image} onUpload={url => updateProject(i, { image: url })} folder="projects" />

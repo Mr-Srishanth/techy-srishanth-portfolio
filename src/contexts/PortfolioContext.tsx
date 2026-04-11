@@ -18,6 +18,10 @@ export interface ProjectData {
   image?: string;
   live_url?: string;
   github_url?: string;
+  doc_url?: string;
+  problem?: string;
+  solution?: string;
+  impact?: string;
 }
 
 export interface CertificateData {

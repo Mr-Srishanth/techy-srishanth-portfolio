@@ -174,10 +174,14 @@ export type Database = {
         Row: {
           created_at: string
           description: string
+          doc_url: string | null
           github_url: string | null
           id: string
           image: string | null
+          impact: string | null
           live_url: string | null
+          problem: string | null
+          solution: string | null
           sort_order: number
           tags: string[]
           title: string
@@ -186,10 +190,14 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string
+          doc_url?: string | null
           github_url?: string | null
           id?: string
           image?: string | null
+          impact?: string | null
           live_url?: string | null
+          problem?: string | null
+          solution?: string | null
           sort_order?: number
           tags?: string[]
           title: string
@@ -198,10 +206,14 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string
+          doc_url?: string | null
           github_url?: string | null
           id?: string
           image?: string | null
+          impact?: string | null
           live_url?: string | null
+          problem?: string | null
+          solution?: string | null
           sort_order?: number
           tags?: string[]
           title?: string

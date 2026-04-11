@@ -1,6 +1,6 @@
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import { useRef, useState } from "react";
-import { ExternalLink, Github, Folder, X } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
+import { ExternalLink, Github, Folder, X, FileText } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { headingReveal, cardReveal, cardHover } from "@/lib/animations";
 import { usePortfolio, type ProjectData } from "@/contexts/PortfolioContext";
@@ -11,6 +11,18 @@ const ProjectsSection = () => {
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const { data } = usePortfolio();
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
+
+  // Close on ESC
+  useEffect(() => {
+    if (!selectedProject) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedProject(null);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [selectedProject]);
+
+  const hasLink = (url?: string) => url && url.trim().length > 0;
 
   return (
     <section id="projects" className="py-24 relative">
@@ -46,17 +58,22 @@ const ProjectsSection = () => {
                 <div className="flex items-center justify-between mb-4">
                   <Folder className="text-primary" size={28} />
                   <div className="flex gap-3">
-                    {project.github_url && (
-                      <a href={project.github_url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}>
+                    {hasLink(project.github_url) && (
+                      <a href={project.github_url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} tabIndex={0} aria-label="GitHub repository">
                         <Github size={18} className="text-muted-foreground hover:text-primary transition-colors duration-200" />
                       </a>
                     )}
-                    {project.live_url && (
-                      <a href={project.live_url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}>
+                    {hasLink(project.live_url) && (
+                      <a href={project.live_url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} tabIndex={0} aria-label="Live demo">
                         <ExternalLink size={18} className="text-muted-foreground hover:text-primary transition-colors duration-200" />
                       </a>
                     )}
-                    {!project.github_url && !project.live_url && (
+                    {hasLink(project.doc_url) && (
+                      <a href={project.doc_url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} tabIndex={0} aria-label="Documentation">
+                        <FileText size={18} className="text-muted-foreground hover:text-primary transition-colors duration-200" />
+                      </a>
+                    )}
+                    {!hasLink(project.github_url) && !hasLink(project.live_url) && !hasLink(project.doc_url) && (
                       <>
                         <Github size={18} className="text-muted-foreground/40" />
                         <ExternalLink size={18} className="text-muted-foreground/40" />
@@ -107,10 +124,14 @@ const ProjectsSection = () => {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              role="dialog"
+              aria-modal="true"
+              aria-label={selectedProject.title}
             >
               <button
                 onClick={() => setSelectedProject(null)}
                 className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Close modal"
               >
                 <X size={20} />
               </button>
@@ -124,6 +145,30 @@ const ProjectsSection = () => {
               <h3 className="font-display text-2xl font-bold text-foreground mb-3">{selectedProject.title}</h3>
               <p className="font-body text-muted-foreground leading-relaxed mb-6">{selectedProject.desc}</p>
 
+              {/* Problem / Solution / Impact */}
+              {(selectedProject.problem || selectedProject.solution || selectedProject.impact) && (
+                <div className="space-y-4 mb-6">
+                  {selectedProject.problem && (
+                    <div className="space-y-1.5">
+                      <h4 className="font-mono text-xs tracking-widest text-primary uppercase">Problem</h4>
+                      <p className="font-body text-sm text-muted-foreground leading-relaxed">{selectedProject.problem}</p>
+                    </div>
+                  )}
+                  {selectedProject.solution && (
+                    <div className="space-y-1.5">
+                      <h4 className="font-mono text-xs tracking-widest text-primary uppercase">Solution</h4>
+                      <p className="font-body text-sm text-muted-foreground leading-relaxed">{selectedProject.solution}</p>
+                    </div>
+                  )}
+                  {selectedProject.impact && (
+                    <div className="space-y-1.5">
+                      <h4 className="font-mono text-xs tracking-widest text-primary uppercase">Impact</h4>
+                      <p className="font-body text-sm text-muted-foreground leading-relaxed">{selectedProject.impact}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <div className="flex flex-wrap gap-2 mb-6">
                 {selectedProject.tags.map((tag) => (
                   <span key={tag} className="px-3 py-1 text-xs font-mono rounded-full bg-primary/10 text-primary border border-primary/20">
@@ -132,15 +177,38 @@ const ProjectsSection = () => {
                 ))}
               </div>
 
-              <div className="flex gap-3">
-                {selectedProject.live_url && (
-                  <a href={selectedProject.live_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground font-mono text-sm neon-glow hover:opacity-90 transition-opacity">
+              <div className="flex flex-wrap gap-3">
+                {hasLink(selectedProject.live_url) && (
+                  <a
+                    href={selectedProject.live_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    tabIndex={0}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground font-mono text-sm hover:scale-105 active:scale-[0.98] transition-all duration-200 shadow-md hover:shadow-lg hover:shadow-primary/20"
+                  >
                     <ExternalLink size={14} /> Live Demo
                   </a>
                 )}
-                {selectedProject.github_url && (
-                  <a href={selectedProject.github_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border text-foreground font-mono text-sm hover:border-primary/50 transition-colors">
+                {hasLink(selectedProject.github_url) && (
+                  <a
+                    href={selectedProject.github_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    tabIndex={0}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border text-foreground font-mono text-sm hover:border-primary/50 hover:scale-105 active:scale-[0.98] transition-all duration-200"
+                  >
                     <Github size={14} /> Source Code
+                  </a>
+                )}
+                {hasLink(selectedProject.doc_url) && (
+                  <a
+                    href={selectedProject.doc_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    tabIndex={0}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border text-foreground font-mono text-sm hover:border-primary/50 hover:scale-105 active:scale-[0.98] transition-all duration-200"
+                  >
+                    <FileText size={14} /> Docs
                   </a>
                 )}
               </div>
