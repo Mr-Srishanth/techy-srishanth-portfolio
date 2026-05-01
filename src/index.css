@@ -63,6 +63,16 @@
   body {
     @apply bg-background text-foreground font-body antialiased;
   }
+  html, body {
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    width: 100%;
+    max-width: 100%;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
   h1, h2, h3, h4, h5, h6 {
     @apply font-display;
   }
