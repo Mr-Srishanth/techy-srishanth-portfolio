@@ -124,133 +124,6 @@ const SortableItem = ({ id, children }: { id: string; children: React.ReactNode 
   );
 };
 
-// ── Certificate logo presets (popular brands) ──
-const LOGO_PRESETS: { name: string; url: string }[] = [
-  { name: "Coursera",    url: "https://cdn.simpleicons.org/coursera/0056D2" },
-  { name: "edX",         url: "https://cdn.simpleicons.org/edx/02262B" },
-  { name: "Udemy",       url: "https://cdn.simpleicons.org/udemy/A435F0" },
-  { name: "Udacity",     url: "https://cdn.simpleicons.org/udacity/02B3E4" },
-  { name: "freeCodeCamp",url: "https://cdn.simpleicons.org/freecodecamp/0A0A23" },
-  { name: "Google",      url: "https://cdn.simpleicons.org/google/4285F4" },
-  { name: "Microsoft",   url: "https://cdn.simpleicons.org/microsoft/5E5E5E" },
-  { name: "AWS",         url: "https://cdn.simpleicons.org/amazonaws/FF9900" },
-  { name: "IBM",         url: "https://cdn.simpleicons.org/ibm/052FAD" },
-  { name: "Meta",        url: "https://cdn.simpleicons.org/meta/0467DF" },
-  { name: "LinkedIn",    url: "https://cdn.simpleicons.org/linkedin/0A66C2" },
-  { name: "HackerRank",  url: "https://cdn.simpleicons.org/hackerrank/00EA64" },
-  { name: "LeetCode",    url: "https://cdn.simpleicons.org/leetcode/FFA116" },
-  { name: "GitHub",      url: "https://cdn.simpleicons.org/github/F0F6FC" },
-  { name: "Kaggle",      url: "https://cdn.simpleicons.org/kaggle/20BEFF" },
-  { name: "TensorFlow",  url: "https://cdn.simpleicons.org/tensorflow/FF6F00" },
-  { name: "PyTorch",     url: "https://cdn.simpleicons.org/pytorch/EE4C2C" },
-  { name: "Python",      url: "https://cdn.simpleicons.org/python/3776AB" },
-  { name: "React",       url: "https://cdn.simpleicons.org/react/61DAFB" },
-  { name: "Oracle",      url: "https://cdn.simpleicons.org/oracle/F80000" },
-  { name: "Cisco",       url: "https://cdn.simpleicons.org/cisco/1BA0D7" },
-  { name: "Salesforce",  url: "https://cdn.simpleicons.org/salesforce/00A1E0" },
-  { name: "DeepLearning",url: "https://cdn.simpleicons.org/deeplearningdotai/00BFA6" },
-  { name: "NVIDIA",      url: "https://cdn.simpleicons.org/nvidia/76B900" },
-];
-
-// ── Certificate logo picker (presets + upload) ──
-const CertificateLogoPicker = ({
-  currentImage, onChange,
-}: { currentImage?: string; onChange: (url: string) => void }) => {
-  const [uploading, setUploading] = useState(false);
-  const [preview, setPreview] = useState<string | undefined>(currentImage);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleFile = async (file: File | undefined) => {
-    if (!file) return;
-    if (!file.type.startsWith("image/")) { toast.error("Please choose an image file"); return; }
-    if (file.size > 2 * 1024 * 1024) { toast.error("Logo must be under 2MB"); return; }
-    const localPreview = URL.createObjectURL(file);
-    setPreview(localPreview);
-    setUploading(true);
-    try {
-      const ext = file.name.split(".").pop() || "png";
-      const fileName = `certs/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
-      const { error } = await supabase.storage.from("certificate-logos").upload(fileName, file, { cacheControl: "3600", upsert: false });
-      if (error) throw error;
-      const { data } = supabase.storage.from("certificate-logos").getPublicUrl(fileName);
-      onChange(data.publicUrl);
-      setPreview(data.publicUrl);
-      toast.success("Logo uploaded");
-    } catch (err) {
-      console.error(err);
-      toast.error("Logo upload failed");
-      setPreview(currentImage);
-    } finally {
-      setUploading(false);
-      URL.revokeObjectURL(localPreview);
-    }
-  };
-
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-3">
-        <div className="w-14 h-14 rounded-lg border border-border bg-secondary/40 flex items-center justify-center overflow-hidden shrink-0">
-          {preview ? (
-            <img
-              src={preview}
-              alt="Logo preview"
-              onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/placeholder.svg"; }}
-              className="max-w-full max-h-full object-contain"
-            />
-          ) : (
-            <Award size={20} className="text-muted-foreground" />
-          )}
-        </div>
-        <div className="flex-1 flex items-center gap-2 flex-wrap">
-          <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={e => handleFile(e.target.files?.[0])} />
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            disabled={uploading}
-            className="px-3 py-1.5 rounded-md bg-primary/10 text-primary text-xs font-mono hover:bg-primary/20 disabled:opacity-50 transition-all"
-          >
-            {uploading ? "Uploading..." : "Upload custom"}
-          </button>
-          {preview && (
-            <button
-              type="button"
-              onClick={() => { setPreview(undefined); onChange(""); }}
-              className="px-3 py-1.5 rounded-md bg-secondary/60 text-muted-foreground text-xs font-mono hover:text-destructive transition-all"
-            >
-              Clear
-            </button>
-          )}
-        </div>
-      </div>
-      <div>
-        <p className="text-[11px] font-mono text-muted-foreground mb-2">Or pick a preset:</p>
-        <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-48 overflow-y-auto p-2 rounded-lg bg-secondary/30 border border-border">
-          {LOGO_PRESETS.map(p => {
-            const selected = preview === p.url;
-            return (
-              <button
-                key={p.name}
-                type="button"
-                title={p.name}
-                onClick={() => { setPreview(p.url); onChange(p.url); }}
-                className={`aspect-square rounded-md flex items-center justify-center border transition-all ${selected ? "border-primary bg-primary/10 scale-105" : "border-border bg-background/50 hover:border-primary/50"}`}
-              >
-                <img
-                  src={p.url}
-                  alt={p.name}
-                  loading="lazy"
-                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = "0.3"; }}
-                  className="max-w-[70%] max-h-[70%] object-contain"
-                />
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-};
-
 // ── Section labels ──
 const SECTION_LABELS: Record<keyof SectionVisibility, string> = {
   about: "About", skills: "Skills", skillRadar: "Skill Radar Chart", rpgSkillTree: "RPG Skill Tree",
@@ -352,7 +225,7 @@ const AdminDashboard = () => {
   const removeProject = (idx: number) => updateDraft({ projects: draft.projects.filter((_, i) => i !== idx) });
   const updateProject = (idx: number, partial: Partial<ProjectData>) => updateDraft({ projects: draft.projects.map((p, i) => i === idx ? { ...p, ...partial } : p) });
 
-  const addCertificate = () => updateDraft({ certificates: [...draft.certificates, { title: "", issuer: "", category: "general", description: "", image: "", link: "" }] });
+  const addCertificate = () => updateDraft({ certificates: [...draft.certificates, { title: "", issuer: "", image: "", link: "" }] });
   const removeCertificate = (idx: number) => updateDraft({ certificates: draft.certificates.filter((_, i) => i !== idx) });
   const updateCertificate = (idx: number, partial: Partial<CertificateData>) => updateDraft({ certificates: draft.certificates.map((c, i) => i === idx ? { ...c, ...partial } : c) });
 
@@ -565,60 +438,24 @@ const AdminDashboard = () => {
 
               {tab === "certificates" && (
                 <>
-                  <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center justify-between">
                     <h2 className="font-display text-xl font-bold text-foreground">Certificates</h2>
                     <motion.button onClick={addCertificate} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary text-sm font-mono hover:bg-primary/20 transition-all" whileTap={{ scale: 0.95 }}><Plus size={14} /> Add</motion.button>
                   </div>
-                  <p className="text-xs text-muted-foreground font-mono">
-                    Multiple certificates can share the same category — they'll be grouped on the public site under one heading.
-                  </p>
                   <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCertDragEnd}>
                     <SortableContext items={draft.certificates.map((_, i) => `cert-${i}`)} strategy={verticalListSortingStrategy}>
                       <div className="space-y-4">
-                        {filteredCerts.map(({ c: cert, i }) => {
-                          const titleErr = !cert.title.trim() ? "Title is required" : null;
-                          const catErr = !(cert.category ?? "").trim() ? "Category is required" : null;
-                          const linkErr = cert.link && !/^https?:\/\//i.test(cert.link.trim()) ? "Link must start with http:// or https://" : null;
-                          return (
-                            <SortableItem key={`cert-${i}`} id={`cert-${i}`}>
-                              <div className="glass-card p-4 space-y-3 relative">
-                                <button onClick={() => { if (confirm("Delete this certificate?")) removeCertificate(i); }} className="absolute top-3 right-3 text-muted-foreground hover:text-destructive transition-colors" title="Delete"><X size={16} /></button>
-                                <div>
-                                  <input value={cert.title} onChange={e => updateCertificate(i, { title: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm font-semibold" placeholder="Certificate title *" />
-                                  <FieldError error={titleErr} />
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                  <div>
-                                    <input
-                                      value={cert.category ?? ""}
-                                      onChange={e => updateCertificate(i, { category: e.target.value })}
-                                      onBlur={e => updateCertificate(i, { category: e.target.value.trim().toLowerCase() })}
-                                      list={`cert-categories-${i}`}
-                                      className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm"
-                                      placeholder="Category * (e.g. hackathon, coursera)"
-                                    />
-                                    <datalist id={`cert-categories-${i}`}>
-                                      {Array.from(new Set(draft.certificates.map(c => (c.category ?? "").trim().toLowerCase()).filter(Boolean))).map(cat => (
-                                        <option key={cat} value={cat} />
-                                      ))}
-                                    </datalist>
-                                    <FieldError error={catErr} />
-                                  </div>
-                                  <input value={cert.issuer} onChange={e => updateCertificate(i, { issuer: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="Issuer (e.g. Coursera)" />
-                                </div>
-                                <textarea value={cert.description ?? ""} onChange={e => updateCertificate(i, { description: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" rows={2} placeholder="Description (optional)" />
-                                <div>
-                                  <input value={cert.link || ""} onChange={e => updateCertificate(i, { link: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="Verification link (optional, must start with https://)" />
-                                  <FieldError error={linkErr} />
-                                </div>
-                                <div className="pt-2 border-t border-border/50">
-                                  <p className="text-xs font-mono text-muted-foreground mb-2">Logo (preset or upload)</p>
-                                  <CertificateLogoPicker currentImage={cert.image} onChange={url => updateCertificate(i, { image: url })} />
-                                </div>
-                              </div>
-                            </SortableItem>
-                          );
-                        })}
+                        {filteredCerts.map(({ c: cert, i }) => (
+                          <SortableItem key={`cert-${i}`} id={`cert-${i}`}>
+                            <div className="glass-card p-4 space-y-3 relative">
+                              <button onClick={() => removeCertificate(i)} className="absolute top-3 right-3 text-muted-foreground hover:text-destructive transition-colors"><X size={16} /></button>
+                              <input value={cert.title} onChange={e => { if (!e.target.value.trim()) toast.error("Title cannot be empty"); updateCertificate(i, { title: e.target.value }); }} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm font-semibold" placeholder="Certificate title *" />
+                              <input value={cert.issuer} onChange={e => updateCertificate(i, { issuer: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="Issuer (e.g. Coursera)" />
+                              <input value={cert.link || ""} onChange={e => updateCertificate(i, { link: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="Link (optional)" />
+                              <ImageDropZone label="Certificate Image" currentImage={cert.image} onUpload={url => updateCertificate(i, { image: url })} folder="certificates" />
+                            </div>
+                          </SortableItem>
+                        ))}
                         {draft.certificates.length === 0 && <p className="text-sm text-muted-foreground font-mono py-8 text-center">No certificates yet.</p>}
                       </div>
                     </SortableContext>

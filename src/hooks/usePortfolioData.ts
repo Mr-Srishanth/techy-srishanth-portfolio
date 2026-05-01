@@ -22,15 +22,7 @@ function mapProject(row: Tables<"projects">): ProjectData & { id: string } {
 }
 
 function mapCertificate(row: Tables<"certificates">): CertificateData & { id: string } {
-  return {
-    id: row.id,
-    title: row.title,
-    issuer: row.issuer,
-    category: ((row as any).category ?? "general").toString().trim().toLowerCase() || "general",
-    description: (row as any).description ?? undefined,
-    image: row.image ?? undefined,
-    link: row.link ?? undefined,
-  };
+  return { id: row.id, title: row.title, issuer: row.issuer, image: row.image ?? undefined, link: row.link ?? undefined };
 }
 
 function mapGreeting(row: Tables<"greetings">): GreetingData & { id: string } {
@@ -204,14 +196,9 @@ export function usePortfolioData() {
     if (certificates.length > 0) {
       await supabase.from("certificates").insert(
         certificates.map((c, i) => ({
-          title: c.title.trim(),
-          issuer: (c.issuer ?? "").trim(),
-          category: ((c.category ?? "general").trim().toLowerCase()) || "general",
-          description: c.description?.trim() ? c.description.trim() : null,
-          image: c.image?.trim() ? c.image.trim() : null,
-          link: c.link?.trim() ? c.link.trim() : null,
-          sort_order: i,
-        } as any))
+          title: c.title, issuer: c.issuer,
+          image: c.image ?? null, link: c.link ?? null, sort_order: i,
+        }))
       );
     }
 

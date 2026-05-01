@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { Award, ExternalLink, X } from "lucide-react";
 import { useLightMotion } from "@/hooks/use-mobile";
@@ -10,24 +10,11 @@ const CertificatesSection = () => {
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const light = useLightMotion();
   const [expanded, setExpanded] = useState<string | null>(null);
-  const { data, loading } = usePortfolio();
+  const { data } = usePortfolio();
 
   const certificates = data.certificates;
 
-  // Group by normalized category (single heading per category)
-  const grouped = useMemo(() => {
-    const map = new Map<string, typeof certificates>();
-    for (const cert of certificates) {
-      const cat = (cert.category ?? "general").toString().trim().toLowerCase();
-      if (!cat) continue;
-      if (!map.has(cat)) map.set(cat, []);
-      map.get(cat)!.push(cert);
-    }
-    return Array.from(map.entries());
-  }, [certificates]);
-
-  const formatCategory = (c: string) =>
-    c.replace(/\b\w/g, (m) => m.toUpperCase()).replace(/[-_]/g, " ");
+  if (certificates.length === 0) return null;
 
   return (
     <section id="certificates" className="py-20 relative" ref={ref}>
@@ -45,25 +32,8 @@ const CertificatesSection = () => {
           </p>
         </motion.div>
 
-        {loading && (
-          <div className="flex justify-center gap-6 max-w-4xl mx-auto">
-            {[0,1,2].map(i => (
-              <div key={i} className="w-32 h-32 rounded-full bg-muted/30 animate-pulse" />
-            ))}
-          </div>
-        )}
-
-        {!loading && grouped.length === 0 && (
-          <p className="text-center text-muted-foreground font-body">No certificates yet.</p>
-        )}
-
-        {!loading && grouped.map(([category, certs]) => (
-          <div key={category} className="mb-12 last:mb-0">
-            <h3 className="font-display text-xl md:text-2xl text-foreground/90 text-center mb-6 tracking-wide">
-              {formatCategory(category)}
-            </h3>
-            <div className="flex flex-wrap justify-center gap-10 max-w-4xl mx-auto">
-              {certs.map((cert, i) => {
+        <div className="flex flex-wrap justify-center gap-10 max-w-4xl mx-auto">
+          {certificates.map((cert, i) => {
             const isExpanded = expanded === cert.title;
             const hasImage = !!cert.image;
 
@@ -82,25 +52,12 @@ const CertificatesSection = () => {
                 >
                   <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full flex items-center justify-center glass-card border-2 border-primary/40 transition-all duration-300 group-hover:border-primary group-hover:shadow-[0_0_25px_hsl(var(--primary)/0.4)]">
                     <div className="absolute inset-0 rounded-full border-2 border-primary/0 group-hover:border-primary/30 group-hover:animate-pulse-glow transition-all duration-300" />
-                    {cert.image ? (
-                      <img
-                        src={cert.image}
-                        alt={`${cert.title} logo`}
-                        loading="lazy"
-                        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
-                        className="max-w-[60%] max-h-[60%] object-contain transition-transform duration-300 group-hover:scale-110"
-                      />
-                    ) : (
-                      <Award size={36} className="text-primary transition-transform duration-300 group-hover:scale-110" />
-                    )}
+                    <Award size={36} className="text-primary transition-transform duration-300 group-hover:scale-110" />
                   </div>
 
                   <div className="text-center">
                     <h3 className="font-display text-sm tracking-wider text-foreground">{cert.title}</h3>
-                    {cert.issuer && <p className="text-muted-foreground text-xs font-body">{cert.issuer}</p>}
-                    {cert.description && (
-                      <p className="text-muted-foreground/80 text-[11px] font-body max-w-[180px] mt-1 leading-snug">{cert.description}</p>
-                    )}
+                    <p className="text-muted-foreground text-xs font-body">{cert.issuer}</p>
                     {!hasImage && cert.link && (
                       <a
                         href={cert.link}
@@ -177,10 +134,8 @@ const CertificatesSection = () => {
                 </AnimatePresence>
               </motion.div>
             );
-              })}
-            </div>
-          </div>
-        ))}
+          })}
+        </div>
       </div>
     </section>
   );

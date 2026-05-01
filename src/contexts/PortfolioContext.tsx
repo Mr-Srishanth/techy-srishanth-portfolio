@@ -29,8 +29,6 @@ export interface CertificateData {
   id?: string;
   title: string;
   issuer: string;
-  category?: string;
-  description?: string;
   image?: string;
   link?: string;
 }
