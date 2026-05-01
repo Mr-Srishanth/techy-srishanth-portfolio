@@ -352,7 +352,7 @@ const AdminDashboard = () => {
   const removeProject = (idx: number) => updateDraft({ projects: draft.projects.filter((_, i) => i !== idx) });
   const updateProject = (idx: number, partial: Partial<ProjectData>) => updateDraft({ projects: draft.projects.map((p, i) => i === idx ? { ...p, ...partial } : p) });
 
-  const addCertificate = () => updateDraft({ certificates: [...draft.certificates, { title: "", issuer: "", image: "", link: "" }] });
+  const addCertificate = () => updateDraft({ certificates: [...draft.certificates, { title: "", issuer: "", category: "general", description: "", image: "", link: "" }] });
   const removeCertificate = (idx: number) => updateDraft({ certificates: draft.certificates.filter((_, i) => i !== idx) });
   const updateCertificate = (idx: number, partial: Partial<CertificateData>) => updateDraft({ certificates: draft.certificates.map((c, i) => i === idx ? { ...c, ...partial } : c) });
 
@@ -565,24 +565,60 @@ const AdminDashboard = () => {
 
               {tab === "certificates" && (
                 <>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
                     <h2 className="font-display text-xl font-bold text-foreground">Certificates</h2>
                     <motion.button onClick={addCertificate} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary text-sm font-mono hover:bg-primary/20 transition-all" whileTap={{ scale: 0.95 }}><Plus size={14} /> Add</motion.button>
                   </div>
+                  <p className="text-xs text-muted-foreground font-mono">
+                    Multiple certificates can share the same category — they'll be grouped on the public site under one heading.
+                  </p>
                   <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCertDragEnd}>
                     <SortableContext items={draft.certificates.map((_, i) => `cert-${i}`)} strategy={verticalListSortingStrategy}>
                       <div className="space-y-4">
-                        {filteredCerts.map(({ c: cert, i }) => (
-                          <SortableItem key={`cert-${i}`} id={`cert-${i}`}>
-                            <div className="glass-card p-4 space-y-3 relative">
-                              <button onClick={() => removeCertificate(i)} className="absolute top-3 right-3 text-muted-foreground hover:text-destructive transition-colors"><X size={16} /></button>
-                              <input value={cert.title} onChange={e => { if (!e.target.value.trim()) toast.error("Title cannot be empty"); updateCertificate(i, { title: e.target.value }); }} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm font-semibold" placeholder="Certificate title *" />
-                              <input value={cert.issuer} onChange={e => updateCertificate(i, { issuer: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="Issuer (e.g. Coursera)" />
-                              <input value={cert.link || ""} onChange={e => updateCertificate(i, { link: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="Link (optional)" />
-                              <ImageDropZone label="Certificate Image" currentImage={cert.image} onUpload={url => updateCertificate(i, { image: url })} folder="certificates" />
-                            </div>
-                          </SortableItem>
-                        ))}
+                        {filteredCerts.map(({ c: cert, i }) => {
+                          const titleErr = !cert.title.trim() ? "Title is required" : null;
+                          const catErr = !(cert.category ?? "").trim() ? "Category is required" : null;
+                          const linkErr = cert.link && !/^https?:\/\//i.test(cert.link.trim()) ? "Link must start with http:// or https://" : null;
+                          return (
+                            <SortableItem key={`cert-${i}`} id={`cert-${i}`}>
+                              <div className="glass-card p-4 space-y-3 relative">
+                                <button onClick={() => { if (confirm("Delete this certificate?")) removeCertificate(i); }} className="absolute top-3 right-3 text-muted-foreground hover:text-destructive transition-colors" title="Delete"><X size={16} /></button>
+                                <div>
+                                  <input value={cert.title} onChange={e => updateCertificate(i, { title: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm font-semibold" placeholder="Certificate title *" />
+                                  <FieldError error={titleErr} />
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                  <div>
+                                    <input
+                                      value={cert.category ?? ""}
+                                      onChange={e => updateCertificate(i, { category: e.target.value })}
+                                      onBlur={e => updateCertificate(i, { category: e.target.value.trim().toLowerCase() })}
+                                      list={`cert-categories-${i}`}
+                                      className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm"
+                                      placeholder="Category * (e.g. hackathon, coursera)"
+                                    />
+                                    <datalist id={`cert-categories-${i}`}>
+                                      {Array.from(new Set(draft.certificates.map(c => (c.category ?? "").trim().toLowerCase()).filter(Boolean))).map(cat => (
+                                        <option key={cat} value={cat} />
+                                      ))}
+                                    </datalist>
+                                    <FieldError error={catErr} />
+                                  </div>
+                                  <input value={cert.issuer} onChange={e => updateCertificate(i, { issuer: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="Issuer (e.g. Coursera)" />
+                                </div>
+                                <textarea value={cert.description ?? ""} onChange={e => updateCertificate(i, { description: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" rows={2} placeholder="Description (optional)" />
+                                <div>
+                                  <input value={cert.link || ""} onChange={e => updateCertificate(i, { link: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="Verification link (optional, must start with https://)" />
+                                  <FieldError error={linkErr} />
+                                </div>
+                                <div className="pt-2 border-t border-border/50">
+                                  <p className="text-xs font-mono text-muted-foreground mb-2">Logo (preset or upload)</p>
+                                  <CertificateLogoPicker currentImage={cert.image} onChange={url => updateCertificate(i, { image: url })} />
+                                </div>
+                              </div>
+                            </SortableItem>
+                          );
+                        })}
                         {draft.certificates.length === 0 && <p className="text-sm text-muted-foreground font-mono py-8 text-center">No certificates yet.</p>}
                       </div>
                     </SortableContext>
