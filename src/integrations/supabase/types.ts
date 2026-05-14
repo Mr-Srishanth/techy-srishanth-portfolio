@@ -59,6 +59,7 @@ export type Database = {
           image: string | null
           issuer: string
           link: string | null
+          logo_url: string | null
           sort_order: number
           title: string
           updated_at: string
@@ -71,6 +72,7 @@ export type Database = {
           image?: string | null
           issuer?: string
           link?: string | null
+          logo_url?: string | null
           sort_order?: number
           title: string
           updated_at?: string
@@ -83,6 +85,7 @@ export type Database = {
           image?: string | null
           issuer?: string
           link?: string | null
+          logo_url?: string | null
           sort_order?: number
           title?: string
           updated_at?: string
