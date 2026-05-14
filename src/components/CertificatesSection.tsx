@@ -10,7 +10,7 @@ import { usePortfolio } from "@/contexts/PortfolioContext";
 import { headingReveal, EASE } from "@/lib/animations";
 import type { CertificateData } from "@/contexts/PortfolioContext";
 
-const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+const ICON_MAP: Record<string, any> = {
   Award, Trophy, Brain, Code2, Cloud, Database, Globe, Shield, Cpu, Network,
   Rocket, Sparkles, Zap, Star, Bot, Terminal, GitBranch, Layers, Key, Lock,
   Atom, Binary, Wand2, Flame, Crown,
