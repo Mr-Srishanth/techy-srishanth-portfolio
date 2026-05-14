@@ -225,7 +225,7 @@ const AdminDashboard = () => {
   const removeProject = (idx: number) => updateDraft({ projects: draft.projects.filter((_, i) => i !== idx) });
   const updateProject = (idx: number, partial: Partial<ProjectData>) => updateDraft({ projects: draft.projects.map((p, i) => i === idx ? { ...p, ...partial } : p) });
 
-  const addCertificate = () => updateDraft({ certificates: [...draft.certificates, { title: "", issuer: "", image: "", link: "" }] });
+  const addCertificate = () => updateDraft({ certificates: [...draft.certificates, { title: "", issuer: "", image: "", link: "", category: "general", description: "", logo_url: "", preset_icon: "Award" }] });
   const removeCertificate = (idx: number) => updateDraft({ certificates: draft.certificates.filter((_, i) => i !== idx) });
   const updateCertificate = (idx: number, partial: Partial<CertificateData>) => updateDraft({ certificates: draft.certificates.map((c, i) => i === idx ? { ...c, ...partial } : c) });
 
