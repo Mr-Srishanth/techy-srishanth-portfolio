@@ -52,31 +52,43 @@ export type Database = {
       }
       certificates: {
         Row: {
+          category: string
           created_at: string
+          description: string | null
           id: string
           image: string | null
           issuer: string
           link: string | null
+          logo_url: string | null
+          preset_icon: string | null
           sort_order: number
           title: string
           updated_at: string
         }
         Insert: {
+          category?: string
           created_at?: string
+          description?: string | null
           id?: string
           image?: string | null
           issuer?: string
           link?: string | null
+          logo_url?: string | null
+          preset_icon?: string | null
           sort_order?: number
           title: string
           updated_at?: string
         }
         Update: {
+          category?: string
           created_at?: string
+          description?: string | null
           id?: string
           image?: string | null
           issuer?: string
           link?: string | null
+          logo_url?: string | null
+          preset_icon?: string | null
           sort_order?: number
           title?: string
           updated_at?: string

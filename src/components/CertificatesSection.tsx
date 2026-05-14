@@ -1,142 +1,323 @@
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import { Award, ExternalLink, X } from "lucide-react";
+import {
+  Award, ExternalLink, X, Trophy, Brain, Code2, Cloud, Database, Globe,
+  Shield, Cpu, Network, Rocket, Sparkles, Zap, Star, Bot, Terminal,
+  GitBranch, Layers, Key, Lock, Atom, Binary, Wand2, Flame, Crown,
+} from "lucide-react";
 import { useLightMotion } from "@/hooks/use-mobile";
 import { usePortfolio } from "@/contexts/PortfolioContext";
-import { headingReveal } from "@/lib/animations";
+import { headingReveal, EASE } from "@/lib/animations";
+import type { CertificateData } from "@/contexts/PortfolioContext";
+
+const ICON_MAP: Record<string, any> = {
+  Award, Trophy, Brain, Code2, Cloud, Database, Globe, Shield, Cpu, Network,
+  Rocket, Sparkles, Zap, Star, Bot, Terminal, GitBranch, Layers, Key, Lock,
+  Atom, Binary, Wand2, Flame, Crown,
+};
+
+function pickIcon(cert: CertificateData) {
+  if (cert.preset_icon && ICON_MAP[cert.preset_icon]) return ICON_MAP[cert.preset_icon];
+  const hay = `${cert.title} ${cert.issuer} ${cert.category ?? ""}`.toLowerCase();
+  if (/(ai|ml|machine|neural|brain)/.test(hay)) return Brain;
+  if (/(cloud|aws|azure|gcp)/.test(hay)) return Cloud;
+  if (/(data|sql|database)/.test(hay)) return Database;
+  if (/(web|html|frontend|react|globe)/.test(hay)) return Globe;
+  if (/(security|cyber|shield)/.test(hay)) return Shield;
+  if (/(hack|trophy|win|finalist)/.test(hay)) return Trophy;
+  if (/(python|code|developer|software)/.test(hay)) return Code2;
+  return Award;
+}
+
+function normalizeCategory(raw?: string) {
+  const v = (raw ?? "").trim().toLowerCase();
+  return v || "general";
+}
+
+function prettyCategory(slug: string) {
+  return slug
+    .split(/[\s/_-]+/)
+    .filter(Boolean)
+    .map(w => w === "ai" || w === "ml" ? w.toUpperCase() : w[0].toUpperCase() + w.slice(1))
+    .join(" / ");
+}
+
+const CertCard = ({ cert, onOpen, index, light }: { cert: CertificateData; onOpen: () => void; index: number; light: boolean }) => {
+  const Icon = pickIcon(cert);
+  return (
+    <motion.button
+      type="button"
+      onClick={onOpen}
+      initial={{ opacity: 0, y: 50, scale: 0.96 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.55, delay: index * 0.07, ease: EASE }}
+      whileHover={light ? undefined : { y: -8, scale: 1.04 }}
+      className="group relative w-full text-left rounded-2xl overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
+      aria-label={`${cert.title} by ${cert.issuer}`}
+    >
+      {/* Outer neon halo */}
+      <div
+        aria-hidden
+        className="absolute -inset-[1px] rounded-2xl opacity-50 group-hover:opacity-100 transition-opacity duration-500"
+        style={{
+          background:
+            "conic-gradient(from 120deg, hsl(var(--neon-cyan) / 0.6), hsl(var(--neon-blue) / 0.5), hsl(280 100% 65% / 0.45), hsl(var(--neon-cyan) / 0.6))",
+          filter: "blur(10px)",
+        }}
+      />
+      {/* Glass surface */}
+      <div className="relative h-full rounded-2xl bg-card/40 backdrop-blur-xl border border-primary/25 group-hover:border-primary/60 transition-colors duration-300">
+        {/* Inner gradient sheen */}
+        <div
+          aria-hidden
+          className="absolute inset-0 rounded-2xl opacity-60 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(140deg, hsl(var(--neon-cyan) / 0.08) 0%, transparent 40%, transparent 60%, hsl(280 100% 70% / 0.07) 100%)",
+          }}
+        />
+        {/* Holographic sweep */}
+        <div aria-hidden className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+          <div className="absolute -inset-y-2 -left-1/2 w-1/2 rotate-12 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-0 group-hover:translate-x-[300%] transition-transform duration-[1100ms] ease-out" />
+        </div>
+
+        <div className="relative p-6 flex flex-col items-center gap-4">
+          {/* Icon core */}
+          <div className="relative w-20 h-20 flex items-center justify-center">
+            {/* rotating ring */}
+            <div
+              aria-hidden
+              className="absolute inset-0 rounded-full"
+              style={{
+                background:
+                  "conic-gradient(from 0deg, transparent 0%, hsl(var(--neon-cyan) / 0.9) 18%, transparent 35%, transparent 60%, hsl(var(--neon-blue) / 0.7) 78%, transparent 95%)",
+                animation: light ? undefined : "rotate-glow 6s linear infinite",
+                filter: "blur(0.5px)",
+              }}
+            />
+            <div className="absolute inset-[3px] rounded-full bg-background/80 backdrop-blur-md border border-primary/40" />
+            {/* pulse */}
+            <div
+              aria-hidden
+              className="absolute inset-2 rounded-full opacity-40 group-hover:opacity-80 transition-opacity duration-500"
+              style={{
+                background: "radial-gradient(circle, hsl(var(--neon-cyan) / 0.4), transparent 70%)",
+              }}
+            />
+            {cert.logo_url ? (
+              <img
+                src={cert.logo_url}
+                alt=""
+                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+                className="relative w-10 h-10 object-contain drop-shadow-[0_0_8px_hsl(var(--neon-cyan)/0.7)]"
+              />
+            ) : (
+              <Icon size={32} className="relative text-primary drop-shadow-[0_0_10px_hsl(var(--neon-cyan)/0.8)]" />
+            )}
+          </div>
+
+          <div className="text-center space-y-1.5 w-full">
+            <h3 className="font-display text-base sm:text-lg tracking-wide text-foreground neon-text leading-snug line-clamp-2">
+              {cert.title || "Untitled"}
+            </h3>
+            {cert.issuer && (
+              <p className="text-xs sm:text-sm text-muted-foreground/80 font-body">
+                {cert.issuer}
+              </p>
+            )}
+            {cert.description && (
+              <p className="text-xs text-muted-foreground/70 font-body line-clamp-2 pt-1">
+                {cert.description}
+              </p>
+            )}
+          </div>
+
+          <span className="inline-flex items-center gap-1 text-[11px] font-mono uppercase tracking-widest text-primary/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            View <ExternalLink size={11} />
+          </span>
+        </div>
+      </div>
+    </motion.button>
+  );
+};
+
+const CertificateModal = ({ cert, onClose }: { cert: CertificateData; onClose: () => void }) => {
+  // ESC + lock body scroll
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+  }, [onClose]);
+
+  const Icon = pickIcon(cert);
+
+  return (
+    <motion.div
+      key="cert-modal"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+      className="fixed inset-0 z-[80] flex items-center justify-center p-4 sm:p-6 bg-background/70 backdrop-blur-md"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={cert.title}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 30, scale: 0.96 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 20, scale: 0.97 }}
+        transition={{ duration: 0.35, ease: EASE }}
+        className="relative max-w-2xl w-full max-h-[88vh] overflow-y-auto rounded-2xl border border-primary/40 bg-card/80 backdrop-blur-2xl shadow-[0_0_60px_hsl(var(--neon-cyan)/0.25)]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute top-3 right-3 z-10 p-2 rounded-full bg-background/80 border border-primary/40 text-primary hover:bg-primary/20 transition-all"
+        >
+          <X size={16} />
+        </button>
+
+        <div className="p-6 sm:p-8 space-y-5">
+          <div className="flex items-center gap-4">
+            <div className="relative w-14 h-14 rounded-full flex items-center justify-center bg-background/60 border border-primary/40">
+              {cert.logo_url ? (
+                <img src={cert.logo_url} alt="" className="w-8 h-8 object-contain" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
+              ) : (
+                <Icon size={26} className="text-primary" />
+              )}
+            </div>
+            <div className="min-w-0">
+              <h3 className="font-display text-xl sm:text-2xl text-foreground neon-text truncate">{cert.title}</h3>
+              {cert.issuer && <p className="text-sm text-muted-foreground">{cert.issuer}</p>}
+            </div>
+          </div>
+
+          {cert.description && (
+            <p className="text-sm sm:text-base text-foreground/85 leading-relaxed font-body">{cert.description}</p>
+          )}
+
+          {cert.image && (
+            <div className="relative rounded-xl overflow-hidden border border-primary/30">
+              <img src={cert.image} alt={`${cert.title} certificate`} loading="lazy" className="w-full h-auto block" />
+            </div>
+          )}
+
+          {cert.link && /^https?:\/\//i.test(cert.link) && (
+            <a
+              href={cert.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/15 border border-primary/40 text-primary text-sm font-mono hover:bg-primary/25 transition-all"
+            >
+              Verify Certificate <ExternalLink size={14} />
+            </a>
+          )}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
 
 const CertificatesSection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const light = useLightMotion();
-  const [expanded, setExpanded] = useState<string | null>(null);
   const { data } = usePortfolio();
+  const [open, setOpen] = useState<CertificateData | null>(null);
 
-  const certificates = data.certificates;
+  const grouped = useMemo(() => {
+    const valid = (data.certificates ?? []).filter(c => c && (c.title || "").trim().length > 0);
+    const map = new Map<string, CertificateData[]>();
+    for (const c of valid) {
+      const key = normalizeCategory(c.category);
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(c);
+    }
+    return Array.from(map.entries());
+  }, [data.certificates]);
 
-  if (certificates.length === 0) return null;
+  const totalValid = grouped.reduce((n, [, arr]) => n + arr.length, 0);
 
   return (
-    <section id="certificates" className="py-20 relative" ref={ref}>
-      <div className="container mx-auto px-4">
-        <motion.div
-          {...headingReveal(inView)}
-          className="text-center mb-14"
-        >
+    <section id="certificates" className="py-20 relative overflow-hidden" ref={ref}>
+      {/* Futuristic background */}
+      <div aria-hidden className="absolute inset-0 grid-bg opacity-[0.07] pointer-events-none" />
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse at 20% 0%, hsl(var(--neon-cyan) / 0.10), transparent 55%), radial-gradient(ellipse at 80% 100%, hsl(280 100% 65% / 0.08), transparent 55%)",
+        }}
+      />
+
+      <div className="container mx-auto px-4 relative">
+        <motion.div {...headingReveal(inView)} className="text-center mb-14">
           <p className="font-mono text-primary text-sm tracking-widest mb-2">{"// CERTIFICATIONS"}</p>
           <h2 className="font-display text-3xl md:text-4xl font-bold neon-text text-primary">
             My Certificates
           </h2>
           <p className="text-muted-foreground font-body max-w-lg mx-auto mt-3">
-            Verified certifications from top platforms.
+            Verified credentials, organized by domain.
           </p>
         </motion.div>
 
-        <div className="flex flex-wrap justify-center gap-10 max-w-4xl mx-auto">
-          {certificates.map((cert, i) => {
-            const isExpanded = expanded === cert.title;
-            const hasImage = !!cert.image;
-
-            return (
-              <motion.div
-                key={cert.id || cert.title}
-                initial={light ? undefined : { opacity: 0, scale: 0.7 }}
-                animate={inView ? { opacity: 1, scale: 1 } : undefined}
-                transition={{ duration: 0.5, delay: i * 0.12 }}
-                className="flex flex-col items-center gap-3"
-              >
-                <motion.button
-                  onClick={() => hasImage && setExpanded(isExpanded ? null : cert.title)}
-                  whileHover={light ? undefined : { scale: 1.12 }}
-                  className="group flex flex-col items-center gap-3 cursor-pointer"
+        {totalValid === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : undefined}
+            transition={{ duration: 0.6, ease: EASE }}
+            className="max-w-md mx-auto text-center rounded-2xl border border-primary/30 bg-card/40 backdrop-blur-xl p-10"
+          >
+            <Sparkles size={28} className="mx-auto text-primary mb-3 drop-shadow-[0_0_10px_hsl(var(--neon-cyan)/0.7)]" />
+            <p className="font-display text-lg text-foreground">No certifications available yet</p>
+            <p className="text-sm text-muted-foreground mt-1">New credentials will materialize here.</p>
+          </motion.div>
+        ) : (
+          <div className="space-y-14 max-w-6xl mx-auto">
+            {grouped.map(([cat, items], gi) => (
+              <div key={cat}>
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{ duration: 0.5, delay: gi * 0.05, ease: EASE }}
+                  className="flex items-center gap-3 mb-6"
                 >
-                  <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full flex items-center justify-center glass-card border-2 border-primary/40 transition-all duration-300 group-hover:border-primary group-hover:shadow-[0_0_25px_hsl(var(--primary)/0.4)]">
-                    <div className="absolute inset-0 rounded-full border-2 border-primary/0 group-hover:border-primary/30 group-hover:animate-pulse-glow transition-all duration-300" />
-                    <Award size={36} className="text-primary transition-transform duration-300 group-hover:scale-110" />
-                  </div>
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/40 to-primary/10" />
+                  <h3 className="font-mono text-xs sm:text-sm tracking-[0.25em] uppercase text-primary px-3 py-1.5 rounded-full border border-primary/30 bg-primary/5 backdrop-blur-sm shadow-[0_0_18px_hsl(var(--neon-cyan)/0.15)]">
+                    {prettyCategory(cat)}
+                    <span className="ml-2 text-primary/60">[{items.length}]</span>
+                  </h3>
+                  <div className="h-px flex-1 bg-gradient-to-l from-transparent via-primary/40 to-primary/10" />
+                </motion.div>
 
-                  <div className="text-center">
-                    <h3 className="font-display text-sm tracking-wider text-foreground">{cert.title}</h3>
-                    <p className="text-muted-foreground text-xs font-body">{cert.issuer}</p>
-                    {!hasImage && cert.link && (
-                      <a
-                        href={cert.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-primary text-xs mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        Verify <ExternalLink size={10} />
-                      </a>
-                    )}
-                    {hasImage && (
-                      <span className="inline-flex items-center gap-1 text-primary text-xs mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        {isExpanded ? "Close" : "View Certificate"}
-                      </span>
-                    )}
-                  </div>
-                </motion.button>
-
-                <AnimatePresence>
-                  {isExpanded && hasImage && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, height: "auto", scale: 1 }}
-                      exit={{ opacity: 0, height: 0, scale: 0.9 }}
-                      transition={{ duration: 0.4, ease: "easeInOut" }}
-                      className="relative w-[280px] sm:w-[400px] md:w-[500px] overflow-visible rounded-xl"
-                    >
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.3, duration: 0.8 }}
-                        className="absolute -inset-12 rounded-3xl pointer-events-none"
-                        style={{
-                          background: "radial-gradient(ellipse at center, hsl(var(--primary) / 0.15) 0%, hsl(var(--primary) / 0.05) 40%, transparent 70%)",
-                          animation: "breathe 4s ease-in-out infinite",
-                        }}
-                      />
-
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.15, duration: 0.5 }}
-                        className="absolute -inset-[3px] rounded-xl pointer-events-none overflow-hidden"
-                      >
-                        <div
-                          className="absolute inset-0"
-                          style={{
-                            background: "conic-gradient(from 0deg, transparent 0%, hsl(var(--primary)) 10%, transparent 20%, transparent 50%, hsl(var(--primary) / 0.6) 60%, transparent 70%)",
-                            animation: "rotate-glow 3s linear infinite",
-                          }}
-                        />
-                        <div className="absolute inset-[2px] rounded-[10px] bg-background" />
-                      </motion.div>
-
-                      <div className="relative glass-card rounded-xl p-2.5 border border-primary/25 backdrop-blur-sm overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-[2px] overflow-hidden pointer-events-none">
-                          <div className="w-1/2 h-full" style={{ background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.8), transparent)", animation: "shimmer 2s ease-in-out infinite" }} />
-                        </div>
-
-                        <button
-                          onClick={() => setExpanded(null)}
-                          className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-background/90 border border-primary/40 text-primary hover:bg-primary/20 hover:shadow-[0_0_12px_hsl(var(--primary)/0.3)] transition-all duration-200"
-                        >
-                          <X size={14} />
-                        </button>
-                        <div className="relative rounded-lg overflow-hidden">
-                          <img src={cert.image} alt={`${cert.title} certificate`} className="w-full rounded-lg" />
-                          <div className="absolute inset-0 rounded-lg pointer-events-none" style={{ boxShadow: "inset 0 0 40px hsl(var(--background) / 0.4), inset 0 0 80px hsl(var(--background) / 0.2)" }} />
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            );
-          })}
-        </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {items.map((cert, i) => (
+                    <CertCard
+                      key={cert.id ?? `${cat}-${i}`}
+                      cert={cert}
+                      index={i}
+                      light={light}
+                      onOpen={() => setOpen(cert)}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
+
+      <AnimatePresence>
+        {open && <CertificateModal cert={open} onClose={() => setOpen(null)} />}
+      </AnimatePresence>
     </section>
   );
 };

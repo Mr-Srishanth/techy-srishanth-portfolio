@@ -22,7 +22,17 @@ function mapProject(row: Tables<"projects">): ProjectData & { id: string } {
 }
 
 function mapCertificate(row: Tables<"certificates">): CertificateData & { id: string } {
-  return { id: row.id, title: row.title, issuer: row.issuer, image: row.image ?? undefined, link: row.link ?? undefined };
+  return {
+    id: row.id,
+    title: row.title,
+    issuer: row.issuer,
+    image: row.image ?? undefined,
+    link: row.link ?? undefined,
+    category: (row as any).category ?? undefined,
+    description: (row as any).description ?? undefined,
+    logo_url: (row as any).logo_url ?? undefined,
+    preset_icon: (row as any).preset_icon ?? undefined,
+  };
 }
 
 function mapGreeting(row: Tables<"greetings">): GreetingData & { id: string } {
@@ -196,9 +206,16 @@ export function usePortfolioData() {
     if (certificates.length > 0) {
       await supabase.from("certificates").insert(
         certificates.map((c, i) => ({
-          title: c.title, issuer: c.issuer,
-          image: c.image ?? null, link: c.link ?? null, sort_order: i,
-        }))
+          title: (c.title || "").trim(),
+          issuer: (c.issuer || "").trim(),
+          image: c.image?.trim() || null,
+          link: c.link?.trim() || null,
+          category: (c.category || "").trim().toLowerCase() || "general",
+          description: c.description?.trim() || null,
+          logo_url: c.logo_url?.trim() || null,
+          preset_icon: c.preset_icon?.trim() || null,
+          sort_order: i,
+        } as any))
       );
     }
 
