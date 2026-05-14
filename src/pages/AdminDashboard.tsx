@@ -451,8 +451,18 @@ const AdminDashboard = () => {
                               <button onClick={() => removeCertificate(i)} className="absolute top-3 right-3 text-muted-foreground hover:text-destructive transition-colors"><X size={16} /></button>
                               <input value={cert.title} onChange={e => { if (!e.target.value.trim()) toast.error("Title cannot be empty"); updateCertificate(i, { title: e.target.value }); }} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm font-semibold" placeholder="Certificate title *" />
                               <input value={cert.issuer} onChange={e => updateCertificate(i, { issuer: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="Issuer (e.g. Coursera)" />
-                              <input value={cert.link || ""} onChange={e => updateCertificate(i, { link: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="Link (optional)" />
-                              <ImageDropZone label="Certificate Image" currentImage={cert.image} onUpload={url => updateCertificate(i, { image: url })} folder="certificates" />
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <input value={cert.category || ""} onChange={e => updateCertificate(i, { category: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="Category (e.g. Hackathon, AI / ML)" />
+                                <select value={cert.preset_icon || "Award"} onChange={e => updateCertificate(i, { preset_icon: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm">
+                                  {["Award","Trophy","Brain","Code2","Cloud","Database","Globe","Shield","Cpu","Network","Rocket","Sparkles","Zap","Star","Bot","Terminal","GitBranch","Layers","Key","Lock","Atom","Binary","Wand2","Flame","Crown"].map(n => <option key={n} value={n}>{n}</option>)}
+                                </select>
+                              </div>
+                              <textarea value={cert.description || ""} onChange={e => updateCertificate(i, { description: e.target.value })} rows={2} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm resize-none" placeholder="Short description (optional)" />
+                              <input value={cert.link || ""} onChange={e => updateCertificate(i, { link: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="Verification link (https://...)" />
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <ImageDropZone label="Custom Logo (optional)" currentImage={cert.logo_url} onUpload={url => updateCertificate(i, { logo_url: url })} folder="cert-logos" />
+                                <ImageDropZone label="Certificate Image (full)" currentImage={cert.image} onUpload={url => updateCertificate(i, { image: url })} folder="certificates" />
+                              </div>
                             </div>
                           </SortableItem>
                         ))}
