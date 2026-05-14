@@ -48,94 +48,62 @@ const CertCard = ({ cert, onOpen, index, light }: { cert: CertificateData; onOpe
     <motion.button
       type="button"
       onClick={onOpen}
-      initial={{ opacity: 0, y: 50, scale: 0.96 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.55, delay: index * 0.07, ease: EASE }}
-      whileHover={light ? undefined : { y: -8, scale: 1.04 }}
-      className="group relative w-full text-left rounded-2xl overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.4, delay: Math.min(index, 6) * 0.05, ease: EASE }}
+      whileHover={light ? undefined : { y: -4 }}
+      className="group relative w-full text-left rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
       aria-label={`${cert.title} by ${cert.issuer}`}
     >
-      {/* Outer neon halo */}
-      <div
-        aria-hidden
-        className="absolute -inset-[1px] rounded-2xl opacity-50 group-hover:opacity-100 transition-opacity duration-500"
-        style={{
-          background:
-            "conic-gradient(from 120deg, hsl(var(--neon-cyan) / 0.6), hsl(var(--neon-blue) / 0.5), hsl(280 100% 65% / 0.45), hsl(var(--neon-cyan) / 0.6))",
-          filter: "blur(10px)",
-        }}
-      />
-      {/* Glass surface */}
-      <div className="relative h-full rounded-2xl bg-card/40 backdrop-blur-xl border border-primary/25 group-hover:border-primary/60 transition-colors duration-300">
-        {/* Inner gradient sheen */}
+      <div className="relative h-full rounded-xl bg-card/50 backdrop-blur-md border border-primary/20 group-hover:border-primary/50 transition-colors duration-300 overflow-hidden">
+        {/* subtle top sheen */}
         <div
           aria-hidden
-          className="absolute inset-0 rounded-2xl opacity-60 pointer-events-none"
+          className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent opacity-60"
+        />
+        {/* hover glow */}
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
           style={{
             background:
-              "linear-gradient(140deg, hsl(var(--neon-cyan) / 0.08) 0%, transparent 40%, transparent 60%, hsl(280 100% 70% / 0.07) 100%)",
+              "radial-gradient(circle at 50% 0%, hsl(var(--neon-cyan) / 0.12), transparent 60%)",
           }}
         />
-        {/* Holographic sweep */}
-        <div aria-hidden className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
-          <div className="absolute -inset-y-2 -left-1/2 w-1/2 rotate-12 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-0 group-hover:translate-x-[300%] transition-transform duration-[1100ms] ease-out" />
-        </div>
 
-        <div className="relative p-6 flex flex-col items-center gap-4">
-          {/* Icon core */}
-          <div className="relative w-20 h-20 flex items-center justify-center">
-            {/* rotating ring */}
-            <div
-              aria-hidden
-              className="absolute inset-0 rounded-full"
-              style={{
-                background:
-                  "conic-gradient(from 0deg, transparent 0%, hsl(var(--neon-cyan) / 0.9) 18%, transparent 35%, transparent 60%, hsl(var(--neon-blue) / 0.7) 78%, transparent 95%)",
-                animation: light ? undefined : "rotate-glow 6s linear infinite",
-                filter: "blur(0.5px)",
-              }}
-            />
-            <div className="absolute inset-[3px] rounded-full bg-background/80 backdrop-blur-md border border-primary/40" />
-            {/* pulse */}
-            <div
-              aria-hidden
-              className="absolute inset-2 rounded-full opacity-40 group-hover:opacity-80 transition-opacity duration-500"
-              style={{
-                background: "radial-gradient(circle, hsl(var(--neon-cyan) / 0.4), transparent 70%)",
-              }}
-            />
+        <div className="relative p-5 flex items-start gap-4">
+          <div className="shrink-0 w-12 h-12 rounded-lg flex items-center justify-center bg-background/70 border border-primary/30 group-hover:border-primary/60 transition-colors">
             {cert.logo_url ? (
               <img
                 src={cert.logo_url}
                 alt=""
                 onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
-                className="relative w-10 h-10 object-contain drop-shadow-[0_0_8px_hsl(var(--neon-cyan)/0.7)]"
+                className="w-7 h-7 object-contain"
               />
             ) : (
-              <Icon size={32} className="relative text-primary drop-shadow-[0_0_10px_hsl(var(--neon-cyan)/0.8)]" />
+              <Icon size={22} className="text-primary" />
             )}
           </div>
 
-          <div className="text-center space-y-1.5 w-full">
-            <h3 className="font-display text-base sm:text-lg tracking-wide text-foreground neon-text leading-snug line-clamp-2">
+          <div className="min-w-0 flex-1 space-y-1">
+            <h3 className="font-display text-sm sm:text-base text-foreground leading-snug line-clamp-2">
               {cert.title || "Untitled"}
             </h3>
             {cert.issuer && (
-              <p className="text-xs sm:text-sm text-muted-foreground/80 font-body">
+              <p className="text-xs text-muted-foreground/80 font-body line-clamp-1">
                 {cert.issuer}
               </p>
             )}
             {cert.description && (
-              <p className="text-xs text-muted-foreground/70 font-body line-clamp-2 pt-1">
+              <p className="text-xs text-muted-foreground/60 font-body line-clamp-2 pt-0.5">
                 {cert.description}
               </p>
             )}
+            <div className="pt-2 inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-widest text-primary/70 opacity-0 group-hover:opacity-100 transition-opacity">
+              View <ExternalLink size={10} />
+            </div>
           </div>
-
-          <span className="inline-flex items-center gap-1 text-[11px] font-mono uppercase tracking-widest text-primary/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            View <ExternalLink size={11} />
-          </span>
         </div>
       </div>
     </motion.button>
