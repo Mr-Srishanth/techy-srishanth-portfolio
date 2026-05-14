@@ -31,6 +31,10 @@ export interface CertificateData {
   issuer: string;
   image?: string;
   link?: string;
+  category?: string;
+  description?: string;
+  logo_url?: string;
+  preset_icon?: string;
 }
 
 export interface GreetingData {
