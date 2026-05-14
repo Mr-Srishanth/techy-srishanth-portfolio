@@ -152,15 +152,7 @@ const LearningJourneySection = () => {
           </div>
         </div>
 
-        {/* Closing line */}
-        <motion.p
-          className="text-center mt-12 font-display text-xl md:text-2xl font-bold text-primary"
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.6, duration: 0.7, ease: EASE_REVEAL }}
-        >
-          This is just the beginning 🚀
-        </motion.p>
+        {/* removed cinematic filler line */}
       </div>
 
       <style>{`.scrollbar-hide::-webkit-scrollbar { display: none; }`}</style>
