@@ -96,6 +96,71 @@
       linear-gradient(90deg, hsl(var(--neon-blue) / 0.03) 1px, transparent 1px);
     background-size: 60px 60px;
   }
+
+  /* ===== Unified global design system ===== */
+  /* Consistent section spacing across the entire site */
+  .section-shell {
+    @apply relative py-20 md:py-28 px-4 md:px-6 overflow-hidden;
+  }
+  .section-container {
+    @apply max-w-7xl mx-auto relative z-10;
+  }
+  /* Subtle ambient backdrop so sections blend together */
+  .section-ambient::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(60% 50% at 15% 0%, hsl(var(--neon-blue) / 0.08), transparent 70%),
+      radial-gradient(50% 40% at 85% 100%, hsl(var(--neon-purple) / 0.06), transparent 70%);
+    z-index: 0;
+  }
+  /* Unified typography */
+  .section-label {
+    @apply inline-block uppercase tracking-[0.3em] text-xs md:text-sm font-mono text-primary/80;
+    text-shadow: 0 0 12px hsl(var(--neon-blue) / 0.45);
+  }
+  .section-heading {
+    @apply font-display font-bold text-3xl md:text-5xl lg:text-6xl tracking-tight;
+    background: linear-gradient(135deg, hsl(var(--foreground)) 0%, hsl(var(--neon-cyan)) 60%, hsl(var(--primary)) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .section-subtitle {
+    @apply text-base md:text-lg text-muted-foreground/90 max-w-2xl;
+  }
+  /* Unified card surface */
+  .surface-card {
+    @apply relative rounded-xl bg-glass/50 backdrop-blur-xl border border-primary/15;
+    box-shadow:
+      0 1px 0 hsl(var(--primary) / 0.08) inset,
+      0 10px 40px -20px hsl(var(--neon-blue) / 0.25);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+  .surface-card:hover {
+    transform: translateY(-4px);
+    border-color: hsl(var(--primary) / 0.45);
+    box-shadow:
+      0 1px 0 hsl(var(--primary) / 0.12) inset,
+      0 20px 60px -20px hsl(var(--neon-blue) / 0.45),
+      0 0 0 1px hsl(var(--primary) / 0.15);
+  }
+  /* Unified button hover */
+  .btn-neon {
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                background-color 0.25s ease;
+  }
+  .btn-neon:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px hsl(var(--neon-blue) / 0.45),
+                0 0 40px hsl(var(--neon-blue) / 0.15);
+  }
 }
 
 @layer utilities {
