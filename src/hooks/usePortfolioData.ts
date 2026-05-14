@@ -31,6 +31,7 @@ function mapCertificate(row: Tables<"certificates">): CertificateData & { id: st
     category: (row as any).category ?? undefined,
     description: (row as any).description ?? undefined,
     logo_url: (row as any).logo_url ?? undefined,
+    preset_icon: (row as any).preset_icon ?? undefined,
   };
 }
 
@@ -212,6 +213,7 @@ export function usePortfolioData() {
           category: (c.category || "").trim().toLowerCase() || "general",
           description: c.description?.trim() || null,
           logo_url: c.logo_url?.trim() || null,
+          preset_icon: c.preset_icon?.trim() || null,
           sort_order: i,
         } as any))
       );
