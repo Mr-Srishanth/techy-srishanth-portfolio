@@ -52,59 +52,39 @@ const CertCard = ({ cert, onOpen, index, light }: { cert: CertificateData; onOpe
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.4, delay: Math.min(index, 6) * 0.05, ease: EASE }}
-      whileHover={light ? undefined : { y: -4 }}
-      className="group relative w-full text-left rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
+      whileHover={light ? undefined : { y: -6 }}
+      className="group relative flex flex-col items-center text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 rounded-full"
       aria-label={`${cert.title} by ${cert.issuer}`}
     >
-      <div className="relative h-full rounded-xl bg-card/50 backdrop-blur-md border border-primary/20 group-hover:border-primary/50 transition-colors duration-300 overflow-hidden">
-        {/* subtle top sheen */}
+      <div className="relative w-36 h-36 sm:w-40 sm:h-40 rounded-full flex items-center justify-center bg-card/40 backdrop-blur-md border border-primary/40 group-hover:border-primary/80 transition-all duration-300 group-hover:shadow-[0_0_30px_hsl(var(--neon-cyan)/0.35)]">
         <div
           aria-hidden
-          className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent opacity-60"
-        />
-        {/* hover glow */}
-        <div
-          aria-hidden
-          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+          className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
           style={{
             background:
-              "radial-gradient(circle at 50% 0%, hsl(var(--neon-cyan) / 0.12), transparent 60%)",
+              "radial-gradient(circle at 50% 50%, hsl(var(--neon-cyan) / 0.18), transparent 70%)",
           }}
         />
-
-        <div className="relative p-5 flex items-start gap-4">
-          <div className="shrink-0 w-12 h-12 rounded-lg flex items-center justify-center bg-background/70 border border-primary/30 group-hover:border-primary/60 transition-colors">
-            {cert.logo_url ? (
-              <img
-                src={cert.logo_url}
-                alt=""
-                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
-                className="w-7 h-7 object-contain"
-              />
-            ) : (
-              <Icon size={22} className="text-primary" />
-            )}
-          </div>
-
-          <div className="min-w-0 flex-1 space-y-1">
-            <h3 className="font-display text-sm sm:text-base text-foreground leading-snug line-clamp-2">
-              {cert.title || "Untitled"}
-            </h3>
-            {cert.issuer && (
-              <p className="text-xs text-muted-foreground/80 font-body line-clamp-1">
-                {cert.issuer}
-              </p>
-            )}
-            {cert.description && (
-              <p className="text-xs text-muted-foreground/60 font-body line-clamp-2 pt-0.5">
-                {cert.description}
-              </p>
-            )}
-            <div className="pt-2 inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-widest text-primary/70 opacity-0 group-hover:opacity-100 transition-opacity">
-              View <ExternalLink size={10} />
-            </div>
-          </div>
-        </div>
+        {cert.logo_url ? (
+          <img
+            src={cert.logo_url}
+            alt=""
+            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+            className="w-14 h-14 object-contain relative z-10"
+          />
+        ) : (
+          <Icon size={48} className="text-primary relative z-10" strokeWidth={1.5} />
+        )}
+      </div>
+      <div className="mt-5 space-y-1 px-2 max-w-[12rem]">
+        <h3 className="font-display text-sm sm:text-base text-foreground leading-snug line-clamp-2">
+          {cert.title || "Untitled"}
+        </h3>
+        {cert.issuer && (
+          <p className="text-xs text-muted-foreground font-body line-clamp-2">
+            {cert.issuer}
+          </p>
+        )}
       </div>
     </motion.button>
   );
@@ -266,7 +246,7 @@ const CertificatesSection = () => {
                   <div className="h-px flex-1 bg-gradient-to-l from-transparent via-primary/40 to-primary/10" />
                 </motion.div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="flex flex-wrap justify-center gap-x-10 gap-y-12">
                   {items.map((cert, i) => (
                     <CertCard
                       key={cert.id ?? `${cat}-${i}`}
