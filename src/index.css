@@ -97,6 +97,51 @@
     background-size: 60px 60px;
   }
 
+  /* ===== Seamless global flow =====
+     Dim per-section grid overlays so sections stop reading as
+     separate highlighted blocks. The global GenerativeArtBackground
+     already provides ambient texture for the whole page. */
+  section > .grid-bg,
+  section .grid-bg {
+    opacity: 0.025 !important;
+  }
+
+  /* Soft top/bottom fade on every section so adjacent sections
+     blend into each other instead of stacking as containers. */
+  main section,
+  body > div section {
+    position: relative;
+  }
+  main section::before,
+  body > div section::before,
+  main section::after,
+  body > div section::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 120px;
+    pointer-events: none;
+    z-index: 1;
+  }
+  main section::before,
+  body > div section::before {
+    top: 0;
+    background: linear-gradient(to bottom, hsl(var(--background)) 0%, transparent 100%);
+    opacity: 0.55;
+  }
+  main section::after,
+  body > div section::after {
+    bottom: 0;
+    background: linear-gradient(to top, hsl(var(--background)) 0%, transparent 100%);
+    opacity: 0.55;
+  }
+  /* Keep content above the blend overlays */
+  section > *:not(.grid-bg):not([aria-hidden="true"]) {
+    position: relative;
+    z-index: 2;
+  }
+
   /* ===== Unified global design system ===== */
   /* Consistent section spacing across the entire site */
   .section-shell {
