@@ -227,8 +227,8 @@ const CertificatesSection = () => {
 
       <div className="container mx-auto px-4 relative">
         <motion.div {...headingReveal(inView)} className="text-center mb-14">
-          <p className="font-mono text-primary text-sm tracking-widest mb-2">{"// CERTIFICATIONS"}</p>
-          <h2 className="font-display text-3xl md:text-4xl font-bold neon-text text-primary">
+          <p className="font-mono text-muted-foreground text-sm tracking-widest mb-2">{"// CERTIFICATIONS"}</p>
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground">
             My Certificates
           </h2>
           <p className="text-muted-foreground font-body max-w-lg mx-auto mt-3">
