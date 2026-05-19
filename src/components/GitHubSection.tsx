@@ -11,7 +11,7 @@ const terminalLines = [
   { text: "role: AI & Software Developer", delay: 1.5, type: "dim" as const },
   { text: "stack: [Python, DSA, ML, C]", delay: 1.8, type: "dim" as const },
   { text: "$ git log --oneline --graph", delay: 2.4, type: "command" as const },
-  { text: "✓ feat: python-calculator — CLI-based arithmetic tool", delay: 2.8, type: "success" as const },
+  { text: "✓ feat: StorySnap AI – Interactive Learning Using AI Stories", delay: 2.8, type: "success" as const },
   { text: "✓ feat: student-management-system — CRUD operations", delay: 3.2, type: "success" as const },
   { text: "✓ feat: dsa-practice-tracker — Algorithm solutions", delay: 3.6, type: "success" as const },
   { text: "✓ feat: ai-chatbot — Intelligent conversational assistant", delay: 4.0, type: "success" as const },

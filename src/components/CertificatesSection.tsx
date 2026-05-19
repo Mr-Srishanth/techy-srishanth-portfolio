@@ -193,7 +193,7 @@ const CertificatesSection = () => {
   const totalValid = grouped.reduce((n, [, arr]) => n + arr.length, 0);
 
   return (
-    <section id="certificates" className="py-20 relative overflow-hidden" ref={ref}>
+    <section id="certificates" className="py-20 relative overflow-hidden bg-[#080a0c]" ref={ref}>
       {/* Futuristic background */}
       <div aria-hidden className="absolute inset-0 grid-bg opacity-[0.07] pointer-events-none" />
       <div
@@ -240,8 +240,8 @@ const CertificatesSection = () => {
                 >
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/40 to-primary/10" />
                   <h3 className="font-mono text-xs sm:text-sm tracking-[0.25em] uppercase text-primary px-3 py-1.5 rounded-full border border-primary/30 bg-primary/5 backdrop-blur-sm shadow-[0_0_18px_hsl(var(--neon-cyan)/0.15)]">
-                    {prettyCategory(cat)}
-                    <span className="ml-2 text-primary/60">[{items.length}]</span>
+                    {cat === "general" ? "MR.SRISHANTH14" : prettyCategory(cat)}
+                    {cat !== "general" && <span className="ml-2 text-primary/60">[{items.length}]</span>}
                   </h3>
                   <div className="h-px flex-1 bg-gradient-to-l from-transparent via-primary/40 to-primary/10" />
                 </motion.div>

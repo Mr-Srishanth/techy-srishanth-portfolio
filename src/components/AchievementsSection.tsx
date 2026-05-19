@@ -37,7 +37,7 @@ const AchievementsSection = () => {
             >
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="relative z-10">
-                <div className="flex items-start justify-between mb-3">
+                <div className="flex items-start justify-between mb-3 text-center">
                   <span className="text-3xl">{a.icon}</span>
                   {a.link && (
                     <a
