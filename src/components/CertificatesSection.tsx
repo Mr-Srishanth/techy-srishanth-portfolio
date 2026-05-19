@@ -194,16 +194,10 @@ const CertificatesSection = () => {
 
   return (
     <section id="certificates" className="py-20 relative overflow-hidden" ref={ref}>
-      {/* Futuristic background */}
-      <div aria-hidden className="absolute inset-0 grid-bg opacity-[0.07] pointer-events-none" />
-      <div
-        aria-hidden
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse at 20% 0%, hsl(var(--neon-cyan) / 0.10), transparent 55%), radial-gradient(ellipse at 80% 100%, hsl(280 100% 65% / 0.08), transparent 55%)",
-        }}
-      />
+      {/* Background — matches Continuous Growth section */}
+      <div aria-hidden className="absolute inset-0 grid-bg opacity-10 pointer-events-none" />
+      <div aria-hidden className="absolute top-1/3 -right-40 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[140px] pointer-events-none" />
+      <div aria-hidden className="absolute bottom-1/4 -left-40 w-[400px] h-[400px] rounded-full bg-neon-purple/5 blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto px-4 relative">
         <motion.div {...headingReveal(inView)} className="text-center mb-14">
