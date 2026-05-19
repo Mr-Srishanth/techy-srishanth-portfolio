@@ -5,7 +5,7 @@ import {
   LogOut, User, FileText, Wrench, FolderOpen, Image, Plus, X, Upload,
   ArrowLeft, Save, Undo2, Redo2, Eye, History, Clock, RotateCcw, Trash2,
   Award, MessageSquare, LayoutGrid, AlertCircle, GripVertical, Search,
-  BarChart3, Sun, Moon, Trophy, Link2
+  BarChart3, Sun, Moon, Trophy, Link2, Folder, ExternalLink, Github
 } from "lucide-react";
 import { toast } from "sonner";
 import { usePortfolio, type SkillData, type ProjectData, type CertificateData, type GreetingData, type AchievementData, type SectionVisibility } from "@/contexts/PortfolioContext";
@@ -141,6 +141,7 @@ const AdminDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [adminTheme, setAdminTheme] = useState<"dark" | "light">(getAdminTheme);
   const [analytics, setAnalytics] = useState<AnalyticsData>(getAnalytics);
+  const [previewProject, setPreviewProject] = useState<ProjectData | null>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const lastSaveRef = useRef(JSON.stringify(draft));
 
@@ -393,7 +394,10 @@ const AdminDashboard = () => {
                         {filteredProjects.map(({ p: project, i }) => (
                           <SortableItem key={`project-${i}`} id={`project-${i}`}>
                             <div className="glass-card p-4 space-y-3 relative">
-                              <button onClick={() => removeProject(i)} className="absolute top-3 right-3 text-muted-foreground hover:text-destructive transition-colors"><X size={16} /></button>
+                              <div className="absolute top-3 right-3 flex items-center gap-2">
+                                <button onClick={() => setPreviewProject(project)} className="text-muted-foreground hover:text-primary transition-colors" title="Live preview"><Eye size={16} /></button>
+                                <button onClick={() => removeProject(i)} className="text-muted-foreground hover:text-destructive transition-colors" title="Delete"><X size={16} /></button>
+                              </div>
                               <input value={project.title} onChange={e => updateProject(i, { title: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm font-semibold" placeholder="Project title" />
                               <input value={project.tagline || ""} onChange={e => updateProject(i, { tagline: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="Tagline (short subtitle)" />
                               <textarea value={project.desc} onChange={e => updateProject(i, { desc: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm resize-none" rows={2} placeholder="Description" />
@@ -618,6 +622,54 @@ const AdminDashboard = () => {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* Live Project Preview Modal */}
+      <AnimatePresence>
+        {previewProject && (
+          <motion.div
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="absolute inset-0 bg-background/80 backdrop-blur-md"
+              onClick={() => setPreviewProject(null)}
+            />
+            <motion.div
+              className="relative glass-card p-6 max-w-lg w-full border border-primary/30"
+              initial={{ scale: 0.92, opacity: 0, y: 16 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.92, opacity: 0, y: 16 }}
+              transition={{ type: "spring", damping: 26, stiffness: 280 }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-mono tracking-widest text-primary/80 uppercase">Live Card Preview</span>
+                <button onClick={() => setPreviewProject(null)} className="text-muted-foreground hover:text-foreground"><X size={18} /></button>
+              </div>
+              {previewProject.image && (
+                <div className="relative mb-4 rounded-lg overflow-hidden h-44">
+                  <img src={previewProject.image} alt={previewProject.title} className="w-full h-full object-cover" />
+                </div>
+              )}
+              <div className="flex items-center justify-between mb-4">
+                <Folder className="text-primary" size={26} />
+                <div className="flex gap-3 text-muted-foreground">
+                  {previewProject.github_url && <Github size={16} />}
+                  {previewProject.live_url && <ExternalLink size={16} />}
+                  {previewProject.doc_url && <FileText size={16} />}
+                </div>
+              </div>
+              <h3 className="font-display text-lg font-semibold text-foreground mb-1 tracking-wider">{previewProject.title || "Untitled"}</h3>
+              {previewProject.tagline && <p className="font-mono text-xs text-primary mb-2">{previewProject.tagline}</p>}
+              <p className="font-body text-sm text-muted-foreground mb-4 leading-relaxed line-clamp-3">{previewProject.desc}</p>
+              <div className="flex flex-wrap gap-2">
+                {previewProject.tags.map(tag => (
+                  <span key={tag} className="px-3 py-1 text-xs font-mono rounded-full bg-primary/10 text-primary border border-primary/20">{tag}</span>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

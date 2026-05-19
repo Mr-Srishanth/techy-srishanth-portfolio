@@ -11,37 +11,38 @@ export const EASE_HERO = EASE;
 
 // Durations (seconds)
 export const DUR_MICRO = 0.2;
-export const DUR_HOVER = 0.3;
-export const DUR_REVEAL = 0.6;
-export const DUR_HERO = 0.8;
-export const DUR_TEXT_REVEAL = 0.5;
+export const DUR_HOVER = 0.4;
+export const DUR_REVEAL = 0.9;
+export const DUR_HERO = 1.0;
+export const DUR_TEXT_REVEAL = 0.7;
 export const DUR_RIPPLE = 0.3;
 export const DUR_SKILL_BAR = 0.8;
 export const DUR_BG_MOTION = 20;
 
 // Stagger delays
-export const STAGGER = 0.08; // 80ms between elements
+export const STAGGER = 0.09; // ~90ms between elements
 
 // Reveal offsets
-export const REVEAL_Y = 30;
+export const REVEAL_Y = 40;
 
 // Shared hover preset for cards
 export const cardHover = {
-  y: -6,
-  scale: 1.02,
-  boxShadow: "0 0 25px hsl(var(--primary) / 0.15)",
+  y: -8,
+  scale: 1.015,
+  boxShadow: "0 18px 50px -18px hsl(var(--primary) / 0.35), 0 0 30px hsl(var(--primary) / 0.18)",
   transition: { duration: DUR_HOVER, ease: EASE },
 };
 
 // Shared button hover preset
 export const buttonHover = {
-  scale: 1.04,
-  boxShadow: "0 0 20px hsl(var(--primary) / 0.3)",
-  transition: { duration: DUR_MICRO, ease: EASE },
+  y: -2,
+  scale: 1.03,
+  boxShadow: "0 0 22px hsl(var(--primary) / 0.35), 0 8px 24px -12px hsl(var(--primary) / 0.4)",
+  transition: { duration: 0.28, ease: EASE },
 };
 
 // Shared button tap
-export const buttonTap = { scale: 0.97 };
+export const buttonTap = { scale: 0.96, transition: { duration: 0.15, ease: EASE } };
 
 // Section heading reveal
 export const headingReveal = (inView: boolean, delay = 0) => ({
@@ -65,4 +66,4 @@ export const textReveal = (inView: boolean, delay = 0.08) => ({
 });
 
 // Word delay for TextReveal component
-export const WORD_DELAY = 0.07;
+export const WORD_DELAY = 0.06;
