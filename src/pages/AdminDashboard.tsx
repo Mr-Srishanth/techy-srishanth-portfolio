@@ -5,7 +5,7 @@ import {
   LogOut, User, FileText, Wrench, FolderOpen, Image, Plus, X, Upload,
   ArrowLeft, Save, Undo2, Redo2, Eye, History, Clock, RotateCcw, Trash2,
   Award, MessageSquare, LayoutGrid, AlertCircle, GripVertical, Search,
-  BarChart3, Sun, Moon, Trophy, Link2
+  BarChart3, Sun, Moon, Trophy, Link2, Folder, ExternalLink, Github
 } from "lucide-react";
 import { toast } from "sonner";
 import { usePortfolio, type SkillData, type ProjectData, type CertificateData, type GreetingData, type AchievementData, type SectionVisibility } from "@/contexts/PortfolioContext";
@@ -141,6 +141,7 @@ const AdminDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [adminTheme, setAdminTheme] = useState<"dark" | "light">(getAdminTheme);
   const [analytics, setAnalytics] = useState<AnalyticsData>(getAnalytics);
+  const [previewProject, setPreviewProject] = useState<ProjectData | null>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const lastSaveRef = useRef(JSON.stringify(draft));
 
