@@ -394,7 +394,10 @@ const AdminDashboard = () => {
                         {filteredProjects.map(({ p: project, i }) => (
                           <SortableItem key={`project-${i}`} id={`project-${i}`}>
                             <div className="glass-card p-4 space-y-3 relative">
-                              <button onClick={() => removeProject(i)} className="absolute top-3 right-3 text-muted-foreground hover:text-destructive transition-colors"><X size={16} /></button>
+                              <div className="absolute top-3 right-3 flex items-center gap-2">
+                                <button onClick={() => setPreviewProject(project)} className="text-muted-foreground hover:text-primary transition-colors" title="Live preview"><Eye size={16} /></button>
+                                <button onClick={() => removeProject(i)} className="text-muted-foreground hover:text-destructive transition-colors" title="Delete"><X size={16} /></button>
+                              </div>
                               <input value={project.title} onChange={e => updateProject(i, { title: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm font-semibold" placeholder="Project title" />
                               <input value={project.tagline || ""} onChange={e => updateProject(i, { tagline: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm" placeholder="Tagline (short subtitle)" />
                               <textarea value={project.desc} onChange={e => updateProject(i, { desc: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm resize-none" rows={2} placeholder="Description" />
