@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Palette } from "lucide-react";
 import { motion } from "framer-motion";
 import { themes, type Theme } from "@/components/CommandPalette";
@@ -13,7 +13,6 @@ const ThemeToggle = () => {
     }
     return "blue";
   });
-  const rafRef = useRef<number>(0);
 
   // Listen for theme changes from CommandPalette
   useEffect(() => {
