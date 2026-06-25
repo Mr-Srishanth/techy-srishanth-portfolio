@@ -16,10 +16,10 @@ const AchievementsSection = () => {
   if (achievements.length === 0) return null;
 
   return (
-    <section id="achievements" className="py-24 relative">
+    <section id="achievements" className="py-16 relative">
       <div className="absolute inset-0 grid-bg opacity-10 pointer-events-none" />
       <div className="container mx-auto px-4 relative z-10" ref={ref}>
-        <motion.div {...headingReveal(inView)} className="text-center mb-16">
+        <motion.div {...headingReveal(inView)} className="text-center mb-10">
           <p className="font-mono text-primary text-sm tracking-widest mb-2">{"// ACHIEVEMENTS"}</p>
           <h2 className="font-display text-3xl md:text-4xl font-bold neon-text text-primary">
             Milestones & Awards
