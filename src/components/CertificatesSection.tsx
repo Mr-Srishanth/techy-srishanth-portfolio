@@ -193,7 +193,7 @@ const CertificatesSection = () => {
   const totalValid = grouped.reduce((n, [, arr]) => n + arr.length, 0);
 
   return (
-    <section id="certificates" className="py-20 relative overflow-hidden" ref={ref}>
+    <section id="certificates" className="py-16 relative overflow-hidden" ref={ref}>
       {/* Background — matches Continuous Growth section */}
       <div aria-hidden className="absolute inset-0 grid-bg opacity-10 pointer-events-none" />
       <div aria-hidden className="absolute top-1/3 -right-40 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[140px] pointer-events-none" />
