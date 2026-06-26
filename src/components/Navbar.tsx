@@ -16,7 +16,22 @@ const sectionIds: Record<string, string> = {
   Contact: "contact",
 };
 
-const MagneticLink = ({ children, onClick, isActive }: { children: string; onClick: () => void; isActive: boolean }) => {
+// Premium spring used for the indicator pill — fast onset, natural settle.
+const PILL_SPRING = { type: "spring" as const, stiffness: 380, damping: 34, mass: 0.9 };
+
+const MagneticLink = ({
+  children,
+  onClick,
+  isActive,
+  onHover,
+  onLeave,
+}: {
+  children: string;
+  onClick: () => void;
+  isActive: boolean;
+  onHover: () => void;
+  onLeave: () => void;
+}) => {
   const ref = useRef<HTMLButtonElement>(null);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
 
@@ -27,44 +42,94 @@ const MagneticLink = ({ children, onClick, isActive }: { children: string; onCli
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
     setOffset({
-      x: (e.clientX - cx) * 0.3,
-      y: (e.clientY - cy) * 0.4,
+      x: (e.clientX - cx) * 0.25,
+      y: (e.clientY - cy) * 0.3,
     });
   }, []);
 
-  const reset = useCallback(() => setOffset({ x: 0, y: 0 }), []);
+  const reset = useCallback(() => {
+    setOffset({ x: 0, y: 0 });
+    onLeave();
+  }, [onLeave]);
 
   return (
     <motion.button
       ref={ref}
       onClick={onClick}
       onMouseMove={handleMouse}
+      onMouseEnter={onHover}
       onMouseLeave={reset}
       animate={{ x: offset.x, y: offset.y }}
-      transition={{ type: "spring", stiffness: 250, damping: 15, mass: 0.5 }}
-      className="relative font-body text-sm tracking-wider uppercase transition-colors duration-200"
+      transition={{ type: "spring", stiffness: 250, damping: 18, mass: 0.5 }}
+      className="relative font-body text-sm tracking-wider uppercase px-3 py-2 rounded-full will-change-transform"
     >
-      <span className={isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"}>
+      <span
+        className={`relative z-10 transition-colors duration-300 ${
+          isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+        }`}
+      >
         {children}
       </span>
-      {isActive && (
-        <motion.div
-          className="absolute -bottom-1 left-0 right-0 h-[2px] bg-primary"
-          layoutId="nav-underline"
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        />
-      )}
     </motion.button>
   );
 };
 
 const Navbar = () => {
   const [active, setActive] = useState("Home");
+  const [hovered, setHovered] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navRowRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [indicator, setIndicator] = useState<{ x: number; w: number } | null>(null);
+  const [hoverRect, setHoverRect] = useState<{ x: number; w: number } | null>(null);
+
+  const measure = useCallback((key: string) => {
+    const row = navRowRef.current;
+    const el = itemRefs.current[key];
+    if (!row || !el) return null;
+    const r = el.getBoundingClientRect();
+    const p = row.getBoundingClientRect();
+    return { x: r.left - p.left, w: r.width };
+  }, []);
+
+  // Track active pill position, re-measure on resize/font load.
+  useEffect(() => {
+    let raf = 0;
+    const update = () => {
+      raf = requestAnimationFrame(() => {
+        const m = measure(active);
+        if (m) setIndicator(m);
+      });
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", update);
+    };
+  }, [active, measure]);
+
+  useEffect(() => {
+    if (!hovered) {
+      setHoverRect(null);
+      return;
+    }
+    const m = measure(hovered);
+    if (m) setHoverRect(m);
+  }, [hovered, measure]);
 
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
     const ids = Object.values(sectionIds);
+    let pending: string | null = null;
+    let timer: number | undefined;
+    const commit = (name: string) => {
+      pending = name;
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        if (pending) setActive(pending);
+      }, 80);
+    };
 
     ids.forEach((id) => {
       const el = document.getElementById(id);
@@ -73,7 +138,7 @@ const Navbar = () => {
         ([entry]) => {
           if (entry.isIntersecting) {
             const linkName = Object.keys(sectionIds).find((k) => sectionIds[k] === id) || "Home";
-            setActive(linkName);
+            commit(linkName);
           }
         },
         { rootMargin: "-40% 0px -55% 0px" }
@@ -82,7 +147,10 @@ const Navbar = () => {
       observers.push(observer);
     });
 
-    return () => observers.forEach((o) => o.disconnect());
+    return () => {
+      observers.forEach((o) => o.disconnect());
+      window.clearTimeout(timer);
+    };
   }, []);
 
   const scrollTo = (id: string) => {
@@ -109,11 +177,55 @@ const Navbar = () => {
           AS
         </motion.span>
 
-        <div className="hidden md:flex items-center gap-8">
+        <div
+          ref={navRowRef}
+          className="hidden md:flex relative items-center gap-2"
+          onMouseLeave={() => setHovered(null)}
+        >
+          {/* Hover pill — soft, follows cursor across items */}
+          {hoverRect && (
+            <motion.div
+              aria-hidden
+              className="absolute top-1/2 -translate-y-1/2 h-9 rounded-full bg-foreground/[0.06] backdrop-blur-sm pointer-events-none"
+              initial={false}
+              animate={{ x: hoverRect.x, width: hoverRect.w, opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={PILL_SPRING}
+              style={{ left: 0 }}
+            />
+          )}
+          {/* Active pill — primary glow, morphs width + position together */}
+          {indicator && (
+            <motion.div
+              aria-hidden
+              className="absolute top-1/2 -translate-y-1/2 h-9 rounded-full pointer-events-none"
+              initial={false}
+              animate={{ x: indicator.x, width: indicator.w }}
+              transition={PILL_SPRING}
+              style={{
+                left: 0,
+                background:
+                  "linear-gradient(180deg, hsl(var(--primary) / 0.18), hsl(var(--primary) / 0.08))",
+                boxShadow:
+                  "0 0 0 1px hsl(var(--primary) / 0.35), 0 8px 24px -8px hsl(var(--primary) / 0.45), inset 0 1px 0 hsl(var(--primary) / 0.25)",
+              }}
+            />
+          )}
           {links.map((link) => (
-            <MagneticLink key={link} onClick={() => scrollTo(link)} isActive={active === link}>
-              {link}
-            </MagneticLink>
+            <div
+              key={link}
+              ref={(el) => (itemRefs.current[link] = el)}
+              className="relative"
+            >
+              <MagneticLink
+                onClick={() => scrollTo(link)}
+                isActive={active === link}
+                onHover={() => setHovered(link)}
+                onLeave={() => setHovered((h) => (h === link ? null : h))}
+              >
+                {link}
+              </MagneticLink>
+            </div>
           ))}
         </div>
 
