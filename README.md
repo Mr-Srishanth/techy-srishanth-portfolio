@@ -75,8 +75,7 @@ Ways to connect with me.
 
 You can view the portfolio here:
 
-https://techy-srishanth.lovable.app
-
+(https://techy-srishanth-portfolio.vercel.app/)
 ---
 
 ## 📬 Contact
