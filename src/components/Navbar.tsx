@@ -80,6 +80,7 @@ const Navbar = () => {
   const [active, setActive] = useState("Home");
   const [hovered, setHovered] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [underlineReady, setUnderlineReady] = useState(false);
   const navRowRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const activeRef = useRef("Home");
@@ -169,6 +170,7 @@ const Navbar = () => {
     lastUnderlineKeyRef.current = `${current}:none`;
     jumpUnderline(e.left, e.right);
     initializedRef.current = true;
+    setUnderlineReady(true);
     if (current !== active) setActive(current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -280,6 +282,7 @@ const Navbar = () => {
               x: xSpring,
               transformOrigin: "left center",
               boxShadow: "0 0 8px hsl(var(--primary) / 0.55)",
+              opacity: underlineReady ? 1 : 0,
               willChange: "transform, width",
             }}
           />
