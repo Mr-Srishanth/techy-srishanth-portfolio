@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useSpring, useTransform, useMotionValue } from "framer-motion";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -16,8 +16,10 @@ const sectionIds: Record<string, string> = {
   Contact: "contact",
 };
 
-// Premium spring used for the indicator pill — fast onset, natural settle.
-const PILL_SPRING = { type: "spring" as const, stiffness: 380, damping: 34, mass: 0.9 };
+// Two springs with different stiffness produce the elastic leading-edge effect:
+// the front (leading) edge arrives a touch sooner, the trailing edge follows.
+const LEAD_SPRING = { stiffness: 340, damping: 32, mass: 0.9 };
+const TRAIL_SPRING = { stiffness: 240, damping: 30, mass: 1 };
 
 const MagneticLink = ({
   children,
@@ -61,7 +63,7 @@ const MagneticLink = ({
       onMouseLeave={reset}
       animate={{ x: offset.x, y: offset.y }}
       transition={{ type: "spring", stiffness: 250, damping: 18, mass: 0.5 }}
-      className="relative font-body text-sm tracking-wider uppercase px-3 py-2 rounded-full will-change-transform"
+      className="relative font-body text-sm tracking-wider uppercase px-3 py-2 will-change-transform"
     >
       <span
         className={`relative z-10 transition-colors duration-300 ${
@@ -80,8 +82,20 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRowRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const [indicator, setIndicator] = useState<{ x: number; w: number } | null>(null);
-  const [hoverRect, setHoverRect] = useState<{ x: number; w: number } | null>(null);
+  const [ready, setReady] = useState(false);
+  const [pulseKey, setPulseKey] = useState(0);
+
+  // Two independent motion values: left edge and right edge of the underline.
+  // Animating edges (not x/width) lets us give each a different spring,
+  // producing a refined elastic "leading edge arrives first" feel.
+  const leftMV = useMotionValue(0);
+  const rightMV = useMotionValue(0);
+  const leftSpring = useSpring(leftMV, TRAIL_SPRING);
+  const rightSpring = useSpring(rightMV, LEAD_SPRING);
+  const xSpring = leftSpring;
+  const widthSpring = useTransform([leftSpring, rightSpring] as any, ([l, r]: number[]) =>
+    Math.max(0, r - l)
+  );
 
   const measure = useCallback((key: string) => {
     const row = navRowRef.current;
@@ -92,13 +106,40 @@ const Navbar = () => {
     return { x: r.left - p.left, w: r.width };
   }, []);
 
-  // Track active pill position, re-measure on resize/font load.
+  // Drive underline edges from (active, hovered). Hovered item creates a subtle
+  // magnetic pull on the nearest edge — the bar doesn't leave the active item.
   useEffect(() => {
     let raf = 0;
     const update = () => {
       raf = requestAnimationFrame(() => {
-        const m = measure(active);
-        if (m) setIndicator(m);
+        const a = measure(active);
+        if (!a) return;
+        // inset the bar slightly from the text padding for elegance
+        const inset = 10;
+        let left = a.x + inset;
+        let right = a.x + a.w - inset;
+
+        if (hovered && hovered !== active) {
+          const h = measure(hovered);
+          if (h) {
+            const hCenter = h.x + h.w / 2;
+            const aCenter = a.x + a.w / 2;
+            const dir = hCenter > aCenter ? 1 : -1;
+            // Tiny stretch toward hovered item — capped at 6px so it stays subtle.
+            const pull = Math.min(6, Math.abs(hCenter - aCenter) * 0.04);
+            if (dir > 0) right += pull;
+            else left -= pull;
+          }
+        }
+
+        if (!ready) {
+          leftMV.jump(left);
+          rightMV.jump(right);
+          setReady(true);
+        } else {
+          leftMV.set(left);
+          rightMV.set(right);
+        }
       });
     };
     update();
@@ -107,16 +148,12 @@ const Navbar = () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", update);
     };
-  }, [active, measure]);
+  }, [active, hovered, measure, leftMV, rightMV, ready]);
 
+  // Tiny finishing pulse when the active item changes.
   useEffect(() => {
-    if (!hovered) {
-      setHoverRect(null);
-      return;
-    }
-    const m = measure(hovered);
-    if (m) setHoverRect(m);
-  }, [hovered, measure]);
+    setPulseKey((k) => k + 1);
+  }, [active]);
 
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
@@ -182,34 +219,32 @@ const Navbar = () => {
           className="hidden md:flex relative items-center gap-2"
           onMouseLeave={() => setHovered(null)}
         >
-          {/* Hover pill — soft, follows cursor across items */}
-          {hoverRect && (
+          {/* Thin underline — two-spring elastic motion, GPU-accelerated transforms. */}
+          {ready && (
             <motion.div
               aria-hidden
-              className="absolute top-1/2 -translate-y-1/2 h-9 rounded-full bg-foreground/[0.06] backdrop-blur-sm pointer-events-none"
-              initial={false}
-              animate={{ x: hoverRect.x, width: hoverRect.w, opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={PILL_SPRING}
-              style={{ left: 0 }}
-            />
-          )}
-          {/* Active pill — primary glow, morphs width + position together */}
-          {indicator && (
-            <motion.div
-              aria-hidden
-              className="absolute top-1/2 -translate-y-1/2 h-9 rounded-full pointer-events-none"
-              initial={false}
-              animate={{ x: indicator.x, width: indicator.w }}
-              transition={PILL_SPRING}
+              className="absolute pointer-events-none rounded-full bg-primary"
               style={{
                 left: 0,
-                background:
-                  "linear-gradient(180deg, hsl(var(--primary) / 0.18), hsl(var(--primary) / 0.08))",
-                boxShadow:
-                  "0 0 0 1px hsl(var(--primary) / 0.35), 0 8px 24px -8px hsl(var(--primary) / 0.45), inset 0 1px 0 hsl(var(--primary) / 0.25)",
+                bottom: 6,
+                height: 2,
+                width: widthSpring,
+                x: xSpring,
+                transformOrigin: "left center",
+                boxShadow: "0 0 8px hsl(var(--primary) / 0.55)",
+                willChange: "transform, width",
               }}
-            />
+            >
+              {/* Microscopic settle pulse on active change */}
+              <motion.span
+                key={pulseKey}
+                className="absolute inset-0 rounded-full bg-primary"
+                initial={{ opacity: 0.55, scaleY: 1.6 }}
+                animate={{ opacity: 0, scaleY: 1 }}
+                transition={{ duration: 0.14, ease: [0.22, 1, 0.36, 1] }}
+                style={{ transformOrigin: "center" }}
+              />
+            </motion.div>
           )}
           {links.map((link) => (
             <div
