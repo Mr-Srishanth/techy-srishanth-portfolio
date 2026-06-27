@@ -82,9 +82,10 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRowRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const [ready, setReady] = useState(false);
-  const [pulseKey, setPulseKey] = useState(0);
-  const firstPulseRef = useRef(true);
+  const activeRef = useRef("Home");
+  const initializedRef = useRef(false);
+  const skipFirstReactiveUpdateRef = useRef(true);
+  const lastUnderlineKeyRef = useRef("");
 
   // Two independent motion values: left edge and right edge of the underline.
   // Animating edges (not x/width) lets us give each a different spring,
@@ -97,6 +98,23 @@ const Navbar = () => {
   const widthSpring = useTransform([leftSpring, rightSpring] as any, ([l, r]: number[]) =>
     Math.max(0, r - l)
   );
+
+  const jumpUnderline = useCallback(
+    (left: number, right: number) => {
+      leftMV.jump(left);
+      rightMV.jump(right);
+      leftSpring.jump(left);
+      rightSpring.jump(right);
+    },
+    [leftMV, rightMV, leftSpring, rightSpring]
+  );
+
+  const updateActive = useCallback((next: string) => {
+    if (activeRef.current === next) return false;
+    activeRef.current = next;
+    setActive(next);
+    return true;
+  }, []);
 
   const measure = useCallback((key: string) => {
     const row = navRowRef.current;
@@ -130,8 +148,8 @@ const Navbar = () => {
     [measure]
   );
 
-  // Determine the actually-visible section synchronously on mount so we never
-  // place the underline under "Home" first and then animate to the real section.
+  // Determine the actually-visible section synchronously on mount, place the
+  // persistent underline before first paint, then allow later updates to animate.
   useLayoutEffect(() => {
     const ids = Object.values(sectionIds);
     const probe = window.scrollY + window.innerHeight * 0.35;
@@ -144,65 +162,46 @@ const Navbar = () => {
         current = Object.keys(sectionIds).find((k) => sectionIds[k] === id) || current;
       }
     }
-    if (current !== active) setActive(current);
+    const e = computeEdges(current, null);
+    if (!e) return;
 
-    // Place underline at the correct spot before first paint, then enable animation.
-    const place = () => {
-      const e = computeEdges(current, null);
-      if (!e) return;
-      leftMV.jump(e.left);
-      rightMV.jump(e.right);
-      firstPulseRef.current = false; // skip the settle pulse on initial placement
-      setReady(true);
-    };
-    place();
-    // Re-place after fonts settle to avoid a width shift.
-    if (typeof document !== "undefined" && (document as any).fonts?.ready) {
-      (document as any).fonts.ready.then(() => {
-        const e = computeEdges(current, null);
-        if (!e) return;
-        leftMV.jump(e.left);
-        rightMV.jump(e.right);
-      });
-    }
+    activeRef.current = current;
+    lastUnderlineKeyRef.current = `${current}:none`;
+    jumpUnderline(e.left, e.right);
+    initializedRef.current = true;
+    if (current !== active) setActive(current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Drive underline edges from (active, hovered) AFTER initial placement.
-  useEffect(() => {
-    if (!ready) return;
-    let raf = 0;
-    const update = () => {
-      raf = requestAnimationFrame(() => {
-        const e = computeEdges(active, hovered);
-        if (!e) return;
-        leftMV.set(e.left);
-        rightMV.set(e.right);
-      });
-    };
-    update();
-    const onResize = () => {
-      // Recalculate without animation jump.
-      const e = computeEdges(active, hovered);
-      if (!e) return;
-      leftMV.jump(e.left);
-      rightMV.jump(e.right);
-    };
-    window.addEventListener("resize", onResize);
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", onResize);
-    };
-  }, [active, hovered, computeEdges, leftMV, rightMV, ready]);
-
-  // Tiny finishing pulse when the active item changes — skip the initial mount.
-  useEffect(() => {
-    if (firstPulseRef.current) {
-      firstPulseRef.current = false;
+  // Drive underline edges from one persistent active/hover state. The first
+  // reactive pass is intentionally ignored because mount already positioned it.
+  useLayoutEffect(() => {
+    if (!initializedRef.current) return;
+    if (skipFirstReactiveUpdateRef.current) {
+      skipFirstReactiveUpdateRef.current = false;
       return;
     }
-    setPulseKey((k) => k + 1);
-  }, [active]);
+
+    const key = `${active}:${hovered ?? "none"}`;
+    if (lastUnderlineKeyRef.current === key) return;
+
+    const e = computeEdges(active, hovered);
+    if (!e) return;
+    lastUnderlineKeyRef.current = key;
+    leftMV.set(e.left);
+    rightMV.set(e.right);
+  }, [active, hovered, computeEdges, leftMV, rightMV]);
+
+  useEffect(() => {
+    const onResize = () => {
+      if (!initializedRef.current) return;
+      const e = computeEdges(activeRef.current, hovered);
+      if (!e) return;
+      jumpUnderline(e.left, e.right);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [computeEdges, hovered, jumpUnderline]);
 
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
@@ -210,10 +209,11 @@ const Navbar = () => {
     let pending: string | null = null;
     let timer: number | undefined;
     const commit = (name: string) => {
+      if (activeRef.current === name) return;
       pending = name;
       window.clearTimeout(timer);
       timer = window.setTimeout(() => {
-        if (pending) setActive(pending);
+        if (pending) updateActive(pending);
       }, 80);
     };
 
@@ -237,10 +237,10 @@ const Navbar = () => {
       observers.forEach((o) => o.disconnect());
       window.clearTimeout(timer);
     };
-  }, []);
+  }, [updateActive]);
 
   const scrollTo = (id: string) => {
-    setActive(id);
+    updateActive(id);
     setMobileOpen(false);
     const sectionId = sectionIds[id] || id.toLowerCase();
     const el = document.getElementById(sectionId);
@@ -268,33 +268,21 @@ const Navbar = () => {
           className="hidden md:flex relative items-center gap-2"
           onMouseLeave={() => setHovered(null)}
         >
-          {/* Thin underline — two-spring elastic motion, GPU-accelerated transforms. */}
-          {ready && (
-            <motion.div
-              aria-hidden
-              className="absolute pointer-events-none rounded-full bg-primary"
-              style={{
-                left: 0,
-                bottom: 6,
-                height: 2,
-                width: widthSpring,
-                x: xSpring,
-                transformOrigin: "left center",
-                boxShadow: "0 0 8px hsl(var(--primary) / 0.55)",
-                willChange: "transform, width",
-              }}
-            >
-              {/* Microscopic settle pulse on active change */}
-              <motion.span
-                key={pulseKey}
-                className="absolute inset-0 rounded-full bg-primary"
-                initial={{ opacity: 0.55, scaleY: 1.6 }}
-                animate={{ opacity: 0, scaleY: 1 }}
-                transition={{ duration: 0.14, ease: [0.22, 1, 0.36, 1] }}
-                style={{ transformOrigin: "center" }}
-              />
-            </motion.div>
-          )}
+          {/* Thin underline — one persistent element, positioned before first paint. */}
+          <motion.div
+            aria-hidden
+            className="absolute pointer-events-none rounded-full bg-primary"
+            style={{
+              left: 0,
+              bottom: 6,
+              height: 2,
+              width: widthSpring,
+              x: xSpring,
+              transformOrigin: "left center",
+              boxShadow: "0 0 8px hsl(var(--primary) / 0.55)",
+              willChange: "transform, width",
+            }}
+          />
           {links.map((link) => (
             <div
               key={link}
