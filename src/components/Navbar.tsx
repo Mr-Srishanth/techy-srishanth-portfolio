@@ -157,7 +157,7 @@ const Navbar = () => {
     for (const id of ids) {
       const el = document.getElementById(id);
       if (!el) continue;
-      const top = el.offsetTop;
+      const top = el.getBoundingClientRect().top + window.scrollY;
       if (top <= probe) {
         current = Object.keys(sectionIds).find((k) => sectionIds[k] === id) || current;
       }
