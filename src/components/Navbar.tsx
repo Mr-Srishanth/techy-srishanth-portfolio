@@ -1,5 +1,5 @@
 import { motion, useSpring, useTransform, useMotionValue } from "framer-motion";
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react";
 import { Menu, X } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { buttonHover, buttonTap, DUR_REVEAL, EASE_REVEAL } from "@/lib/animations";
@@ -84,6 +84,7 @@ const Navbar = () => {
   const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [ready, setReady] = useState(false);
   const [pulseKey, setPulseKey] = useState(0);
+  const firstPulseRef = useRef(true);
 
   // Two independent motion values: left edge and right edge of the underline.
   // Animating edges (not x/width) lets us give each a different spring,
@@ -106,52 +107,100 @@ const Navbar = () => {
     return { x: r.left - p.left, w: r.width };
   }, []);
 
-  // Drive underline edges from (active, hovered). Hovered item creates a subtle
-  // magnetic pull on the nearest edge — the bar doesn't leave the active item.
+  const computeEdges = useCallback(
+    (activeKey: string, hoveredKey: string | null) => {
+      const a = measure(activeKey);
+      if (!a) return null;
+      const inset = 10;
+      let left = a.x + inset;
+      let right = a.x + a.w - inset;
+      if (hoveredKey && hoveredKey !== activeKey) {
+        const h = measure(hoveredKey);
+        if (h) {
+          const hCenter = h.x + h.w / 2;
+          const aCenter = a.x + a.w / 2;
+          const dir = hCenter > aCenter ? 1 : -1;
+          const pull = Math.min(6, Math.abs(hCenter - aCenter) * 0.04);
+          if (dir > 0) right += pull;
+          else left -= pull;
+        }
+      }
+      return { left, right };
+    },
+    [measure]
+  );
+
+  // Determine the actually-visible section synchronously on mount so we never
+  // place the underline under "Home" first and then animate to the real section.
+  useLayoutEffect(() => {
+    const ids = Object.values(sectionIds);
+    const probe = window.scrollY + window.innerHeight * 0.35;
+    let current = "Home";
+    for (const id of ids) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+      const top = el.offsetTop;
+      if (top <= probe) {
+        current = Object.keys(sectionIds).find((k) => sectionIds[k] === id) || current;
+      }
+    }
+    if (current !== active) setActive(current);
+
+    // Place underline at the correct spot before first paint, then enable animation.
+    const place = () => {
+      const e = computeEdges(current, null);
+      if (!e) return;
+      leftMV.jump(e.left);
+      rightMV.jump(e.right);
+      firstPulseRef.current = false; // skip the settle pulse on initial placement
+      setReady(true);
+    };
+    place();
+    // Re-place after fonts settle to avoid a width shift.
+    if (typeof document !== "undefined" && (document as any).fonts?.ready) {
+      (document as any).fonts.ready.then(() => {
+        const e = computeEdges(current, null);
+        if (!e) return;
+        leftMV.jump(e.left);
+        rightMV.jump(e.right);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Drive underline edges from (active, hovered) AFTER initial placement.
   useEffect(() => {
+    if (!ready) return;
     let raf = 0;
     const update = () => {
       raf = requestAnimationFrame(() => {
-        const a = measure(active);
-        if (!a) return;
-        // inset the bar slightly from the text padding for elegance
-        const inset = 10;
-        let left = a.x + inset;
-        let right = a.x + a.w - inset;
-
-        if (hovered && hovered !== active) {
-          const h = measure(hovered);
-          if (h) {
-            const hCenter = h.x + h.w / 2;
-            const aCenter = a.x + a.w / 2;
-            const dir = hCenter > aCenter ? 1 : -1;
-            // Tiny stretch toward hovered item — capped at 6px so it stays subtle.
-            const pull = Math.min(6, Math.abs(hCenter - aCenter) * 0.04);
-            if (dir > 0) right += pull;
-            else left -= pull;
-          }
-        }
-
-        if (!ready) {
-          leftMV.jump(left);
-          rightMV.jump(right);
-          setReady(true);
-        } else {
-          leftMV.set(left);
-          rightMV.set(right);
-        }
+        const e = computeEdges(active, hovered);
+        if (!e) return;
+        leftMV.set(e.left);
+        rightMV.set(e.right);
       });
     };
     update();
-    window.addEventListener("resize", update);
+    const onResize = () => {
+      // Recalculate without animation jump.
+      const e = computeEdges(active, hovered);
+      if (!e) return;
+      leftMV.jump(e.left);
+      rightMV.jump(e.right);
+    };
+    window.addEventListener("resize", onResize);
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("resize", update);
+      window.removeEventListener("resize", onResize);
     };
-  }, [active, hovered, measure, leftMV, rightMV, ready]);
+  }, [active, hovered, computeEdges, leftMV, rightMV, ready]);
 
-  // Tiny finishing pulse when the active item changes.
+  // Tiny finishing pulse when the active item changes — skip the initial mount.
   useEffect(() => {
+    if (firstPulseRef.current) {
+      firstPulseRef.current = false;
+      return;
+    }
     setPulseKey((k) => k + 1);
   }, [active]);
 
