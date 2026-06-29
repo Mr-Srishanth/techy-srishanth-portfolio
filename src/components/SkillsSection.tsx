@@ -32,13 +32,13 @@ const SkillsSection = () => {
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 max-w-4xl mx-auto">
           {data.skills.map((skill, i) => {
             const logo = logoMap[skill.name];
             return (
               <motion.div
                 key={skill.name}
-                className={`glass-card p-6 group ${skill.upcoming ? "opacity-60" : ""}`}
+                className={`glass-card p-5 sm:p-6 group ${skill.upcoming ? "opacity-60" : ""}`}
                 {...cardReveal(inView, i, 0.12)}
                 whileHover={isMobile ? undefined : skill.upcoming ? undefined : cardHover}
                 whileTap={isMobile ? { scale: 0.98 } : undefined}
