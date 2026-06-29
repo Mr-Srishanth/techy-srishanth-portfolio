@@ -74,7 +74,7 @@ const HeroSection = () => {
       id="home"
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="relative min-h-screen flex items-center pt-16 overflow-hidden"
+      className="relative min-h-[100svh] flex items-center pt-20 md:pt-16 pb-16 md:pb-0 overflow-hidden"
     >
       <motion.div className="absolute inset-0 grid-bg animate-grid-move opacity-20 pointer-events-none" style={{ y: gridY }} />
       <motion.div
@@ -99,8 +99,9 @@ const HeroSection = () => {
         transition={{ duration: 1.5, ease: EASE_HERO }}
       />
 
-      <div className="container mx-auto px-4 grid md:grid-cols-2 gap-16 items-center relative z-10">
+      <div className="container mx-auto px-4 grid md:grid-cols-2 gap-10 md:gap-16 items-center relative z-10">
         <motion.div
+          className="order-2 md:order-1"
           initial={{ opacity: 0, y: 40, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: DUR_HERO, delay: d(0), ease: EASE_HERO }}
@@ -110,7 +111,7 @@ const HeroSection = () => {
             const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
             return (
               <motion.p
-                className="font-mono text-sm text-primary mb-6 tracking-widest"
+                className="font-mono text-xs sm:text-sm text-primary mb-4 md:mb-6 tracking-widest"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: d(1), duration: 0.6, ease: EASE_HERO }}
@@ -121,7 +122,7 @@ const HeroSection = () => {
           })()}
 
           <motion.h1
-            className="font-display text-5xl md:text-6xl lg:text-7xl font-black leading-[1.05] mb-3"
+            className="font-display text-[2.5rem] xs:text-5xl md:text-6xl lg:text-7xl font-black leading-[1.05] mb-3"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: d(2), duration: DUR_HERO, ease: EASE_HERO }}
@@ -140,7 +141,7 @@ const HeroSection = () => {
 
           {/* Bold tagline */}
           <motion.p
-            className="font-display text-2xl md:text-3xl font-bold text-foreground/90 mt-5 mb-2 leading-snug"
+            className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-foreground/90 mt-4 md:mt-5 mb-2 leading-snug"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: d(2.5), duration: 0.7, ease: EASE_HERO }}
@@ -149,7 +150,7 @@ const HeroSection = () => {
           </motion.p>
 
           <motion.p
-            className="font-body text-lg md:text-xl text-muted-foreground mb-5 max-w-lg"
+            className="font-body text-base sm:text-lg md:text-xl text-muted-foreground mb-5 max-w-lg"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: d(3), duration: 0.6, ease: EASE_HERO }}
@@ -176,7 +177,7 @@ const HeroSection = () => {
           </motion.div>
 
           <motion.p
-            className="font-body text-muted-foreground text-lg mb-10 max-w-md leading-relaxed"
+            className="font-body text-muted-foreground text-base sm:text-lg mb-8 md:mb-10 max-w-md leading-relaxed"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: d(4), duration: 0.7, ease: EASE_HERO }}
@@ -185,7 +186,7 @@ const HeroSection = () => {
           </motion.p>
 
           <motion.div
-            className="glass-card px-4 py-3 rounded-xl flex items-center gap-3 max-w-md mb-10"
+            className="glass-card px-4 py-3 rounded-xl flex items-center gap-3 max-w-md mb-8 md:mb-10"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: d(5), ease: EASE_HERO }}
@@ -202,14 +203,14 @@ const HeroSection = () => {
           </motion.div>
 
           <motion.div
-            className="flex gap-4 flex-wrap"
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:flex-wrap"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: d(6), duration: 0.6, ease: EASE_HERO }}
           >
             <motion.button
               onClick={() => scrollTo("projects")}
-              className="group px-8 py-3.5 rounded-xl bg-primary text-primary-foreground font-body font-bold tracking-wider neon-glow inline-flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="group w-full sm:w-auto justify-center px-6 sm:px-8 py-3.5 rounded-xl bg-primary text-primary-foreground font-body font-bold tracking-wider neon-glow inline-flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               whileHover={isMobile ? undefined : buttonHover}
               whileTap={buttonTap}
               transition={{ type: "spring", stiffness: 400, damping: 20 }}
@@ -219,7 +220,7 @@ const HeroSection = () => {
             </motion.button>
             <motion.button
               onClick={() => scrollTo("contact")}
-              className="px-8 py-3.5 rounded-xl neon-border text-foreground font-body font-bold tracking-wider hover:bg-primary/10 transition-colors"
+              className="w-full sm:w-auto px-6 sm:px-8 py-3.5 rounded-xl neon-border text-foreground font-body font-bold tracking-wider hover:bg-primary/10 transition-colors"
               whileHover={isMobile ? undefined : buttonHover}
               whileTap={buttonTap}
             >
@@ -230,7 +231,7 @@ const HeroSection = () => {
                 href={data.resumeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-6 py-3.5 rounded-xl border border-border text-muted-foreground font-body font-bold tracking-wider hover:text-foreground hover:border-primary/50 transition-colors inline-flex items-center gap-2"
+                className="w-full sm:w-auto justify-center px-6 py-3.5 rounded-xl border border-border text-muted-foreground font-body font-bold tracking-wider hover:text-foreground hover:border-primary/50 transition-colors inline-flex items-center gap-2"
                 whileHover={isMobile ? undefined : buttonHover}
                 whileTap={buttonTap}
               >
@@ -241,7 +242,7 @@ const HeroSection = () => {
         </motion.div>
 
         <motion.div
-          className="flex justify-center"
+          className="order-1 md:order-2 flex justify-center"
           initial={{ opacity: 0, scale: 0.85 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: d(2), ease: EASE_HERO }}
@@ -255,7 +256,7 @@ const HeroSection = () => {
               />
             )}
             <motion.div
-              className={`relative w-72 h-72 md:w-[340px] md:h-[340px] rounded-full overflow-hidden neon-border ${light ? "" : "animate-float"}`}
+              className={`relative w-52 h-52 sm:w-64 sm:h-64 md:w-[340px] md:h-[340px] rounded-full overflow-hidden neon-border ${light ? "" : "animate-float"}`}
               style={isMobile ? undefined : { x: imgX, y: imgY }}
             >
               <img src={profileImg} alt={data.heroName} className="w-full h-full object-cover" />
@@ -274,7 +275,7 @@ const HeroSection = () => {
 
       {/* Scroll indicator */}
       <motion.div
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        className="hidden md:flex absolute bottom-10 left-1/2 -translate-x-1/2 flex-col items-center gap-2"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 2, duration: 0.8, ease: EASE_HERO }}
