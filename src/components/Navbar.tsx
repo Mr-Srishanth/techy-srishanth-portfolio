@@ -1,4 +1,4 @@
-import { motion, useSpring, useTransform, useMotionValue } from "framer-motion";
+import { motion, AnimatePresence, useSpring, useTransform, useMotionValue } from "framer-motion";
 import { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react";
 import { Menu, X } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -334,12 +334,12 @@ const Navbar = () => {
 
   return (
     <motion.nav
-      className="fixed top-0 left-0 right-0 z-40 glass-card border-b border-glass-border/20 backdrop-blur-2xl"
+      className="fixed top-0 left-0 right-0 z-40 glass-card border-b border-glass-border/20 backdrop-blur-2xl safe-pt safe-px"
       initial={{ y: -80 }}
       animate={{ y: 0 }}
       transition={{ duration: DUR_REVEAL, delay: 0.2, ease: EASE_REVEAL }}
     >
-      <div className="container mx-auto flex items-center justify-between h-16 px-4">
+      <div className="container mx-auto flex items-center justify-between h-14 md:h-16 px-4">
         <motion.span
           className="font-display text-lg tracking-wider text-primary neon-text cursor-pointer"
           whileHover={{ scale: 1.04 }}
@@ -400,31 +400,64 @@ const Navbar = () => {
           </motion.button>
         </div>
 
-        <button className="md:hidden text-foreground" onClick={() => setMobileOpen(!mobileOpen)}>
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+        <button
+          className="md:hidden text-foreground inline-flex items-center justify-center w-11 h-11 -mr-2 rounded-lg active:bg-primary/10 transition-colors"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          aria-expanded={mobileOpen}
+        >
+          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
-      {mobileOpen && (
-        <motion.div
-          className="md:hidden glass-card border-t border-glass-border/20 p-4 space-y-3"
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          transition={{ duration: 0.3, ease: EASE_REVEAL }}
-        >
-          {links.map((link) => (
-            <button
-              key={link}
-              onClick={() => scrollTo(link)}
-              className={`block w-full text-left font-body py-2 tracking-wider transition-colors duration-200 ${
-                active === link ? "text-primary" : "text-muted-foreground hover:text-primary"
-              }`}
-            >
-              {link}
-            </button>
-          ))}
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            className="md:hidden border-t border-glass-border/20 bg-background/95 backdrop-blur-2xl px-4 pt-3 pb-4 safe-pb"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.22, ease: EASE_REVEAL }}
+          >
+            <div className="flex flex-col">
+              {links.map((link, i) => {
+                const isActive = active === link;
+                return (
+                  <motion.button
+                    key={link}
+                    onClick={() => scrollTo(link)}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.03 * i, duration: 0.25, ease: EASE_REVEAL }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`relative flex items-center justify-between w-full text-left font-body py-3.5 px-3 rounded-lg tracking-wider text-base transition-colors ${
+                      isActive ? "text-primary bg-primary/10" : "text-muted-foreground active:bg-primary/5"
+                    }`}
+                  >
+                    <span>{link}</span>
+                    {isActive && (
+                      <motion.span
+                        layoutId="mobile-nav-dot"
+                        className="w-1.5 h-1.5 rounded-full bg-primary"
+                        style={{ boxShadow: "0 0 8px hsl(var(--primary))" }}
+                      />
+                    )}
+                  </motion.button>
+                );
+              })}
+              <div className="mt-3 pt-3 border-t border-glass-border/20 flex items-center justify-between gap-3">
+                <ThemeToggle />
+                <button
+                  onClick={() => scrollTo("Contact")}
+                  className="flex-1 px-5 py-3 rounded-lg font-body text-sm tracking-wider bg-primary text-primary-foreground active:scale-[0.98] transition-transform"
+                >
+                  Let's Talk
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 };

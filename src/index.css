@@ -67,6 +67,9 @@
   body {
     @apply bg-background text-foreground font-body antialiased;
     width: 100%;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+    overscroll-behavior-y: none;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-display;
@@ -517,3 +520,59 @@ button, a[role="button"], [role="button"] {
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
 }
+
+/* ============================================================
+   Mobile-first premium polish — preserves desktop design
+   ============================================================ */
+
+/* Safe-area helpers for modern phones (notch / rounded corners) */
+@supports (padding: max(0px)) {
+  .safe-pt { padding-top: max(env(safe-area-inset-top), 0px); }
+  .safe-pb { padding-bottom: max(env(safe-area-inset-bottom), 0px); }
+  .safe-px { padding-left: max(env(safe-area-inset-left), 0px); padding-right: max(env(safe-area-inset-right), 0px); }
+}
+
+/* Smoother momentum scrolling on iOS */
+html, body { -webkit-overflow-scrolling: touch; }
+
+/* Touch-only refinements */
+@media (hover: none) and (pointer: coarse) {
+  /* Disable hover-only transforms that would stick on tap */
+  .surface-card:hover,
+  .glass-card:hover { transform: none; }
+
+  /* Lighter blurs to keep mid-range Android phones at 60fps */
+  .glass-card,
+  .surface-card { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+
+  /* Comfortable minimum tap target */
+  button, a[role="button"], [role="button"], a {
+    min-height: 40px;
+  }
+
+  /* Tap feedback replacement for hover */
+  button:active, a:active, [role="button"]:active {
+    transform: scale(0.97);
+    transition: transform 90ms ease-out;
+  }
+}
+
+/* Reduce expensive background blurs on small screens */
+@media (max-width: 767px) {
+  /* Soften huge ambient glow blobs */
+  .blur-\[150px\] { filter: blur(80px); }
+  .blur-\[200px\] { filter: blur(100px); }
+  .blur-\[140px\] { filter: blur(80px); }
+  .blur-\[120px\] { filter: blur(70px); }
+  .blur-\[100px\] { filter: blur(60px); }
+  .blur-\[80px\]  { filter: blur(50px); }
+
+  /* Slow grid animation to save battery */
+  .animate-grid-move { animation-duration: 40s; }
+
+  /* Tighter section rhythm on phones */
+  section { scroll-margin-top: 72px; }
+}
+
+/* Allow text selection on tap for content; keep buttons non-selectable */
+button, [role="button"] { -webkit-user-select: none; user-select: none; }

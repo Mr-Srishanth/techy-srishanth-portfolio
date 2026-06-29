@@ -56,7 +56,7 @@ const CertCard = ({ cert, onOpen, index, light }: { cert: CertificateData; onOpe
       className="group relative flex flex-col items-center text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 rounded-full"
       aria-label={`${cert.title} by ${cert.issuer}`}
     >
-      <div className="relative w-36 h-36 sm:w-40 sm:h-40 rounded-full flex items-center justify-center bg-card/40 backdrop-blur-md border border-primary/40 group-hover:border-primary/80 transition-all duration-300 group-hover:shadow-[0_0_30px_hsl(var(--neon-cyan)/0.35)]">
+      <div className="relative w-28 h-28 sm:w-40 sm:h-40 rounded-full flex items-center justify-center bg-card/40 backdrop-blur-md border border-primary/40 group-hover:border-primary/80 transition-all duration-300 group-hover:shadow-[0_0_30px_hsl(var(--neon-cyan)/0.35)]">
         <div
           aria-hidden
           className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
@@ -70,14 +70,14 @@ const CertCard = ({ cert, onOpen, index, light }: { cert: CertificateData; onOpe
             src={cert.logo_url}
             alt=""
             onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
-            className="w-14 h-14 object-contain relative z-10"
+            className="w-10 h-10 sm:w-14 sm:h-14 object-contain relative z-10"
           />
         ) : (
-          <Icon size={48} className="text-primary relative z-10" strokeWidth={1.5} />
+          <Icon className="text-primary relative z-10 w-9 h-9 sm:w-12 sm:h-12" strokeWidth={1.5} />
         )}
       </div>
-      <div className="mt-5 space-y-1 px-2 max-w-[12rem]">
-        <h3 className="font-display text-sm sm:text-base text-foreground leading-snug line-clamp-2">
+      <div className="mt-4 sm:mt-5 space-y-1 px-2 max-w-[9rem] sm:max-w-[12rem]">
+        <h3 className="font-display text-xs sm:text-base text-foreground leading-snug line-clamp-2">
           {cert.title || "Untitled"}
         </h3>
         {cert.issuer && (
@@ -240,7 +240,7 @@ const CertificatesSection = () => {
                   <div className="h-px flex-1 bg-gradient-to-l from-transparent via-primary/40 to-primary/10" />
                 </motion.div>
 
-                <div className="flex flex-wrap justify-center gap-x-10 gap-y-12">
+                <div className="flex flex-wrap justify-center gap-x-6 sm:gap-x-10 gap-y-10 sm:gap-y-12">
                   {items.map((cert, i) => (
                     <CertCard
                       key={cert.id ?? `${cat}-${i}`}

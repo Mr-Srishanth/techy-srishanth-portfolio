@@ -35,11 +35,11 @@ const ProjectsSection = () => {
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+        <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 max-w-5xl mx-auto">
           {data.projects.map((project, i) => (
             <motion.div
               key={`${project.title}-${i}`}
-              className="glass-card p-6 group cursor-pointer relative overflow-hidden"
+              className="glass-card p-5 sm:p-6 group cursor-pointer relative overflow-hidden"
               {...cardReveal(inView, i, 0.12)}
               whileHover={isMobile ? undefined : cardHover}
               whileTap={isMobile ? { scale: 0.98 } : undefined}
@@ -109,7 +109,7 @@ const ProjectsSection = () => {
       <AnimatePresence>
         {selectedProject && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+              className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 safe-pb"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -119,10 +119,10 @@ const ProjectsSection = () => {
               onClick={() => setSelectedProject(null)}
             />
             <motion.div
-              className="relative glass-card p-6 md:p-8 max-w-2xl w-full max-h-[85vh] overflow-y-auto border border-primary/20"
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                className="relative glass-card p-5 sm:p-6 md:p-8 max-w-2xl w-full max-h-[92vh] sm:max-h-[85vh] overflow-y-auto border border-primary/20 rounded-t-2xl sm:rounded-2xl"
+                initial={{ y: "100%", opacity: 0, scale: 1 }}
+                animate={{ y: 0, opacity: 1, scale: 1 }}
+                exit={{ y: "100%", opacity: 0 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               role="dialog"
               aria-modal="true"
@@ -180,14 +180,14 @@ const ProjectsSection = () => {
                 ))}
               </div>
 
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
                 {hasLink(selectedProject.live_url) && (
                   <a
                     href={selectedProject.live_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     tabIndex={0}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground font-mono text-sm hover:scale-105 active:scale-[0.98] transition-all duration-200 shadow-md hover:shadow-lg hover:shadow-primary/20"
+                    className="flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-primary text-primary-foreground font-mono text-sm hover:scale-105 active:scale-[0.98] transition-all duration-200 shadow-md hover:shadow-lg hover:shadow-primary/20"
                   >
                     <ExternalLink size={14} /> Live Demo
                   </a>
@@ -198,7 +198,7 @@ const ProjectsSection = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     tabIndex={0}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border text-foreground font-mono text-sm hover:border-primary/50 hover:scale-105 active:scale-[0.98] transition-all duration-200"
+                    className="flex items-center justify-center gap-2 px-5 py-3 rounded-lg border border-border text-foreground font-mono text-sm hover:border-primary/50 hover:scale-105 active:scale-[0.98] transition-all duration-200"
                   >
                     <Github size={14} /> Source Code
                   </a>
@@ -209,7 +209,7 @@ const ProjectsSection = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     tabIndex={0}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border text-foreground font-mono text-sm hover:border-primary/50 hover:scale-105 active:scale-[0.98] transition-all duration-200"
+                    className="flex items-center justify-center gap-2 px-5 py-3 rounded-lg border border-border text-foreground font-mono text-sm hover:border-primary/50 hover:scale-105 active:scale-[0.98] transition-all duration-200"
                   >
                     <FileText size={14} /> Docs
                   </a>
