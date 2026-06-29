@@ -87,6 +87,11 @@ const Navbar = () => {
   const initializedRef = useRef(false);
   const skipFirstReactiveUpdateRef = useRef(true);
   const lastUnderlineKeyRef = useRef("");
+  const isProgrammaticScrollingRef = useRef(false);
+  const programmaticScrollFrameRef = useRef<number | null>(null);
+  const programmaticScrollTimeoutRef = useRef<number | null>(null);
+  const observerPendingRef = useRef<string | null>(null);
+  const observerTimerRef = useRef<number | undefined>();
 
   // Two independent motion values: left edge and right edge of the underline.
   // Animating edges (not x/width) lets us give each a different spring,
@@ -116,6 +121,60 @@ const Navbar = () => {
     setActive(next);
     return true;
   }, []);
+
+  const clearObserverPending = useCallback(() => {
+    observerPendingRef.current = null;
+    window.clearTimeout(observerTimerRef.current);
+  }, []);
+
+  const finishProgrammaticScroll = useCallback(() => {
+    isProgrammaticScrollingRef.current = false;
+    if (programmaticScrollFrameRef.current !== null) {
+      window.cancelAnimationFrame(programmaticScrollFrameRef.current);
+      programmaticScrollFrameRef.current = null;
+    }
+    if (programmaticScrollTimeoutRef.current !== null) {
+      window.clearTimeout(programmaticScrollTimeoutRef.current);
+      programmaticScrollTimeoutRef.current = null;
+    }
+  }, []);
+
+  const watchProgrammaticScrollEnd = useCallback(
+    (targetId: string) => {
+      finishProgrammaticScroll();
+      isProgrammaticScrollingRef.current = true;
+
+      let stableFrames = 0;
+      let previousY = window.scrollY;
+      const startedAt = performance.now();
+
+      const tick = () => {
+        const target = document.getElementById(targetId);
+        const scrollDelta = Math.abs(window.scrollY - previousY);
+        previousY = window.scrollY;
+
+        const targetSettled = target ? Math.abs(target.getBoundingClientRect().top) < 3 : true;
+        const scrollSettled = scrollDelta < 0.5;
+
+        if ((targetSettled && scrollSettled) || performance.now() - startedAt > 1400) {
+          stableFrames += 1;
+        } else {
+          stableFrames = 0;
+        }
+
+        if (stableFrames >= 6) {
+          finishProgrammaticScroll();
+          return;
+        }
+
+        programmaticScrollFrameRef.current = window.requestAnimationFrame(tick);
+      };
+
+      programmaticScrollTimeoutRef.current = window.setTimeout(finishProgrammaticScroll, 1800);
+      programmaticScrollFrameRef.current = window.requestAnimationFrame(tick);
+    },
+    [finishProgrammaticScroll]
+  );
 
   const measure = useCallback((key: string) => {
     const row = navRowRef.current;
@@ -208,8 +267,6 @@ const Navbar = () => {
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
     const ids = Object.values(sectionIds);
-    let pending: string | null = null;
-    let timer: number | undefined;
     // Ignore the IntersectionObserver's initial synchronous callback burst:
     // on mount each observer fires once with the current intersection state,
     // which would otherwise overwrite the active section we already resolved
@@ -220,11 +277,15 @@ const Navbar = () => {
     }, 0);
     const commit = (name: string) => {
       if (!settled) return;
+      if (isProgrammaticScrollingRef.current) return;
       if (activeRef.current === name) return;
-      pending = name;
-      window.clearTimeout(timer);
-      timer = window.setTimeout(() => {
-        if (pending) updateActive(pending);
+      observerPendingRef.current = name;
+      window.clearTimeout(observerTimerRef.current);
+      observerTimerRef.current = window.setTimeout(() => {
+        if (isProgrammaticScrollingRef.current) return;
+        const pending = observerPendingRef.current;
+        if (pending && activeRef.current !== pending) updateActive(pending);
+        observerPendingRef.current = null;
       }, 80);
     };
 
@@ -246,18 +307,30 @@ const Navbar = () => {
 
     return () => {
       observers.forEach((o) => o.disconnect());
-      window.clearTimeout(timer);
+      window.clearTimeout(observerTimerRef.current);
       window.clearTimeout(settleTimer);
     };
   }, [updateActive]);
 
   const scrollTo = (id: string) => {
-    updateActive(id);
-    setMobileOpen(false);
     const sectionId = sectionIds[id] || id.toLowerCase();
+
+    clearObserverPending();
+    if (activeRef.current !== id) updateActive(id);
+    setMobileOpen(false);
     const el = document.getElementById(sectionId);
-    el?.scrollIntoView({ behavior: "smooth" });
+    if (!el) return;
+
+    watchProgrammaticScrollEnd(sectionId);
+    el.scrollIntoView({ behavior: "smooth" });
   };
+
+  useEffect(() => {
+    return () => {
+      finishProgrammaticScroll();
+      clearObserverPending();
+    };
+  }, [clearObserverPending, finishProgrammaticScroll]);
 
   return (
     <motion.nav
