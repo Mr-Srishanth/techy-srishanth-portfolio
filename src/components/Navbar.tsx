@@ -210,7 +210,16 @@ const Navbar = () => {
     const ids = Object.values(sectionIds);
     let pending: string | null = null;
     let timer: number | undefined;
+    // Ignore the IntersectionObserver's initial synchronous callback burst:
+    // on mount each observer fires once with the current intersection state,
+    // which would otherwise overwrite the active section we already resolved
+    // in useLayoutEffect. We only want genuine scroll-driven changes.
+    let settled = false;
+    const settleTimer = window.setTimeout(() => {
+      settled = true;
+    }, 0);
     const commit = (name: string) => {
+      if (!settled) return;
       if (activeRef.current === name) return;
       pending = name;
       window.clearTimeout(timer);
@@ -238,6 +247,7 @@ const Navbar = () => {
     return () => {
       observers.forEach((o) => o.disconnect());
       window.clearTimeout(timer);
+      window.clearTimeout(settleTimer);
     };
   }, [updateActive]);
 
