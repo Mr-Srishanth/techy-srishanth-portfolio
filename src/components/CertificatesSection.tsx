@@ -91,12 +91,13 @@ const CertCard = ({ cert, onOpen, index, light }: { cert: CertificateData; onOpe
 };
 
 const CertificateModal = ({ cert, onClose }: { cert: CertificateData; onClose: () => void }) => {
-  // ESC + lock body scroll
+  // ESC to close. We intentionally avoid mutating document.body styles here
+  // (background scroll is prevented by the modal's own overscroll-behavior
+  // + backdrop). This keeps page scrolling from ever getting stuck locked.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
-    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+    return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
   const Icon = pickIcon(cert);
