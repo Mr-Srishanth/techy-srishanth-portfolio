@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,7 +13,22 @@ import Preview from "./pages/Preview";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  // Scroll watchdog: if something leaves body/html in a locked state without
+  // the explicit `data-scroll-locked` marker, release it. Prevents the whole
+  // page becoming un-scrollable after a modal/animation glitch.
+  useEffect(() => {
+    const release = () => {
+      const html = document.documentElement;
+      if (html.getAttribute("data-scroll-locked") === "true") return;
+      if (document.body.style.overflow === "hidden") document.body.style.overflow = "";
+      if (document.body.style.position === "fixed") document.body.style.position = "";
+      if (html.style.overflow === "hidden") html.style.overflow = "";
+    };
+    const id = window.setInterval(release, 500);
+    return () => window.clearInterval(id);
+  }, []);
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <PortfolioProvider>
@@ -31,6 +47,7 @@ const App = () => (
       </PortfolioProvider>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
