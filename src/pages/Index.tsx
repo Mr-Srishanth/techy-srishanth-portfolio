@@ -86,37 +86,35 @@ const Index = () => {
         {loading && <LoadingScreen onComplete={handleComplete} />}
       </AnimatePresence>
 
-      {!loading && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-        >
-          <GreetingBanner />
-          <ScrollProgress />
-          <GenerativeArtBackground />
-          
-          <SpotlightGlow />
-          <CommandPalette />
-          <Navbar />
-          <HeroSection />
-          {s.about && <SectionReveal><AboutSection /></SectionReveal>}
-          {s.skills && <SectionReveal direction="left" delay={0.1}><SkillsSection /></SectionReveal>}
-          {s.skillRadar && <SectionReveal delay={0.05}><SkillRadarChart /></SectionReveal>}
-          {s.rpgSkillTree && <SectionReveal direction="left" delay={0.1}><RPGSkillTree /></SectionReveal>}
-          {s.projects && <SectionReveal direction="right" delay={0.1}><ProjectsSection /></SectionReveal>}
-          {s.timeline && <SectionReveal parallax={false}><TimeMachineTimeline /></SectionReveal>}
-          {s.learningJourney && <SectionReveal><LearningJourneySection /></SectionReveal>}
-          {s.achievements && <SectionReveal direction="left" delay={0.1}><AchievementsSection /></SectionReveal>}
-          {s.certificates && <SectionReveal><CertificatesSection /></SectionReveal>}
-          {s.github && <SectionReveal direction="right" delay={0.1}><GitHubSection /></SectionReveal>}
-          <ScrollToTop />
-          <KonamiEasterEgg />
-          <CustomCursor />
-          {s.contact && <SectionReveal><ContactSection /></SectionReveal>}
-          <Footer />
-        </motion.div>
-      )}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: loading ? 0 : 1 }}
+        transition={{ duration: 0.8 }}
+      >
+        <GreetingBanner />
+        <ScrollProgress />
+        <GenerativeArtBackground />
+        
+        <SpotlightGlow />
+        <CommandPalette />
+        <Navbar />
+        <HeroSection />
+        {s.about && <SectionReveal><AboutSection /></SectionReveal>}
+        {s.skills && <SectionReveal direction="left" delay={0.1}><SkillsSection /></SectionReveal>}
+        {s.skillRadar && <SectionReveal delay={0.05}><SkillRadarChart /></SectionReveal>}
+        {s.rpgSkillTree && <SectionReveal direction="left" delay={0.1}><RPGSkillTree /></SectionReveal>}
+        {s.projects && <SectionReveal direction="right" delay={0.1}><ProjectsSection /></SectionReveal>}
+        {s.timeline && <SectionReveal parallax={false}><TimeMachineTimeline /></SectionReveal>}
+        {s.learningJourney && <SectionReveal><LearningJourneySection /></SectionReveal>}
+        {s.achievements && <SectionReveal direction="left" delay={0.1}><AchievementsSection /></SectionReveal>}
+        {s.certificates && <SectionReveal><CertificatesSection /></SectionReveal>}
+        {s.github && <SectionReveal direction="right" delay={0.1}><GitHubSection /></SectionReveal>}
+        <ScrollToTop />
+        <KonamiEasterEgg />
+        <CustomCursor />
+        {s.contact && <SectionReveal><ContactSection /></SectionReveal>}
+        <Footer />
+      </motion.div>
     </>
   );
 };
