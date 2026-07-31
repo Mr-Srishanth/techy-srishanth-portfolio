@@ -68,7 +68,6 @@
     width: 100%;
     -webkit-tap-highlight-color: transparent;
     -webkit-text-size-adjust: 100%;
-    overscroll-behavior-y: none;
   }
   /* Scroll safety net: nothing may permanently lock the document scroll.
      Only components using an explicit `data-scroll-locked` marker on <html>
