@@ -2,7 +2,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { ExternalLink, Github, Folder, X, FileText } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { headingReveal, cardReveal, cardHover } from "@/lib/animations";
+import { headingReveal, cardReveal, cardHover, SPRING, backdropVariants } from "@/lib/animations";
 import { usePortfolio, type ProjectData } from "@/contexts/PortfolioContext";
 
 const ProjectsSection = () => {
@@ -116,14 +116,18 @@ const ProjectsSection = () => {
           >
             <motion.div
               className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+              variants={backdropVariants}
+              initial="hidden"
+              animate="show"
+              exit="exit"
               onClick={() => setSelectedProject(null)}
             />
             <motion.div
                 className="relative glass-card p-5 sm:p-6 md:p-8 max-w-2xl w-full max-h-[92vh] sm:max-h-[85vh] overflow-y-auto border border-primary/20 rounded-t-2xl sm:rounded-2xl"
-                initial={{ y: "100%", opacity: 0, scale: 1 }}
-                animate={{ y: 0, opacity: 1, scale: 1 }}
-                exit={{ y: "100%", opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                initial={{ y: "100%", opacity: 0, filter: "blur(8px)" }}
+                animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+                exit={{ y: "100%", opacity: 0, filter: "blur(6px)" }}
+              transition={SPRING.liquid}
               role="dialog"
               aria-modal="true"
               aria-label={selectedProject.title}
