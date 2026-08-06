@@ -105,10 +105,10 @@ const CertificateModal = ({ cert, onClose }: { cert: CertificateData; onClose: (
   return (
     <motion.div
       key="cert-modal"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.25 }}
+      variants={backdropVariants}
+      initial="hidden"
+      animate="show"
+      exit="exit"
       className="fixed inset-0 z-[80] flex items-center justify-center p-4 sm:p-6 bg-background/70 backdrop-blur-md"
       onClick={onClose}
       role="dialog"
@@ -116,10 +116,10 @@ const CertificateModal = ({ cert, onClose }: { cert: CertificateData; onClose: (
       aria-label={cert.title}
     >
       <motion.div
-        initial={{ opacity: 0, y: 30, scale: 0.96 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 20, scale: 0.97 }}
-        transition={{ duration: 0.35, ease: EASE }}
+        variants={panelVariants}
+        initial="hidden"
+        animate="show"
+        exit="exit"
         className="relative max-w-2xl w-full max-h-[88vh] overflow-y-auto rounded-2xl border border-primary/40 bg-card/80 backdrop-blur-2xl shadow-[0_0_60px_hsl(var(--neon-cyan)/0.25)]"
         onClick={(e) => e.stopPropagation()}
       >
