@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { useLightMotion } from "@/hooks/use-mobile";
 import { usePortfolio } from "@/contexts/PortfolioContext";
-import { headingReveal, EASE } from "@/lib/animations";
+import { headingReveal, EASE, backdropVariants, panelVariants } from "@/lib/animations";
 import type { CertificateData } from "@/contexts/PortfolioContext";
 
 const ICON_MAP: Record<string, any> = {
