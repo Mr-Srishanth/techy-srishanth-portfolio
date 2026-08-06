@@ -276,13 +276,37 @@
               border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Button transition defaults */
+/* Button transition defaults — one language for every control */
 button, a[role="button"], [role="button"] {
-  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  transition: transform var(--motion-fast) var(--motion-ease),
+              box-shadow var(--motion-fast) var(--motion-ease),
+              filter var(--motion-fast) var(--motion-ease);
+}
+button:active, a[role="button"]:active, [role="button"]:active {
+  transition-duration: var(--motion-micro);
+}
+
+/* Unified focus ring — visible, soft, on-brand */
+:where(button, a, input, textarea, select, [tabindex]):focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px hsl(var(--background)),
+    0 0 0 4px hsl(var(--primary) / 0.65),
+    0 0 18px hsl(var(--primary) / 0.35);
+  border-radius: var(--radius);
+  transition: box-shadow var(--motion-fast) var(--motion-ease);
 }
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
   .animate-float,
   .animate-pulse-glow,
   .animate-grid-move {
