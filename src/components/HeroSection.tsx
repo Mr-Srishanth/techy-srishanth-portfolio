@@ -1,6 +1,5 @@
 import { motion, useMotionValue, useTransform, useScroll, useSpring } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
-import defaultProfileImg from "@/assets/profile.jpg";
 import { useIsMobile, useLightMotion } from "@/hooks/use-mobile";
 import { EASE_HERO, DUR_HERO, STAGGER, buttonHover, buttonTap } from "@/lib/animations";
 import { usePortfolio } from "@/contexts/PortfolioContext";
@@ -9,7 +8,7 @@ import { Download, ChevronDown, ArrowRight } from "lucide-react";
 const roles = ["Developer", "Builder", "Problem Solver", "AI Enthusiast"];
 
 const HeroSection = () => {
-  const { data } = usePortfolio();
+  const { data, loading } = usePortfolio();
   const [roleIdx, setRoleIdx] = useState(0);
   const [displayed, setDisplayed] = useState("");
   const [typing, setTyping] = useState(true);
@@ -23,7 +22,9 @@ const HeroSection = () => {
   const isMobile = useIsMobile();
   const light = useLightMotion();
 
-  const profileImg = data.profileImage || defaultProfileImg;
+  // Never show a bundled/stale fallback image — only the live value from the
+  // database. Until it arrives we render a shimmer skeleton instead.
+  const profileImg = data.profileImage || "";
   const nameParts = data.heroName.split(" ");
   const firstName = nameParts.slice(0, -1).join(" ") || nameParts[0];
   const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
@@ -259,7 +260,20 @@ const HeroSection = () => {
               className={`relative w-52 h-52 sm:w-64 sm:h-64 md:w-[340px] md:h-[340px] rounded-full overflow-hidden neon-border ${light ? "" : "animate-float"}`}
               style={isMobile ? undefined : { x: imgX, y: imgY }}
             >
-              <img src={profileImg} alt={data.heroName} className="w-full h-full object-cover" />
+              {profileImg ? (
+                <img
+                  key={profileImg}
+                  src={profileImg}
+                  alt={data.heroName}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div
+                  className="w-full h-full bg-muted/30 animate-pulse"
+                  aria-hidden="true"
+                  aria-busy={loading}
+                />
+              )}
             </motion.div>
             {!light && (
               <motion.div
