@@ -8,6 +8,9 @@ export interface SkillData {
   icon: string;
   logo?: string;
   upcoming?: boolean;
+  /** Optional explicit label. When empty it is derived from `level`. */
+  proficiency?: string;
+  category?: string;
 }
 
 export interface ProjectData {
@@ -23,6 +26,17 @@ export interface ProjectData {
   problem?: string;
   solution?: string;
   impact?: string;
+  // ── Case-study fields ──
+  research?: string;
+  architecture?: string;
+  challenges?: string;
+  solved_how?: string;
+  lessons?: string;
+  tech_stack?: string[];
+  key_features?: string[];
+  gallery?: string[];
+  status?: string;
+  year?: string;
 }
 
 export interface CertificateData {
@@ -35,6 +49,8 @@ export interface CertificateData {
   description?: string;
   logo_url?: string;
   preset_icon?: string;
+  skills?: string[];
+  completion_date?: string;
 }
 
 export interface GreetingData {
@@ -83,6 +99,8 @@ export interface PortfolioData {
   certificates: CertificateData[];
   greetings: GreetingData[];
   achievements: AchievementData[];
+  timeline: TimelineEventData[];
+  journey: JourneyItemData[];
   sections: SectionVisibility;
   // Social links
   githubUrl: string;
