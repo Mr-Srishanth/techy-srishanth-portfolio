@@ -114,7 +114,7 @@ export function usePortfolioData() {
 
   const fetchAll = useCallback(async () => {
     try {
-      const [contentRes, skillsRes, projectsRes, certsRes, greetingsRes, sectionsRes, achievementsRes] = await Promise.all([
+      const [contentRes, skillsRes, projectsRes, certsRes, greetingsRes, sectionsRes, achievementsRes, timelineRes, journeyRes] = await Promise.all([
         supabase.from("portfolio_content").select("*").limit(1).single(),
         supabase.from("skills").select("*").order("sort_order"),
         supabase.from("projects").select("*").order("sort_order"),
@@ -122,6 +122,8 @@ export function usePortfolioData() {
         supabase.from("greetings").select("*"),
         supabase.from("section_visibility").select("*").limit(1).single(),
         supabase.from("achievements").select("*").order("sort_order"),
+        supabase.from("timeline_events").select("*").order("sort_order"),
+        supabase.from("journey_items").select("*").order("sort_order"),
       ]);
 
       const content = contentRes.data;
@@ -149,6 +151,8 @@ export function usePortfolioData() {
         certificates: (certsRes.data ?? []).map(mapCertificate),
         greetings: (greetingsRes.data ?? []).map(mapGreeting),
         achievements: (achievementsRes.data ?? []).map(mapAchievement),
+        timeline: (timelineRes.data ?? []).map(mapTimelineEvent),
+        journey: (journeyRes.data ?? []).map(mapJourneyItem),
         sections: sections ? mapSections(sections) : { ...DEFAULT_SECTIONS },
       });
     } catch (err) {
