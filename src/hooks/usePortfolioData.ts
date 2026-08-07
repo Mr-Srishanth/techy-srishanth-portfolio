@@ -218,6 +218,7 @@ export function usePortfolioData() {
         skills.map((s, i) => ({
           name: s.name, level: s.level, icon: s.icon,
           logo: s.logo ?? null, upcoming: s.upcoming ?? false, sort_order: i,
+          proficiency: s.proficiency ?? "", category: s.category ?? "",
         }))
       );
     }
@@ -236,6 +237,16 @@ export function usePortfolioData() {
           problem: p.problem ?? null,
           solution: p.solution ?? null,
           impact: p.impact ?? null,
+          research: p.research ?? null,
+          architecture: p.architecture ?? null,
+          challenges: p.challenges ?? null,
+          solved_how: p.solved_how ?? null,
+          lessons: p.lessons ?? null,
+          tech_stack: p.tech_stack ?? [],
+          key_features: p.key_features ?? [],
+          gallery: p.gallery ?? [],
+          status: p.status ?? "",
+          year: p.year ?? "",
         } as any))
       );
     }
@@ -253,6 +264,8 @@ export function usePortfolioData() {
           description: c.description?.trim() || null,
           logo_url: c.logo_url?.trim() || null,
           preset_icon: c.preset_icon?.trim() || null,
+          skills: c.skills ?? [],
+          completion_date: c.completion_date ?? "",
           sort_order: i,
         } as any))
       );
