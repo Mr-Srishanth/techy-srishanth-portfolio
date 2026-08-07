@@ -71,6 +71,30 @@ export interface AchievementData {
   sort_order?: number;
 }
 
+/** A milestone on the "Journey Through Time" timeline. */
+export interface TimelineEventData {
+  id?: string;
+  year: string;
+  title: string;
+  description: string;
+  /** lucide-react icon name, e.g. "Rocket" */
+  icon: string;
+  /** "primary" | "neon-cyan" | "neon-purple" */
+  accent: string;
+  sort_order?: number;
+}
+
+/** A card in the "Continuous Growth" learning journey rail. */
+export interface JourneyItemData {
+  id?: string;
+  title: string;
+  description: string;
+  date_label: string;
+  icon: string;
+  accent: string;
+  sort_order?: number;
+}
+
 export interface SectionVisibility {
   about: boolean;
   skills: boolean;
@@ -136,6 +160,8 @@ const DEFAULT_DATA: PortfolioData = {
   certificates: [],
   greetings: [],
   achievements: [],
+  timeline: [],
+  journey: [],
   sections: { ...DEFAULT_SECTIONS },
   githubUrl: "",
   linkedinUrl: "",
