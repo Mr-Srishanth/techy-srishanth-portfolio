@@ -115,7 +115,7 @@ const ProjectsSection = () => {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+              className="absolute inset-0 bg-background/55 backdrop-blur-xl"
               variants={backdropVariants}
               initial="hidden"
               animate="show"
@@ -123,7 +123,7 @@ const ProjectsSection = () => {
               onClick={() => setSelectedProject(null)}
             />
             <motion.div
-                className="relative glass-card p-5 sm:p-6 md:p-8 max-w-2xl w-full max-h-[92vh] sm:max-h-[85vh] overflow-y-auto border border-primary/20 rounded-t-2xl sm:rounded-2xl"
+                className="relative glass-5 p-5 sm:p-6 md:p-8 max-w-2xl w-full max-h-[92vh] sm:max-h-[85vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl"
                 initial={{ y: "100%", opacity: 0, filter: "blur(8px)" }}
                 animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
                 exit={{ y: "100%", opacity: 0, filter: "blur(6px)" }}
