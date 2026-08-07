@@ -215,7 +215,7 @@ const CertificatesSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : undefined}
             transition={{ duration: 0.6, ease: EASE }}
-            className="max-w-md mx-auto text-center rounded-2xl border border-primary/30 bg-card/40 backdrop-blur-xl p-10"
+            className="glass-2 max-w-md mx-auto text-center rounded-2xl p-10"
           >
             <Sparkles size={28} className="mx-auto text-primary mb-3 drop-shadow-[0_0_10px_hsl(var(--neon-cyan)/0.7)]" />
             <p className="font-display text-lg text-foreground">No certifications available yet</p>
