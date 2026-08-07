@@ -1,10 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
-import type { PortfolioData, SkillData, ProjectData, CertificateData, GreetingData, AchievementData, SectionVisibility } from "@/contexts/PortfolioContext";
+import type { PortfolioData, SkillData, ProjectData, CertificateData, GreetingData, AchievementData, TimelineEventData, JourneyItemData, SectionVisibility } from "@/contexts/PortfolioContext";
 
 function mapSkill(row: Tables<"skills">): SkillData & { id: string } {
-  return { id: row.id, name: row.name, level: row.level, icon: row.icon, logo: row.logo ?? undefined, upcoming: row.upcoming };
+  return {
+    id: row.id, name: row.name, level: row.level, icon: row.icon,
+    logo: row.logo ?? undefined, upcoming: row.upcoming,
+    proficiency: row.proficiency ?? "",
+    category: row.category ?? "",
+  };
 }
 
 function mapProject(row: Tables<"projects">): ProjectData & { id: string } {
@@ -18,6 +23,16 @@ function mapProject(row: Tables<"projects">): ProjectData & { id: string } {
     problem: (row as any).problem ?? undefined,
     solution: (row as any).solution ?? undefined,
     impact: (row as any).impact ?? undefined,
+    research: (row as any).research ?? undefined,
+    architecture: (row as any).architecture ?? undefined,
+    challenges: (row as any).challenges ?? undefined,
+    solved_how: (row as any).solved_how ?? undefined,
+    lessons: (row as any).lessons ?? undefined,
+    tech_stack: (row as any).tech_stack ?? [],
+    key_features: (row as any).key_features ?? [],
+    gallery: (row as any).gallery ?? [],
+    status: (row as any).status ?? "",
+    year: (row as any).year ?? "",
   };
 }
 
@@ -32,6 +47,23 @@ function mapCertificate(row: Tables<"certificates">): CertificateData & { id: st
     description: (row as any).description ?? undefined,
     logo_url: (row as any).logo_url ?? undefined,
     preset_icon: (row as any).preset_icon ?? undefined,
+    skills: (row as any).skills ?? [],
+    completion_date: (row as any).completion_date ?? "",
+  };
+}
+
+function mapTimelineEvent(row: Tables<"timeline_events">): TimelineEventData & { id: string } {
+  return {
+    id: row.id, year: row.year, title: row.title, description: row.description,
+    icon: row.icon, accent: row.accent, sort_order: row.sort_order,
+  };
+}
+
+function mapJourneyItem(row: Tables<"journey_items">): JourneyItemData & { id: string } {
+  return {
+    id: row.id, title: row.title, description: row.description,
+    date_label: row.date_label, icon: row.icon, accent: row.accent,
+    sort_order: row.sort_order,
   };
 }
 
@@ -69,6 +101,7 @@ const DEFAULT_DATA: PortfolioData = {
   aboutTitle: "Aspiring AI & Software Developer",
   aboutP1: "", aboutP2: "", profileImage: "",
   skills: [], projects: [], certificates: [], greetings: [], achievements: [],
+  timeline: [], journey: [],
   sections: { ...DEFAULT_SECTIONS },
   githubUrl: "", linkedinUrl: "", instagramUrl: "", email: "", resumeUrl: "",
 };
@@ -81,7 +114,7 @@ export function usePortfolioData() {
 
   const fetchAll = useCallback(async () => {
     try {
-      const [contentRes, skillsRes, projectsRes, certsRes, greetingsRes, sectionsRes, achievementsRes] = await Promise.all([
+      const [contentRes, skillsRes, projectsRes, certsRes, greetingsRes, sectionsRes, achievementsRes, timelineRes, journeyRes] = await Promise.all([
         supabase.from("portfolio_content").select("*").limit(1).single(),
         supabase.from("skills").select("*").order("sort_order"),
         supabase.from("projects").select("*").order("sort_order"),
@@ -89,6 +122,8 @@ export function usePortfolioData() {
         supabase.from("greetings").select("*"),
         supabase.from("section_visibility").select("*").limit(1).single(),
         supabase.from("achievements").select("*").order("sort_order"),
+        supabase.from("timeline_events").select("*").order("sort_order"),
+        supabase.from("journey_items").select("*").order("sort_order"),
       ]);
 
       const content = contentRes.data;
@@ -116,6 +151,8 @@ export function usePortfolioData() {
         certificates: (certsRes.data ?? []).map(mapCertificate),
         greetings: (greetingsRes.data ?? []).map(mapGreeting),
         achievements: (achievementsRes.data ?? []).map(mapAchievement),
+        timeline: (timelineRes.data ?? []).map(mapTimelineEvent),
+        journey: (journeyRes.data ?? []).map(mapJourneyItem),
         sections: sections ? mapSections(sections) : { ...DEFAULT_SECTIONS },
       });
     } catch (err) {
@@ -137,6 +174,8 @@ export function usePortfolioData() {
       .on("postgres_changes", { event: "*", schema: "public", table: "greetings" }, () => fetchAll())
       .on("postgres_changes", { event: "*", schema: "public", table: "section_visibility" }, () => fetchAll())
       .on("postgres_changes", { event: "*", schema: "public", table: "achievements" }, () => fetchAll())
+      .on("postgres_changes", { event: "*", schema: "public", table: "timeline_events" }, () => fetchAll())
+      .on("postgres_changes", { event: "*", schema: "public", table: "journey_items" }, () => fetchAll())
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
@@ -179,6 +218,7 @@ export function usePortfolioData() {
         skills.map((s, i) => ({
           name: s.name, level: s.level, icon: s.icon,
           logo: s.logo ?? null, upcoming: s.upcoming ?? false, sort_order: i,
+          proficiency: s.proficiency ?? "", category: s.category ?? "",
         }))
       );
     }
@@ -197,6 +237,16 @@ export function usePortfolioData() {
           problem: p.problem ?? null,
           solution: p.solution ?? null,
           impact: p.impact ?? null,
+          research: p.research ?? null,
+          architecture: p.architecture ?? null,
+          challenges: p.challenges ?? null,
+          solved_how: p.solved_how ?? null,
+          lessons: p.lessons ?? null,
+          tech_stack: p.tech_stack ?? [],
+          key_features: p.key_features ?? [],
+          gallery: p.gallery ?? [],
+          status: p.status ?? "",
+          year: p.year ?? "",
         } as any))
       );
     }
@@ -214,6 +264,8 @@ export function usePortfolioData() {
           description: c.description?.trim() || null,
           logo_url: c.logo_url?.trim() || null,
           preset_icon: c.preset_icon?.trim() || null,
+          skills: c.skills ?? [],
+          completion_date: c.completion_date ?? "",
           sort_order: i,
         } as any))
       );

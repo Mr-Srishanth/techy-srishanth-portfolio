@@ -8,6 +8,9 @@ export interface SkillData {
   icon: string;
   logo?: string;
   upcoming?: boolean;
+  /** Optional explicit label. When empty it is derived from `level`. */
+  proficiency?: string;
+  category?: string;
 }
 
 export interface ProjectData {
@@ -23,6 +26,17 @@ export interface ProjectData {
   problem?: string;
   solution?: string;
   impact?: string;
+  // ── Case-study fields ──
+  research?: string;
+  architecture?: string;
+  challenges?: string;
+  solved_how?: string;
+  lessons?: string;
+  tech_stack?: string[];
+  key_features?: string[];
+  gallery?: string[];
+  status?: string;
+  year?: string;
 }
 
 export interface CertificateData {
@@ -35,6 +49,8 @@ export interface CertificateData {
   description?: string;
   logo_url?: string;
   preset_icon?: string;
+  skills?: string[];
+  completion_date?: string;
 }
 
 export interface GreetingData {
@@ -52,6 +68,30 @@ export interface AchievementData {
   icon: string;
   link?: string;
   color: string;
+  sort_order?: number;
+}
+
+/** A milestone on the "Journey Through Time" timeline. */
+export interface TimelineEventData {
+  id?: string;
+  year: string;
+  title: string;
+  description: string;
+  /** lucide-react icon name, e.g. "Rocket" */
+  icon: string;
+  /** "primary" | "neon-cyan" | "neon-purple" */
+  accent: string;
+  sort_order?: number;
+}
+
+/** A card in the "Continuous Growth" learning journey rail. */
+export interface JourneyItemData {
+  id?: string;
+  title: string;
+  description: string;
+  date_label: string;
+  icon: string;
+  accent: string;
   sort_order?: number;
 }
 
@@ -83,6 +123,8 @@ export interface PortfolioData {
   certificates: CertificateData[];
   greetings: GreetingData[];
   achievements: AchievementData[];
+  timeline: TimelineEventData[];
+  journey: JourneyItemData[];
   sections: SectionVisibility;
   // Social links
   githubUrl: string;
@@ -118,6 +160,8 @@ const DEFAULT_DATA: PortfolioData = {
   certificates: [],
   greetings: [],
   achievements: [],
+  timeline: [],
+  journey: [],
   sections: { ...DEFAULT_SECTIONS },
   githubUrl: "",
   linkedinUrl: "",
