@@ -174,6 +174,8 @@ export function usePortfolioData() {
       .on("postgres_changes", { event: "*", schema: "public", table: "greetings" }, () => fetchAll())
       .on("postgres_changes", { event: "*", schema: "public", table: "section_visibility" }, () => fetchAll())
       .on("postgres_changes", { event: "*", schema: "public", table: "achievements" }, () => fetchAll())
+      .on("postgres_changes", { event: "*", schema: "public", table: "timeline_events" }, () => fetchAll())
+      .on("postgres_changes", { event: "*", schema: "public", table: "journey_items" }, () => fetchAll())
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
