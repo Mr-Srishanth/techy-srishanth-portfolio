@@ -939,3 +939,32 @@ body::before {
   .btn-neon, .btn-glass { transition: none !important; }
   .glass-card:hover, .surface-card:hover { transform: none; }
 }
+
+/* ---- Form material: inputs, selects, textareas ----------------------- */
+input:not([type="range"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+textarea,
+select {
+  -webkit-backdrop-filter: blur(var(--g-blur-1)) saturate(140%);
+  backdrop-filter: blur(var(--g-blur-1)) saturate(140%);
+  box-shadow:
+    inset 0 1px 2px hsl(220 40% 2% / 0.22),
+    inset 0 -1px 0 hsl(var(--g-light) / 0.05);
+  border-color: hsl(var(--g-light) / 0.10) !important;
+  transition: border-color var(--motion-fast) var(--motion-ease),
+              box-shadow var(--motion-fast) var(--motion-ease),
+              background-color var(--motion-fast) var(--motion-ease);
+}
+input:hover:not(:focus), textarea:hover:not(:focus), select:hover:not(:focus) {
+  border-color: hsl(var(--g-light) / 0.16) !important;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: hsl(var(--primary) / 0.45) !important;
+  box-shadow:
+    inset 0 1px 2px hsl(220 40% 2% / 0.18),
+    0 0 0 3px hsl(var(--primary) / 0.14);
+}
+.theme-light input, .theme-light textarea, .theme-light select,
+.admin-light input, .admin-light textarea, .admin-light select {
+  box-shadow: inset 0 1px 2px hsl(220 25% 40% / 0.06);
+  border-color: hsl(220 30% 20% / 0.12) !important;
+}
