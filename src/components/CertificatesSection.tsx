@@ -56,7 +56,7 @@ const CertCard = ({ cert, onOpen, index, light }: { cert: CertificateData; onOpe
       className="group relative flex flex-col items-center text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 rounded-full"
       aria-label={`${cert.title} by ${cert.issuer}`}
     >
-      <div className="glass-3 relative w-28 h-28 sm:w-40 sm:h-40 !rounded-full flex items-center justify-center">
+      <div className="relative w-28 h-28 sm:w-40 sm:h-40 rounded-full flex items-center justify-center bg-card/40 backdrop-blur-md border border-primary/40 group-hover:border-primary/80 transition-all duration-300 group-hover:shadow-[0_0_30px_hsl(var(--neon-cyan)/0.35)]">
         <div
           aria-hidden
           className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
@@ -109,7 +109,7 @@ const CertificateModal = ({ cert, onClose }: { cert: CertificateData; onClose: (
       initial="hidden"
       animate="show"
       exit="exit"
-      className="fixed inset-0 z-[80] flex items-center justify-center p-4 sm:p-6 bg-background/55 backdrop-blur-xl"
+      className="fixed inset-0 z-[80] flex items-center justify-center p-4 sm:p-6 bg-background/70 backdrop-blur-md"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -120,7 +120,7 @@ const CertificateModal = ({ cert, onClose }: { cert: CertificateData; onClose: (
         initial="hidden"
         animate="show"
         exit="exit"
-        className="relative max-w-2xl w-full max-h-[88vh] overflow-y-auto rounded-2xl glass-5"
+        className="relative max-w-2xl w-full max-h-[88vh] overflow-y-auto rounded-2xl border border-primary/40 bg-card/80 backdrop-blur-2xl shadow-[0_0_60px_hsl(var(--neon-cyan)/0.25)]"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -215,7 +215,7 @@ const CertificatesSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : undefined}
             transition={{ duration: 0.6, ease: EASE }}
-            className="glass-2 max-w-md mx-auto text-center rounded-2xl p-10"
+            className="max-w-md mx-auto text-center rounded-2xl border border-primary/30 bg-card/40 backdrop-blur-xl p-10"
           >
             <Sparkles size={28} className="mx-auto text-primary mb-3 drop-shadow-[0_0_10px_hsl(var(--neon-cyan)/0.7)]" />
             <p className="font-display text-lg text-foreground">No certifications available yet</p>
