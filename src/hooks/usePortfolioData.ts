@@ -101,6 +101,7 @@ const DEFAULT_DATA: PortfolioData = {
   aboutTitle: "Aspiring AI & Software Developer",
   aboutP1: "", aboutP2: "", profileImage: "",
   skills: [], projects: [], certificates: [], greetings: [], achievements: [],
+  timeline: [], journey: [],
   sections: { ...DEFAULT_SECTIONS },
   githubUrl: "", linkedinUrl: "", instagramUrl: "", email: "", resumeUrl: "",
 };
