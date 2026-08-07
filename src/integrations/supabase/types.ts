@@ -53,6 +53,7 @@ export type Database = {
       certificates: {
         Row: {
           category: string
+          completion_date: string
           created_at: string
           description: string | null
           id: string
@@ -61,12 +62,14 @@ export type Database = {
           link: string | null
           logo_url: string | null
           preset_icon: string | null
+          skills: string[]
           sort_order: number
           title: string
           updated_at: string
         }
         Insert: {
           category?: string
+          completion_date?: string
           created_at?: string
           description?: string | null
           id?: string
@@ -75,12 +78,14 @@ export type Database = {
           link?: string | null
           logo_url?: string | null
           preset_icon?: string | null
+          skills?: string[]
           sort_order?: number
           title: string
           updated_at?: string
         }
         Update: {
           category?: string
+          completion_date?: string
           created_at?: string
           description?: string | null
           id?: string
@@ -89,6 +94,7 @@ export type Database = {
           link?: string | null
           logo_url?: string | null
           preset_icon?: string | null
+          skills?: string[]
           sort_order?: number
           title?: string
           updated_at?: string
@@ -120,6 +126,42 @@ export type Database = {
           id?: string
           image?: string | null
           message?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      journey_items: {
+        Row: {
+          accent: string
+          created_at: string
+          date_label: string
+          description: string
+          icon: string
+          id: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          accent?: string
+          created_at?: string
+          date_label?: string
+          description?: string
+          icon?: string
+          id?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          accent?: string
+          created_at?: string
+          date_label?: string
+          description?: string
+          icon?: string
+          id?: string
+          sort_order?: number
           title?: string
           updated_at?: string
         }
@@ -184,55 +226,85 @@ export type Database = {
       }
       projects: {
         Row: {
+          architecture: string | null
+          challenges: string | null
           created_at: string
           description: string
           doc_url: string | null
+          gallery: string[]
           github_url: string | null
           id: string
           image: string | null
           impact: string | null
+          key_features: string[]
+          lessons: string | null
           live_url: string | null
           problem: string | null
+          research: string | null
           solution: string | null
+          solved_how: string | null
           sort_order: number
+          status: string
           tagline: string | null
           tags: string[]
+          tech_stack: string[]
           title: string
           updated_at: string
+          year: string
         }
         Insert: {
+          architecture?: string | null
+          challenges?: string | null
           created_at?: string
           description?: string
           doc_url?: string | null
+          gallery?: string[]
           github_url?: string | null
           id?: string
           image?: string | null
           impact?: string | null
+          key_features?: string[]
+          lessons?: string | null
           live_url?: string | null
           problem?: string | null
+          research?: string | null
           solution?: string | null
+          solved_how?: string | null
           sort_order?: number
+          status?: string
           tagline?: string | null
           tags?: string[]
+          tech_stack?: string[]
           title: string
           updated_at?: string
+          year?: string
         }
         Update: {
+          architecture?: string | null
+          challenges?: string | null
           created_at?: string
           description?: string
           doc_url?: string | null
+          gallery?: string[]
           github_url?: string | null
           id?: string
           image?: string | null
           impact?: string | null
+          key_features?: string[]
+          lessons?: string | null
           live_url?: string | null
           problem?: string | null
+          research?: string | null
           solution?: string | null
+          solved_how?: string | null
           sort_order?: number
+          status?: string
           tagline?: string | null
           tags?: string[]
+          tech_stack?: string[]
           title?: string
           updated_at?: string
+          year?: string
         }
         Relationships: []
       }
@@ -289,37 +361,79 @@ export type Database = {
       }
       skills: {
         Row: {
+          category: string
           created_at: string
           icon: string
           id: string
           level: number
           logo: string | null
           name: string
+          proficiency: string
           sort_order: number
           upcoming: boolean
           updated_at: string
         }
         Insert: {
+          category?: string
           created_at?: string
           icon?: string
           id?: string
           level?: number
           logo?: string | null
           name: string
+          proficiency?: string
           sort_order?: number
           upcoming?: boolean
           updated_at?: string
         }
         Update: {
+          category?: string
           created_at?: string
           icon?: string
           id?: string
           level?: number
           logo?: string | null
           name?: string
+          proficiency?: string
           sort_order?: number
           upcoming?: boolean
           updated_at?: string
+        }
+        Relationships: []
+      }
+      timeline_events: {
+        Row: {
+          accent: string
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          sort_order: number
+          title: string
+          updated_at: string
+          year: string
+        }
+        Insert: {
+          accent?: string
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          year?: string
+        }
+        Update: {
+          accent?: string
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          year?: string
         }
         Relationships: []
       }
