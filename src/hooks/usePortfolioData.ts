@@ -1,10 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
-import type { PortfolioData, SkillData, ProjectData, CertificateData, GreetingData, AchievementData, SectionVisibility } from "@/contexts/PortfolioContext";
+import type { PortfolioData, SkillData, ProjectData, CertificateData, GreetingData, AchievementData, TimelineEventData, JourneyItemData, SectionVisibility } from "@/contexts/PortfolioContext";
 
 function mapSkill(row: Tables<"skills">): SkillData & { id: string } {
-  return { id: row.id, name: row.name, level: row.level, icon: row.icon, logo: row.logo ?? undefined, upcoming: row.upcoming };
+  return {
+    id: row.id, name: row.name, level: row.level, icon: row.icon,
+    logo: row.logo ?? undefined, upcoming: row.upcoming,
+    proficiency: row.proficiency ?? "",
+    category: row.category ?? "",
+  };
 }
 
 function mapProject(row: Tables<"projects">): ProjectData & { id: string } {
@@ -18,6 +23,16 @@ function mapProject(row: Tables<"projects">): ProjectData & { id: string } {
     problem: (row as any).problem ?? undefined,
     solution: (row as any).solution ?? undefined,
     impact: (row as any).impact ?? undefined,
+    research: (row as any).research ?? undefined,
+    architecture: (row as any).architecture ?? undefined,
+    challenges: (row as any).challenges ?? undefined,
+    solved_how: (row as any).solved_how ?? undefined,
+    lessons: (row as any).lessons ?? undefined,
+    tech_stack: (row as any).tech_stack ?? [],
+    key_features: (row as any).key_features ?? [],
+    gallery: (row as any).gallery ?? [],
+    status: (row as any).status ?? "",
+    year: (row as any).year ?? "",
   };
 }
 
@@ -32,6 +47,23 @@ function mapCertificate(row: Tables<"certificates">): CertificateData & { id: st
     description: (row as any).description ?? undefined,
     logo_url: (row as any).logo_url ?? undefined,
     preset_icon: (row as any).preset_icon ?? undefined,
+    skills: (row as any).skills ?? [],
+    completion_date: (row as any).completion_date ?? "",
+  };
+}
+
+function mapTimelineEvent(row: Tables<"timeline_events">): TimelineEventData & { id: string } {
+  return {
+    id: row.id, year: row.year, title: row.title, description: row.description,
+    icon: row.icon, accent: row.accent, sort_order: row.sort_order,
+  };
+}
+
+function mapJourneyItem(row: Tables<"journey_items">): JourneyItemData & { id: string } {
+  return {
+    id: row.id, title: row.title, description: row.description,
+    date_label: row.date_label, icon: row.icon, accent: row.accent,
+    sort_order: row.sort_order,
   };
 }
 
